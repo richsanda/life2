@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="email-api" />
+        <module name="email-app" />
+        <module name="email-data" />
+        <module name="email-job" />
+        <module name="email-service" />
+        <module name="email-service-api" />
+        <module name="email-web" />
+        <module name="email-xml" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="email-api" target="1.8" />
+      <module name="email-app" target="1.8" />
+      <module name="email-data" target="1.8" />
+      <module name="email-job" target="1.8" />
+      <module name="email-parent" target="1.8" />
+      <module name="email-service" target="1.8" />
+      <module name="email-service-api" target="1.8" />
+      <module name="email-web" target="1.8" />
+      <module name="email-xml" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

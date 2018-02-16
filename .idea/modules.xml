@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/email-api/email-api.iml" filepath="$PROJECT_DIR$/email-api/email-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/email-app/email-app.iml" filepath="$PROJECT_DIR$/email-app/email-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/email-data/email-data.iml" filepath="$PROJECT_DIR$/email-data/email-data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/email-job/email-job.iml" filepath="$PROJECT_DIR$/email-job/email-job.iml" />
+      <module fileurl="file://$PROJECT_DIR$/email-parent.iml" filepath="$PROJECT_DIR$/email-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/email-service/email-service.iml" filepath="$PROJECT_DIR$/email-service/email-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/email-service-api/email-service-api.iml" filepath="$PROJECT_DIR$/email-service-api/email-service-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/email-web/email-web.iml" filepath="$PROJECT_DIR$/email-web/email-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/email-xml/email-xml.iml" filepath="$PROJECT_DIR$/email-xml/email-xml.iml" />
+    </modules>
+  </component>
+</project>

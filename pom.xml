@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>w.whateva</groupId>
+    <artifactId>email-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>email-parent</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+        <spring.data.version>1.10.10.RELEASE</spring.data.version>
+        <spring.oxm.version>5.0.3.RELEASE</spring.oxm.version>
+        <mongodb.driver.version>3.6.2</mongodb.driver.version>
+        <jackson-datatype.version>2.9.4</jackson-datatype.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>de.flapdoodle.embed</groupId>
+                <artifactId>de.flapdoodle.embed.mongo</artifactId>
+                <version>1.50.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cz.jirutka.spring</groupId>
+                <artifactId>embedmongo-spring</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>email-app</module>
+        <module>email-service</module>
+        <module>email-data</module>
+        <module>email-service-api</module>
+        <module>email-web</module>
+        <module>email-job</module>
+        <module>email-xml</module>
+    <module>email-api</module>
+  </modules>
+
+</project>
