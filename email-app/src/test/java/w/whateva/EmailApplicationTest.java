@@ -7,15 +7,13 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple EmailApplication.
  */
-public class ApiEmailApplicationTest
-    extends TestCase
-{
+public class EmailApplicationTest extends TestCase {
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public ApiEmailApplicationTest(String testName )
+    public EmailApplicationTest(String testName )
     {
         super( testName );
     }
@@ -25,7 +23,7 @@ public class ApiEmailApplicationTest
      */
     public static Test suite()
     {
-        return new TestSuite( ApiEmailApplicationTest.class );
+        return new TestSuite( EmailApplicationTest.class );
     }
 
     /**

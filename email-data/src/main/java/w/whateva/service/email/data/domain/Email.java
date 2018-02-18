@@ -1,6 +1,7 @@
 package w.whateva.service.email.data.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class Email {
         this.id = id;
     }
 
+    @Indexed
     private LocalDateTime sent;
     private String from;
     private String to;
