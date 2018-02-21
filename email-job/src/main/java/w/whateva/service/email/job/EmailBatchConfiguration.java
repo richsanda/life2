@@ -1,6 +1,5 @@
 package w.whateva.service.email.job;
 
-import generated.Email;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -13,20 +12,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import w.whateva.service.email.job.beans.EmailProcessor;
 import w.whateva.service.email.job.beans.EmailWriter;
+import w.whateva.service.email.job.beans.PersonProcessor;
+import w.whateva.service.email.job.beans.PersonWriter;
 import w.whateva.service.email.sapi.EmailService;
+import w.whateva.service.email.sapi.PersonService;
 import w.whateva.service.email.sapi.sao.ApiEmail;
+import w.whateva.service.email.sapi.sao.ApiPerson;
 
 @Configuration
 @EnableBatchProcessing
 public class EmailBatchConfiguration extends DefaultBatchConfigurer {
 
-    //private final EntityManagerFactory entityManagerFactory;
     private final EmailService emailService;
+    private final PersonService personService;
 
     @Autowired
-    public EmailBatchConfiguration(EmailService emailService) {
-        // this.entityManagerFactory = entityManagerFactory;
+    public EmailBatchConfiguration(EmailService emailService, PersonService personService) {
         this.emailService = emailService;
+        this.personService = personService;
     }
 
     // ensure the job launched at startup uses the same transaction manager as the data module
@@ -34,13 +37,6 @@ public class EmailBatchConfiguration extends DefaultBatchConfigurer {
     public PlatformTransactionManager platformTransactionManager() {
         return new ResourcelessTransactionManager();
     }
-
-    /*
-    @Override
-    public PlatformTransactionManager getTransactionManager() {
-        return platformTransactionManager();
-    }
-    */
 
     @Bean
     @StepScope
@@ -51,5 +47,16 @@ public class EmailBatchConfiguration extends DefaultBatchConfigurer {
     @Bean
     ItemWriter<ApiEmail> emailWriter() {
         return new EmailWriter(emailService);
+    }
+
+    @Bean
+    @StepScope
+    ItemProcessor<ApiPerson, ApiPerson> personProcessor() {
+        return new PersonProcessor();
+    }
+
+    @Bean
+    ItemWriter<ApiPerson> personWriter() {
+        return new PersonWriter(personService);
     }
 }

@@ -1,2 +1,4 @@
 /Users/rich/checkouts/email/email-data/src/main/java/w/whateva/service/email/data/repository/EmailRepository.java
+/Users/rich/checkouts/email/email-data/src/main/java/w/whateva/service/email/data/domain/Person.java
+/Users/rich/checkouts/email/email-data/src/main/java/w/whateva/service/email/data/repository/PersonRepository.java
 /Users/rich/checkouts/email/email-data/src/main/java/w/whateva/service/email/data/domain/Email.java

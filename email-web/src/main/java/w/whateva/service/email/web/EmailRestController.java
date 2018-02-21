@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import w.whateva.service.email.api.EmailOperations;
-import w.whateva.service.email.api.dto.Email;
+import w.whateva.service.email.api.dto.DtoPerson;
+import w.whateva.service.email.api.dto.DtoEmail;
 import w.whateva.service.email.sapi.EmailService;
+import w.whateva.service.email.sapi.PersonService;
 import w.whateva.service.email.sapi.sao.ApiEmail;
+import w.whateva.service.email.web.mapper.PersonMapper;
 import w.whateva.service.email.web.mapper.EmailMapper;
 
 import java.util.List;
@@ -19,10 +22,12 @@ import java.util.stream.Collectors;
 public class EmailRestController implements EmailOperations {
 
     private final EmailService emailService;
+    private final PersonService personService;
 
     @Autowired
-    public EmailRestController(EmailService emailService) {
+    public EmailRestController(EmailService emailService, PersonService personService) {
         this.emailService = emailService;
+        this.personService = personService;
     }
 
     @Override
@@ -33,16 +38,21 @@ public class EmailRestController implements EmailOperations {
 
     @Override
     @RequestMapping(value = "/email/{key}", method= RequestMethod.GET, produces = "application/json")
-    public Email readEmail(@PathVariable("key") String key) {
+    public DtoEmail readEmail(@PathVariable("key") String key) {
         ApiEmail apiEmail = emailService.readEmail(key);
         if (null == apiEmail) return null;
-        Email email = new Email();
-        BeanUtils.copyProperties(apiEmail, email);
-        return email;
+        DtoEmail dtoEmail = new DtoEmail();
+        BeanUtils.copyProperties(apiEmail, dtoEmail);
+        return dtoEmail;
     }
 
     @Override
-    public List<Email> allEmails() {
+    public List<DtoEmail> allEmails() {
         return emailService.allEmails().stream().map(EmailMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DtoPerson> allPersons() {
+        return personService.allPersons().stream().map(PersonMapper::toDto).collect(Collectors.toList());
     }
 }

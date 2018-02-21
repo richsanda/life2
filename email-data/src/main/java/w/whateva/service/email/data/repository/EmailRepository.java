@@ -6,7 +6,7 @@ import w.whateva.service.email.data.domain.Email;
 
 import java.util.List;
 
-@Repository
+@Repository(value = "emails")
 public interface EmailRepository extends MongoRepository<Email, String> {
 
     List<Email> findAllByOrderBySentAsc();

@@ -15,12 +15,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.service.email.sapi.sao.ApiEmail;
+import w.whateva.service.email.sapi.sao.ApiPerson;
 
 import java.io.IOException;
 
@@ -34,6 +36,9 @@ public class EmailJobConfiguration {
     @Value("${email.xml.file.pattern}")
     private String emailXmlFilePattern;
 
+    @Value("${person.xml.file}")
+    private String personXmlFile;
+
     @Autowired
     public EmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailBatchConfiguration config) {
         this.jobs = jobs;
@@ -43,7 +48,10 @@ public class EmailJobConfiguration {
 
     @Bean
     public Job loadEmailJob() throws Exception {
-        return this.jobs.get("loadEmailJob").start(loadEmailStep()).build();
+        return this.jobs.get("loadEmailJob")
+                .start(loadEmailStep())
+                .next(loadPersonStep())
+                .build();
     }
 
     @Bean
@@ -53,6 +61,16 @@ public class EmailJobConfiguration {
                 .reader(emailReader())
                 .processor(config.emailProcessor())
                 .writer(config.emailWriter())
+                .build();
+    }
+
+    @Bean
+    public Step loadPersonStep() throws Exception {
+        return this.steps.get("loadPersonStep")
+                .<ApiPerson, ApiPerson>chunk(10)
+                .reader(personReader())
+                .processor(config.personProcessor())
+                .writer(config.personWriter())
                 .build();
     }
 
@@ -82,8 +100,18 @@ public class EmailJobConfiguration {
     @Bean
     public Jaxb2Marshaller emailUnmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(ApiEmail.class);
+        marshaller.setClassesToBeBound(ApiEmail.class, ApiPerson.class);
         marshaller.setCheckForXmlRootElement(true);
         return marshaller;
+    }
+
+    @Bean
+    @StepScope
+    public ResourceAwareItemReaderItemStream<ApiPerson> personReader() {
+        StaxEventItemReader<ApiPerson> reader = new StaxEventItemReader<>();
+        reader.setFragmentRootElementName("person");
+        reader.setResource(new FileSystemResource(personXmlFile));
+        reader.setUnmarshaller(emailUnmarshaller());
+        return reader;
     }
 }

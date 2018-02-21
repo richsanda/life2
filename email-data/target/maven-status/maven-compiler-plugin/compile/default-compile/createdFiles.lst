@@ -1,2 +1,4 @@
-w/whateva/service/email/data/domain/Email.class
+w/whateva/service/email/data/domain/Person.class
 w/whateva/service/email/data/repository/EmailRepository.class
+w/whateva/service/email/data/repository/PersonRepository.class
+w/whateva/service/email/data/domain/Email.class

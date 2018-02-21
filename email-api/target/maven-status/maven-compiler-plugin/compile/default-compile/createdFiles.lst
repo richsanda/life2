@@ -1,2 +1,3 @@
+w/whateva/service/email/api/dto/DtoPerson.class
 w/whateva/service/email/api/EmailOperations.class
-w/whateva/service/email/api/dto/Email.class
+w/whateva/service/email/api/dto/DtoEmail.class

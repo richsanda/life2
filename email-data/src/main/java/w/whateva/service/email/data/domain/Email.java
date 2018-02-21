@@ -5,11 +5,12 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
  */
-@Document
 public class Email {
 
     @Id
@@ -27,6 +28,7 @@ public class Email {
     private LocalDateTime sent;
     private String from;
     private String to;
+    private Set<String> tos;
     private String subject;
     private String body;
 
@@ -53,6 +55,15 @@ public class Email {
     public void setTo(String to) {
         this.to = to;
     }
+
+    public Set<String> getTos() {
+        return tos;
+    }
+
+    public void setTos(Set<String> tos) {
+        this.tos = tos;
+    }
+
 
     public String getSubject() {
         return subject;

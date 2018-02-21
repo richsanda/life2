@@ -3,7 +3,8 @@ package w.whateva.service.email.api;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import w.whateva.service.email.api.dto.Email;
+import w.whateva.service.email.api.dto.DtoPerson;
+import w.whateva.service.email.api.dto.DtoEmail;
 
 import java.util.List;
 
@@ -14,8 +15,11 @@ public interface EmailOperations {
     List<String> allKeys();
 
     @RequestMapping(value = "/email/{key}", method= RequestMethod.GET, produces = "application/json")
-    Email readEmail(@PathVariable("key") String key);
+    DtoEmail readEmail(@PathVariable("key") String key);
 
     @RequestMapping(value = "/emails", method= RequestMethod.GET, produces = "application/json")
-    List<Email> allEmails();
+    List<DtoEmail> allEmails();
+
+    @RequestMapping(value = "/persons", method= RequestMethod.GET, produces = "application/json")
+    public List<DtoPerson> allPersons();
 }

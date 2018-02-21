@@ -11,7 +11,7 @@
     </parent>
 
     <build>
-        <finalName>email</finalName>
+        <finalName>dtoEmail</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -25,7 +25,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>w.whateva.service.email.app.EmailApplication</mainClass>
+                    <mainClass>w.whateva.service.dtoEmail.app.EmailApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
@@ -73,15 +73,15 @@
             <artifactId>spring-data-mongodb</artifactId>
         </dependency-->
 
-        <dependency>
+        <!--dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
-        </dependency>
+        </dependency-->
 
-        <dependency>
+        <!--dependency>
             <groupId>cz.jirutka.spring</groupId>
             <artifactId>embedmongo-spring</artifactId>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

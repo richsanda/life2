@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Set;
 
 @XmlRootElement(name = "Email")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -28,6 +30,7 @@ public class ApiEmail {
     private String from;
     @XmlElement(name = "To")
     private String to;
+    private Set<String> tos;
     @XmlElement(name = "Subject")
     private String subject;
     @XmlElement(name = "Body")
@@ -55,6 +58,14 @@ public class ApiEmail {
 
     public void setTo(String to) {
         this.to = to;
+    }
+
+    public Set<String> getTos() {
+        return tos;
+    }
+
+    public void setTos(Set<String> tos) {
+        this.tos = tos;
     }
 
     public String getSubject() {
@@ -85,4 +96,6 @@ public class ApiEmail {
             return v.toString();
         }
     }
+
+
 }

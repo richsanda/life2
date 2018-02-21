@@ -3,9 +3,11 @@ package w.whateva.service.email.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import w.whateva.service.email.data.domain.Person;
 import w.whateva.service.email.data.domain.Email;
 import w.whateva.service.email.data.repository.EmailRepository;
 import w.whateva.service.email.sapi.EmailService;
+import w.whateva.service.email.sapi.sao.ApiPerson;
 import w.whateva.service.email.sapi.sao.ApiEmail;
 
 import java.util.List;
@@ -50,10 +52,21 @@ public class EmailServiceImpl implements EmailService {
         return repository.findAllByOrderBySentAsc().stream().map(EmailServiceImpl::toApi).collect(Collectors.toList());
     }
 
+    public List<ApiPerson> allAddresses() {
+        return null; // repository.findAddresses().stream().map(EmailServiceImpl::toApi).collect(Collectors.toList());
+    }
+
     private static ApiEmail toApi(Email email) {
         if (null == email) return null;
         ApiEmail apiEmail = new ApiEmail();
         BeanUtils.copyProperties(email, apiEmail);
         return apiEmail;
+    }
+
+    private static ApiPerson toApi(Person person) {
+        if (null == person) return null;
+        ApiPerson apiPerson = new ApiPerson();
+        BeanUtils.copyProperties(person, apiPerson);
+        return apiPerson;
     }
 }

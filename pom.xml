@@ -15,6 +15,7 @@
         <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
         <spring.data.version>1.10.10.RELEASE</spring.data.version>
         <spring.oxm.version>5.0.3.RELEASE</spring.oxm.version>
+        <mail.version>1.6.0</mail.version>
         <mongodb.driver.version>3.6.2</mongodb.driver.version>
         <jackson-datatype.version>2.9.4</jackson-datatype.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -66,7 +67,7 @@
         <module>email-web</module>
         <module>email-job</module>
         <module>email-xml</module>
-    <module>email-api</module>
-  </modules>
+        <module>email-api</module>
+    </modules>
 
 </project>
