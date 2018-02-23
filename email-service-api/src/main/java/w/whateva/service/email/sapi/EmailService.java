@@ -1,5 +1,6 @@
 package w.whateva.service.email.sapi;
 
+import w.whateva.service.email.sapi.sao.ApiEmailCount;
 import w.whateva.service.email.sapi.sao.ApiPerson;
 import w.whateva.service.email.sapi.sao.ApiEmail;
 
@@ -14,4 +15,6 @@ public interface EmailService {
     List<String> allKeys();
 
     List<ApiEmail> allEmails();
+
+    public List<ApiEmailCount> emailCounts();
 }

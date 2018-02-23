@@ -11,6 +11,7 @@ import java.util.Set;
 /**
  *
  */
+@Document(collection = "email")
 public class Email {
 
     @Id
@@ -28,6 +29,7 @@ public class Email {
     private LocalDateTime sent;
     private String from;
     private String to;
+    @Indexed
     private Set<String> tos;
     private String subject;
     private String body;

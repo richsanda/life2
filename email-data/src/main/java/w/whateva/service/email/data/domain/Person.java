@@ -1,10 +1,12 @@
 package w.whateva.service.email.data.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import java.util.Set;
 
+@Document(collection = "person")
 public class Person {
 
     @Id
@@ -19,7 +21,9 @@ public class Person {
     }
 
     private String name;
-    private List<String> emails;
+
+    @Indexed
+    private Set<String> emails;
 
     public String getName() {
         return name;
@@ -29,11 +33,11 @@ public class Person {
         this.name = name;
     }
 
-    public List<String> getEmails() {
+    public Set<String> getEmails() {
         return emails;
     }
 
-    public void setEmails(List<String> emails) {
+    public void setEmails(Set<String> emails) {
         this.emails = emails;
     }
 }

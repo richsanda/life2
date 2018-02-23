@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import w.whateva.service.email.api.EmailOperations;
+import w.whateva.service.email.api.dto.DtoEmailCount;
 import w.whateva.service.email.api.dto.DtoPerson;
 import w.whateva.service.email.api.dto.DtoEmail;
 import w.whateva.service.email.sapi.EmailService;
@@ -54,5 +55,10 @@ public class EmailRestController implements EmailOperations {
     @Override
     public List<DtoPerson> allPersons() {
         return personService.allPersons().stream().map(PersonMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DtoEmailCount> allEmailCounts() {
+        return emailService.emailCounts().stream().map(PersonMapper::toDto).collect(Collectors.toList());
     }
 }

@@ -1,11 +1,11 @@
 package w.whateva.service.email.api.dto;
 
-import java.util.List;
+import java.util.Set;
 
 public class DtoPerson {
 
     private String name;
-    private List<String> emails;
+    private Set<String> emails;
 
     public String getName() {
         return name;
@@ -15,11 +15,11 @@ public class DtoPerson {
         this.name = name;
     }
 
-    public List<String> getCount() {
+    public Set<String> getEmails() {
         return emails;
     }
 
-    public void setCount(List<String> emails) {
+    public void setEmails(Set<String> emails) {
         this.emails = emails;
     }
 }

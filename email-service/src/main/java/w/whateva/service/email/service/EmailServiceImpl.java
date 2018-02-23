@@ -3,10 +3,13 @@ package w.whateva.service.email.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import w.whateva.service.email.data.domain.EmailCount;
 import w.whateva.service.email.data.domain.Person;
 import w.whateva.service.email.data.domain.Email;
 import w.whateva.service.email.data.repository.EmailRepository;
+import w.whateva.service.email.data.repository.PersonDao;
 import w.whateva.service.email.sapi.EmailService;
+import w.whateva.service.email.sapi.sao.ApiEmailCount;
 import w.whateva.service.email.sapi.sao.ApiPerson;
 import w.whateva.service.email.sapi.sao.ApiEmail;
 
@@ -19,23 +22,25 @@ import java.util.stream.Collectors;
 @Service
 public class EmailServiceImpl implements EmailService {
 
-    private final EmailRepository repository;
+    private final EmailRepository emailRepository;
+    private final PersonDao personDao;
 
     @Autowired
-    public EmailServiceImpl(EmailRepository repository) {
-        this.repository = repository;
+    public EmailServiceImpl(EmailRepository emailRepository, PersonDao personDao) {
+        this.emailRepository = emailRepository;
+        this.personDao = personDao;
     }
 
     @Override
     public void addEmail(ApiEmail apiEmail) {
         Email email = new Email();
         BeanUtils.copyProperties(apiEmail, email);
-        repository.save(email);
+        emailRepository.save(email);
     }
 
     @Override
     public ApiEmail readEmail(String key) {
-        Email email = repository.findOne(key);
+        Email email = emailRepository.findOne(key);
         if (null == email) return null;
         ApiEmail apiEmail = new ApiEmail();
         BeanUtils.copyProperties(email, apiEmail);
@@ -44,12 +49,17 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public List<String> allKeys() {
-        return repository.findAll().stream().map(Email::getId).collect(Collectors.toList());
+        return emailRepository.findAll().stream().map(Email::getId).collect(Collectors.toList());
     }
 
     @Override
     public List<ApiEmail> allEmails() {
-        return repository.findAllByOrderBySentAsc().stream().map(EmailServiceImpl::toApi).collect(Collectors.toList());
+        return emailRepository.findAllByOrderBySentAsc().stream().map(EmailServiceImpl::toApi).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ApiEmailCount> emailCounts() {
+        return personDao.getEmailCount().stream().map(EmailServiceImpl::toApi).collect(Collectors.toList());
     }
 
     public List<ApiPerson> allAddresses() {
@@ -68,5 +78,12 @@ public class EmailServiceImpl implements EmailService {
         ApiPerson apiPerson = new ApiPerson();
         BeanUtils.copyProperties(person, apiPerson);
         return apiPerson;
+    }
+
+    private static ApiEmailCount toApi(EmailCount emailCount) {
+        if (null == emailCount) return null;
+        ApiEmailCount apiEmailCount = new ApiEmailCount();
+        BeanUtils.copyProperties(emailCount, apiEmailCount);
+        return apiEmailCount;
     }
 }
