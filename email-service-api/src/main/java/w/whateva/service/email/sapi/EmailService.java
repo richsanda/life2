@@ -1,10 +1,11 @@
 package w.whateva.service.email.sapi;
 
-import w.whateva.service.email.sapi.sao.ApiEmailCount;
-import w.whateva.service.email.sapi.sao.ApiPerson;
 import w.whateva.service.email.sapi.sao.ApiEmail;
+import w.whateva.service.email.sapi.sao.ApiEmailCount;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface EmailService {
 
@@ -16,5 +17,7 @@ public interface EmailService {
 
     List<ApiEmail> allEmails();
 
-    public List<ApiEmailCount> emailCounts();
+    List<ApiEmailCount> emailCounts();
+
+    List<ApiEmail> emails(Set<String> names, LocalDateTime after, LocalDateTime before);
 }

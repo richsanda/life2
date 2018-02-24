@@ -14,9 +14,9 @@
     <orderEntry type="module" module-name="email-web" />
     <orderEntry type="module" module-name="email-api" />
     <orderEntry type="module" module-name="email-service-api" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.0" level="project" />
     <orderEntry type="module" module-name="email-job" />
     <orderEntry type="module" module-name="email-xml" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-batch:1.5.10.RELEASE" level="project" />

@@ -3,17 +3,19 @@ package w.whateva.service.email.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import w.whateva.service.email.data.domain.Email;
 import w.whateva.service.email.data.domain.EmailCount;
 import w.whateva.service.email.data.domain.Person;
-import w.whateva.service.email.data.domain.Email;
 import w.whateva.service.email.data.repository.EmailRepository;
 import w.whateva.service.email.data.repository.PersonDao;
 import w.whateva.service.email.sapi.EmailService;
+import w.whateva.service.email.sapi.sao.ApiEmail;
 import w.whateva.service.email.sapi.sao.ApiEmailCount;
 import w.whateva.service.email.sapi.sao.ApiPerson;
-import w.whateva.service.email.sapi.sao.ApiEmail;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -62,8 +64,8 @@ public class EmailServiceImpl implements EmailService {
         return personDao.getEmailCount().stream().map(EmailServiceImpl::toApi).collect(Collectors.toList());
     }
 
-    public List<ApiPerson> allAddresses() {
-        return null; // repository.findAddresses().stream().map(EmailServiceImpl::toApi).collect(Collectors.toList());
+    public List<ApiEmail> emails(Set<String> names, LocalDateTime after, LocalDateTime before) {
+        return personDao.getEmails(names, after, before).stream().map(EmailServiceImpl::toApi).collect(Collectors.toList());
     }
 
     private static ApiEmail toApi(Email email) {

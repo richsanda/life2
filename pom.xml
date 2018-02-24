@@ -17,7 +17,7 @@
         <spring.oxm.version>5.0.3.RELEASE</spring.oxm.version>
         <mail.version>1.6.0</mail.version>
         <mongodb.driver.version>3.6.2</mongodb.driver.version>
-        <jackson-datatype.version>2.9.4</jackson-datatype.version>
+        <jackson-datatype.version>2.9.0</jackson-datatype.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
