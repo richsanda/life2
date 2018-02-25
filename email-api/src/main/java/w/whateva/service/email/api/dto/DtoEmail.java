@@ -18,13 +18,15 @@ public class DtoEmail {
     }
 
     @JsonFormat(pattern="yyyy-MM-dd'T'hh:mm:ss")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime sent;
     private String from;
     private String to;
     private String subject;
     private String body;
 
+    @JsonFormat(pattern="yyyy-MM-dd'T'hh:mm:ss")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public LocalDateTime getSent() {
         return sent;
     }

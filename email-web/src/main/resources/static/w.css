@@ -1,0 +1,460 @@
+div.title {
+    #background-color: lavenderblush;
+    background-color: #fafafa;
+    font-weight: bold;
+    vertical-align: middle;
+    #height: 20px;
+    padding: 4px;
+    padding-bottom: 5px;
+}
+
+div.count {
+    width: 32px;
+}
+
+div.title-info {
+    width: calc(100% - 475px);
+    white-space: pre-wrap;
+}
+
+span.title {
+    margin-left: 4px;
+}
+
+span.artist-link:hover {
+    opacity: 0.8;
+}
+
+div.story {
+    padding-top: 4px;
+    margin-top: 4px;
+    margin-left: 32px;
+}
+
+textarea.story {
+    width: inherit;
+    height: inherit;
+}
+
+div.title, div.story {
+
+}
+
+div.entry {
+    color: saddlebrown;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-bottom: 4px;
+}
+
+div.year, div.ordinal, div.tag-title, div.person-title {
+
+    color: saddlebrown;
+    background-color: #ddd0d8;
+
+    font-weight: bold;
+
+    border: 1px solid saddlebrown;
+}
+
+div.nav-button {
+    color: saddlebrown;
+    background-color: #ddd0d8;
+
+    font-weight: bold;
+
+    border: 1px solid saddlebrown;
+}
+
+div.title-button, div.ordinal, div.title-button-example {
+
+    display: inline-block;
+    zoom: 1;
+
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+
+    padding: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+div.overlay {
+
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0, 0.8);
+    overflow-x: hidden;
+
+    display: none;
+}
+
+.overlay-content {
+    position: relative;
+    top: 25%;
+    width: 80%;
+    margin-top: 30px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus, .overlay .close-button:hover {
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.overlay .close-buttons {
+    width: 20%;
+    vertical-align: top;
+    display: inline-block;
+}
+
+.overlay label {
+    display: inline-block;
+}
+
+label.year, label.year input {
+    width: 40px;
+}
+label.ordinal, label.ordinal input {
+    width: 40px;
+}
+label.release, label.release input {
+    width: 80px;
+}
+label.title, label.title input {
+    width: 300px;
+}
+label.artist, label.artist input {
+    width: 300px;
+}
+label.name, label.name input {
+    width: 400px;
+}
+label.full, label.full input {
+    width: 400px;
+}
+
+label.tag {
+    width: 820px;
+}
+
+.overlay .close-button, .overlay label {
+
+    color: saddlebrown;
+    background-color: #ddd0d8;
+    border: 1px solid saddlebrown;
+
+    -moz-border-radius: 0.4em;
+    -webkit-border-radius: 0.4em;
+    border-radius: 0.4em;
+
+    margin: 8px;
+    padding: 8px;
+}
+
+.overlay label {
+    margin: 4px;
+    padding: 12px;
+}
+
+div.edit-entry:hover, div.delete-entry:hover, div.name-tag:hover, div.hash-tag:hover, div.year:hover,
+div.nav-button:hover, div.tab:hover, div.edit-tag:hover, div.edit-person:hover, div.delete-tag:hover,
+div.delete-person:hover, div.title-button:hover, div.title:hover, div.artists div.music:hover,
+div.persons-url:hover, div.artist-url:hover {
+    cursor: pointer;
+}
+
+div.edit-entry, div.delete-entry, div.edit-tag, div.delete-tag, div.edit-person, div.delete-person, div.edit-button {
+    font-weight: bold;
+    color: darkblue;
+    border: none;
+    margin-left: 20px;
+    background-color: #ddd0d8;
+}
+
+div.story div.name-tag, div.story div.hash-tag, div.story div.music {
+    
+    display: inline-block;
+    zoom: 1;
+
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+
+    padding-left: 1px;
+    padding-right: 1px;
+
+    border: 1px solid #bbb0b7;
+}
+
+div.tabs {
+
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-bottom: 4px;
+}
+
+div.tab {
+
+    color: saddlebrown;
+    background-color: #ddd0d8;
+
+    font-weight: bold;
+
+    border: 1px solid saddlebrown;
+
+    display: inline-block;
+    zoom: 1;
+
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+
+    font-size: 1.2em;
+
+    padding: 2px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+div.pane {
+
+    border: 1px solid saddlebrown;
+
+    vertical-align: middle;
+
+    color: saddlebrown;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+div.soundtrack-title {
+    
+    font-size: 1.2em;
+    padding: 8px;
+
+    color: saddlebrown;
+
+    font-weight: bold;
+    
+    display: inline-block;
+    zoom: 1;
+
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+}
+
+div.people, div.years {
+
+    -webkit-column-count: 5; /* Chrome, Safari, Opera */
+    -moz-column-count: 5; /* Firefox */
+    column-count: 5;
+
+    -webkit-column-gap: 10px; /* Chrome, Safari, Opera */
+    -moz-column-gap: 10px; /* Firefox */
+    column-gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+div.tags, div.artists {
+
+    -webkit-column-count: 4; /* Chrome, Safari, Opera */
+    -moz-column-count: 4; /* Firefox */
+    column-count: 4;
+
+    -webkit-column-gap: 10px; /* Chrome, Safari, Opera */
+    -moz-column-gap: 10px; /* Firefox */
+    column-gap: 10px;
+}
+
+div.people div.name-tag, div.tags div.hash-tag, div.years div.year, div.artists div.music {
+
+    padding: 2px;
+    margin: 2px;
+
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+
+    border: 1px solid #bbb0b7;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+    -webkit-column-break-inside: avoid; /* Chrome, Safari */
+    page-break-inside: avoid;           /* Theoretically FF 20+ */
+    break-inside: avoid-column;         /* IE 11 */
+}
+
+div.years div.year {
+
+    padding: 4px;
+    margin: 4px;
+    -moz-border-radius: 0.4em;
+    -webkit-border-radius: 0.4em;
+    border-radius: 0.4em;
+    
+    border: 1px solid saddlebrown;
+
+    font-size: 1.1em;
+}
+
+div.tags div.hash-tag:hover, div.artists div.music:hover {
+    opacity: 0.8;
+}
+
+div.favorites div.entry div.title, div.favorites-button {
+    #background-color: #ffe1e1
+}
+
+div.representatives div.entry div.title, div.representatives-button {
+    #background-color: #ffffe1
+}
+
+div.shared div.entry div.title, div.shared-button {
+    #background-color: #e1e1ff
+}
+
+div.title div {
+    display: inline-block;
+    zoom: 1;
+}
+
+div.timeline-segment {
+
+    display: inline-block;
+    overflow: hidden;
+
+    font-size: 0.75em;
+
+    border-right: 1px solid #edcfcf;
+    color: #edcfcf;
+
+    width: 29px;
+    height: 15px;
+
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+div.timeline-segment-last {
+
+    display: inline-block;
+    overflow: hidden;
+
+    font-size: 0.75em;
+
+    color: #edcfcf;
+
+    width: 30px;
+    height: 15px;
+
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+div.soundtrack-segment {
+    color: #fafafa;
+    background-color: #d8cdd4;
+    opacity: 0.6;
+}
+
+div.year-ordinal {
+    
+    display: inline-block;
+    float: left;
+    zoom: 1;
+    
+    position: relative;
+
+    white-space: nowrap;
+
+    margin-right: 10px;
+    margin-top: -3px;
+}
+
+div.timeline-container {
+
+    width: 330px;
+
+    display: inline-block;
+    float: right;
+    zoom: 1;
+
+    border: 1px solid #edcfcf;
+
+    position: relative;
+
+    white-space: nowrap;
+    margin-top: -3px;
+    margin-right: -3px;
+}
+
+div.soundtrack-circle {
+    border-radius: 50%;
+    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+    background: #8b8066;
+    position: absolute;
+    overflow-x: hidden;
+    top: 50%;
+    z-index: 1;
+}
+
+div.timespan {
+
+    position: absolute;
+    overflow-x: hidden;
+    top: 50%;
+    z-index: 1;
+
+    height: 2px;
+    background-color: #8b8066;
+    margin-top: -1px;
+}
+
+div.media, div.format, div.player, div.timeline, div.music, div.general {
+
+}
+
+div.media {
+    background-color: #bdd0d5;
+}
+
+div.format {
+    background-color: #d5ddd0;
+}
+
+div.player {
+    background-color: #d5d07d;
+}
+
+div.timeline {
+    background-color: #ddd0d8;
+}
+
+div.music {
+    background-color: lavenderblush;
+}
+
+div.general {
+    background-color: #d9d1c0;
+}
