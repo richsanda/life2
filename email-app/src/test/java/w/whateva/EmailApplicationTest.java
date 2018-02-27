@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.query.Criteria;
+import w.whateva.service.email.web.mapper.ControllerProcessor;
 
 /**
  * Unit test for simple EmailApplication.

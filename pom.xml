@@ -20,6 +20,7 @@
         <jackson-datatype.version>2.9.0</jackson-datatype.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.processor.version>3.3.2</maven.processor.version>
     </properties>
 
     <dependencyManagement>

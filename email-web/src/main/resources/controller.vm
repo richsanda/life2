@@ -1,0 +1,25 @@
+package ${appPackage};
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
+import ${apiPackage}.*;
+
+@RestController
+public class ${className} { // implements ${interfaceName} {
+
+    private final ${serviceType} ${serviceVar};
+
+    @Autowired
+    public ${className}(${serviceType} ${serviceVar}) {
+        this.${serviceVar} = ${serviceVar};
+    }
+#foreach($method in $methods)
+
+    #foreach($a in $method.annotations)${a.name}
+#end
+    public ${method.returnType} ${method.name}(#foreach($param in $method.params)#foreach($a in $param.annotations)${a.name} #end${param.type} ${param.name}#if( $foreach.hasNext ), #end#end) {
+        return ${serviceVar}.${method.name}(#foreach($param in $method.params)${param.name}#if( $foreach.hasNext ), #end#end);
+    }
+#end
+}
