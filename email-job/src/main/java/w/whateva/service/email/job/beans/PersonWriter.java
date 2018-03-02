@@ -2,13 +2,12 @@ package w.whateva.service.email.job.beans;
 
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import w.whateva.service.email.sapi.EmailService;
-import w.whateva.service.email.sapi.PersonService;
-import w.whateva.service.email.sapi.sao.ApiPerson;
+import w.whateva.service.email.api.PersonService;
+import w.whateva.service.email.api.dto.DtoPerson;
 
 import java.util.List;
 
-public class PersonWriter implements ItemWriter<ApiPerson> {
+public class PersonWriter implements ItemWriter<DtoPerson> {
 
     private final PersonService personService;
 
@@ -17,9 +16,9 @@ public class PersonWriter implements ItemWriter<ApiPerson> {
         this.personService = personService;
     }
 
-    public void write(List<? extends ApiPerson> apiPersons) throws Exception {
-        for (ApiPerson apiPerson : apiPersons) {
-            personService.addPerson(apiPerson);
+    public void write(List<? extends DtoPerson> dtoPersons) throws Exception {
+        for (DtoPerson dtoPerson : dtoPersons) {
+            personService.addPerson(dtoPerson);
         }
     }
 }

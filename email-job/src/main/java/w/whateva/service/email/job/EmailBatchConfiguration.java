@@ -10,24 +10,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+import w.whateva.service.email.api.EmailOperations;
+import w.whateva.service.email.api.PersonService;
+import w.whateva.service.email.api.dto.DtoEmail;
+import w.whateva.service.email.api.dto.DtoPerson;
 import w.whateva.service.email.job.beans.EmailProcessor;
 import w.whateva.service.email.job.beans.EmailWriter;
 import w.whateva.service.email.job.beans.PersonProcessor;
 import w.whateva.service.email.job.beans.PersonWriter;
-import w.whateva.service.email.sapi.EmailService;
-import w.whateva.service.email.sapi.PersonService;
-import w.whateva.service.email.sapi.sao.ApiEmail;
-import w.whateva.service.email.sapi.sao.ApiPerson;
 
 @Configuration
 @EnableBatchProcessing
 public class EmailBatchConfiguration extends DefaultBatchConfigurer {
 
-    private final EmailService emailService;
+    private final EmailOperations emailService;
     private final PersonService personService;
 
     @Autowired
-    public EmailBatchConfiguration(EmailService emailService, PersonService personService) {
+    public EmailBatchConfiguration(EmailOperations emailService, PersonService personService) {
         this.emailService = emailService;
         this.personService = personService;
     }
@@ -40,23 +40,23 @@ public class EmailBatchConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
-    ItemProcessor<ApiEmail, ApiEmail> emailProcessor() {
+    ItemProcessor<DtoEmail, DtoEmail> emailProcessor() {
         return new EmailProcessor();
     }
 
     @Bean
-    ItemWriter<ApiEmail> emailWriter() {
+    ItemWriter<DtoEmail> emailWriter() {
         return new EmailWriter(emailService);
     }
 
     @Bean
     @StepScope
-    ItemProcessor<ApiPerson, ApiPerson> personProcessor() {
+    ItemProcessor<DtoPerson, DtoPerson> personProcessor() {
         return new PersonProcessor();
     }
 
     @Bean
-    ItemWriter<ApiPerson> personWriter() {
+    ItemWriter<DtoPerson> personWriter() {
         return new PersonWriter(personService);
     }
 }

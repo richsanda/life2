@@ -45,7 +45,7 @@
                 <configuration>
                     <outputDirectory>target/generated-sources/annotations</outputDirectory>
                     <processors>
-                        <processor>w.whateva.service.email.web.mapper.ControllerProcessor</processor>
+                        <processor>w.whateva.service.utilities.controller.AutoControllerProcessor</processor>
                     </processors>
                 </configuration>
             </plugin>
@@ -80,6 +80,12 @@
             <groupId>w.whateva</groupId>
             <artifactId>email-service</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>w.whateva</groupId>
+            <artifactId>utilities</artifactId>
+            <version>${utilities.version}</version>
         </dependency>
 
         <dependency>

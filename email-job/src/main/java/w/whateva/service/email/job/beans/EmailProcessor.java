@@ -1,21 +1,20 @@
 package w.whateva.service.email.job.beans;
 
-import com.sun.java.swing.plaf.windows.WindowsTreeUI;
-import generated.Email;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
-import w.whateva.service.email.sapi.sao.ApiEmail;
+import w.whateva.service.email.api.dto.DtoEmail;
 
 import javax.mail.internet.InternetAddress;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EmailProcessor implements ItemProcessor<ApiEmail, ApiEmail> {
+public class EmailProcessor implements ItemProcessor<DtoEmail, DtoEmail> {
 
-    public ApiEmail process(ApiEmail apiEmail) {
-        apiEmail.setTos(toEmailAddresses(apiEmail.getTo()));
-        return apiEmail;
+    public DtoEmail process(DtoEmail dtoEmail) {
+        dtoEmail.setTos(toEmailAddresses(dtoEmail.getTo()));
+        return dtoEmail;
     }
 
     private static Set<String> toSimpleAddresses(String addressList) {

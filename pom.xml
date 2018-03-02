@@ -21,6 +21,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.processor.version>3.3.2</maven.processor.version>
+        <utilities.version>1.0-SNAPSHOT</utilities.version>
     </properties>
 
     <dependencyManagement>
@@ -64,9 +65,8 @@
         <module>email-app</module>
         <module>email-service</module>
         <module>email-data</module>
-        <module>email-service-api</module>
-        <module>email-web</module>
         <module>email-job</module>
+        <module>email-web</module>
         <module>email-xml</module>
         <module>email-api</module>
     </modules>

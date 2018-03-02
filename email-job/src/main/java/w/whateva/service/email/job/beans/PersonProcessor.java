@@ -2,20 +2,16 @@ package w.whateva.service.email.job.beans;
 
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import w.whateva.service.email.sapi.sao.ApiEmail;
-import w.whateva.service.email.sapi.sao.ApiPerson;
+import w.whateva.service.email.api.dto.DtoPerson;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PersonProcessor implements ItemProcessor<ApiPerson, ApiPerson> {
+public class PersonProcessor implements ItemProcessor<DtoPerson, DtoPerson> {
 
-    public ApiPerson process(ApiPerson apiPerson) {
-        apiPerson.setEmails(processEmails(apiPerson.getEmails()));
-        return apiPerson;
+    public DtoPerson process(DtoPerson dtoPerson) {
+        dtoPerson.setEmails(processEmails(dtoPerson.getEmails()));
+        return dtoPerson;
     }
 
     private Set<String> processEmails(Set<String> emails) {

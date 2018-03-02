@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="email-service-api" />
+    <orderEntry type="module" module-name="email-api" />
     <orderEntry type="module" module-name="email-xml" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-batch:1.5.10.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:1.5.10.RELEASE" level="project" />

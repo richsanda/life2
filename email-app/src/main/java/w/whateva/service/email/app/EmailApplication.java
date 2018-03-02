@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import w.whateva.service.email.api.EmailOperations;
-import w.whateva.service.email.web.mapper.WController;
+import w.whateva.service.utilities.controller.AutoControllers;
 
 /**
  *
@@ -24,7 +24,7 @@ import w.whateva.service.email.web.mapper.WController;
 @EntityScan(basePackages = {
         "w.whateva.service.email.data.domain"
 })
-@WController(api = EmailOperations.class)
+@AutoControllers(apis = { EmailOperations.class })
 public class EmailApplication {
 
     public static void main(String[] args) throws Exception {

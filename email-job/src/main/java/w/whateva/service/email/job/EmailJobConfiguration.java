@@ -1,6 +1,5 @@
 package w.whateva.service.email.job;
 
-import generated.Email;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -14,15 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import w.whateva.service.email.sapi.sao.ApiEmail;
-import w.whateva.service.email.sapi.sao.ApiPerson;
+import w.whateva.service.email.api.dto.DtoEmail;
+import w.whateva.service.email.api.dto.DtoPerson;
 
 import java.io.IOException;
 
@@ -57,7 +54,7 @@ public class EmailJobConfiguration {
     @Bean
     public Step loadEmailStep() throws Exception {
         return this.steps.get("loadEmailStep")
-                .<ApiEmail, ApiEmail>chunk(10)
+                .<DtoEmail, DtoEmail>chunk(10)
                 .reader(emailReader())
                 .processor(config.emailProcessor())
                 .writer(config.emailWriter())
@@ -67,7 +64,7 @@ public class EmailJobConfiguration {
     @Bean
     public Step loadPersonStep() throws Exception {
         return this.steps.get("loadPersonStep")
-                .<ApiPerson, ApiPerson>chunk(10)
+                .<DtoPerson, DtoPerson>chunk(10)
                 .reader(personReader())
                 .processor(config.personProcessor())
                 .writer(config.personWriter())
@@ -76,8 +73,8 @@ public class EmailJobConfiguration {
 
     @Bean
     @StepScope
-    public ItemReader<ApiEmail> emailReader() throws IOException {
-        MultiResourceItemReader<ApiEmail> reader = new MultiResourceItemReader<ApiEmail>();
+    public ItemReader<DtoEmail> emailReader() throws IOException {
+        MultiResourceItemReader<DtoEmail> reader = new MultiResourceItemReader<DtoEmail>();
         ClassLoader classLoader = this.getClass().getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
         Resource[] resources = resolver.getResources("file:" + emailXmlFilePattern);
@@ -88,8 +85,8 @@ public class EmailJobConfiguration {
 
     @Bean
     @StepScope
-    public ResourceAwareItemReaderItemStream<ApiEmail> oneEmailReader() {
-        StaxEventItemReader<ApiEmail> reader = new StaxEventItemReader<>();
+    public ResourceAwareItemReaderItemStream<DtoEmail> oneEmailReader() {
+        StaxEventItemReader<DtoEmail> reader = new StaxEventItemReader<>();
         reader.setFragmentRootElementName("Email");
         //Resource resource = resourceLoader.getResource("file:/Users/rich/Downloads/games/2005.1.1.xml");
         //reader.setResource(resource);
@@ -100,15 +97,15 @@ public class EmailJobConfiguration {
     @Bean
     public Jaxb2Marshaller emailUnmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(ApiEmail.class, ApiPerson.class);
+        marshaller.setClassesToBeBound(DtoEmail.class, DtoPerson.class);
         marshaller.setCheckForXmlRootElement(true);
         return marshaller;
     }
 
     @Bean
     @StepScope
-    public ResourceAwareItemReaderItemStream<ApiPerson> personReader() {
-        StaxEventItemReader<ApiPerson> reader = new StaxEventItemReader<>();
+    public ResourceAwareItemReaderItemStream<DtoPerson> personReader() {
+        StaxEventItemReader<DtoPerson> reader = new StaxEventItemReader<>();
         reader.setFragmentRootElementName("person");
         reader.setResource(new FileSystemResource(personXmlFile));
         reader.setUnmarshaller(emailUnmarshaller());
