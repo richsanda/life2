@@ -69,6 +69,7 @@
         <module>email-web</module>
         <module>email-xml</module>
         <module>email-api</module>
+        <module>email-service-api</module>
     </modules>
 
 </project>
