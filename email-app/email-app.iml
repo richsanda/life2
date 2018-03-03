@@ -13,7 +13,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: w.whateva:email-web:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="module" module-name="email-api" />
+    <orderEntry type="library" name="Maven: w.whateva:email-api:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: w.whateva:email-service-api:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0" level="project" />
