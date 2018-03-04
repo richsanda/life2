@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>w.whateva</groupId>
-    <artifactId>email-parent</artifactId>
+    <artifactId>life2-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>email-parent</name>
+    <name>life2-parent</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -62,14 +62,14 @@
     </dependencies>
 
     <modules>
-        <module>email-app</module>
-        <module>email-service</module>
-        <module>email-data</module>
-        <module>email-job</module>
-        <module>email-web</module>
-        <module>email-xml</module>
-        <module>email-api</module>
-        <module>email-service-api</module>
+        <module>life2-app</module>
+        <module>life2-service</module>
+        <module>life2-data</module>
+        <module>life2-job</module>
+        <module>life2-web</module>
+        <module>life2-xml</module>
+        <module>life2-api</module>
+        <module>life2-service-api</module>
     </modules>
 
 </project>
