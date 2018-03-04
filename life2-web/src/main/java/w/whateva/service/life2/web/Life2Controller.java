@@ -1,10 +1,10 @@
-package w.whateva.service.email.web;
+package w.whateva.service.life2.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class EmailController {
+public class Life2Controller {
 
     @RequestMapping("/")
     public String index() {

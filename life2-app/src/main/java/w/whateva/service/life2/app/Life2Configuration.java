@@ -1,4 +1,4 @@
-package w.whateva.service.email.app;
+package w.whateva.service.life2.app;
 
 import org.springframework.boot.autoconfigure.web.WebMvcRegistrations;
 import org.springframework.boot.autoconfigure.web.WebMvcRegistrationsAdapter;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @Configuration
-public class EmailConfiguration {
+public class Life2Configuration {
 
     @Bean
     public WebMvcRegistrations serviceWebRegistrations() {

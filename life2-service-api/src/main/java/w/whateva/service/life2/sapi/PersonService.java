@@ -1,6 +1,6 @@
-package w.whateva.service.email.api;
+package w.whateva.service.life2.sapi;
 
-import w.whateva.service.email.api.dto.DtoPerson;
+import w.whateva.service.life2.api.dto.DtoPerson;
 
 import java.util.List;
 

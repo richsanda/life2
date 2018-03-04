@@ -5,13 +5,13 @@
 
     <parent>
         <groupId>w.whateva</groupId>
-        <artifactId>email-parent</artifactId>
+        <artifactId>life2-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>email-web</artifactId>
+    <artifactId>life2-web</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>email-web</name>
+    <name>life2-web</name>
 
     <url>http://maven.apache.org</url>
 
@@ -23,13 +23,13 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>email-api</artifactId>
+            <artifactId>life2-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>email-service-api</artifactId>
+            <artifactId>life2-service-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

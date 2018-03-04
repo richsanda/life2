@@ -1,20 +1,14 @@
-package w.whateva.service.email.data.domain;
+package w.whateva.service.life2.api.dto;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-/**
- *
- */
-@Document(collection = "email")
-public class Email {
+public class DtoPiece {
 
-    @Id
     private String id;
 
     public String getId() {
@@ -25,15 +19,17 @@ public class Email {
         this.id = id;
     }
 
-    @Indexed
+    @JsonFormat(pattern="yyyy-MM-dd'T'hh:mm:ss")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime sent;
     private String from;
     private String to;
-    @Indexed
     private Set<String> tos;
     private String subject;
     private String body;
 
+    @JsonFormat(pattern="yyyy-MM-dd'T'hh:mm:ss")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public LocalDateTime getSent() {
         return sent;
     }
@@ -66,7 +62,6 @@ public class Email {
         this.tos = tos;
     }
 
-
     public String getSubject() {
         return subject;
     }
@@ -82,5 +77,4 @@ public class Email {
     public void setBody(String body) {
         this.body = body;
     }
-
 }

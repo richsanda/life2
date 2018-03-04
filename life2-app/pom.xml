@@ -6,12 +6,12 @@
 
     <parent>
         <groupId>w.whateva</groupId>
-        <artifactId>email-parent</artifactId>
+        <artifactId>life2-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <build>
-        <finalName>email</finalName>
+        <finalName>life2</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -25,7 +25,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>w.whateva.service.dtoEmail.app.EmailApplication</mainClass>
+                    <mainClass>w.whateva.service.life2.app.Life2Application</mainClass>
                 </configuration>
             </plugin>
 
@@ -53,9 +53,9 @@
     </build>
 
     <groupId>w.whateva</groupId>
-    <artifactId>email-app</artifactId>
+    <artifactId>life2-app</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>email-app</name>
+    <name>life2-app</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -66,19 +66,13 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>email-web</artifactId>
+            <artifactId>life2-web</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>email-job</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>email-service</artifactId>
+            <artifactId>life2-service</artifactId>
             <version>${project.version}</version>
         </dependency>
 

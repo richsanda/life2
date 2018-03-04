@@ -1,13 +1,11 @@
-package w.whateva.service.email.app;
+package w.whateva.service.life2.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import w.whateva.service.email.api.EmailOperations;
+import w.whateva.service.life2.api.PieceOperations;
 import w.whateva.service.utilities.controller.AutoControllers;
 
 /**
@@ -16,19 +14,13 @@ import w.whateva.service.utilities.controller.AutoControllers;
 @SpringBootApplication
 @EnableAutoConfiguration (exclude = { DataSourceAutoConfiguration.class })
 @ComponentScan(basePackages = {
-        "w.whateva.service.email"
+        "w.whateva.service.life2"
 })
-@EnableMongoRepositories(basePackages = {
-        "w.whateva.service.email.data.repository"
-})
-@EntityScan(basePackages = {
-        "w.whateva.service.email.data.domain"
-})
-@AutoControllers(apis = { EmailOperations.class })
-public class EmailApplication {
+@AutoControllers(apis = { PieceOperations.class })
+public class Life2Application {
 
     public static void main(String[] args) throws Exception {
 
-        SpringApplication.run(EmailApplication.class, args);
+        SpringApplication.run(Life2Application.class, args);
     }
 }
