@@ -15,15 +15,15 @@ public class ShredUtilityTest {
     @Test
     public void putIntoBuckets() {
 
-        int count = 2000;
+        int count = 12704;
 
-        int randMin = 1000000;
-        int randMax = 2000000;
+        int randMin = 1;
+        int randMax = 10000;
 
-        int min = 500000;
-        int max = 3000000;
+        int min = 8000;
+        int max = 9000;
 
-        int numBuckets = 10;
+        int numBuckets = 100;
 
         // invent a sorted list of something
         List<Integer> sorted = IntStream.range(0, count)
@@ -42,6 +42,12 @@ public class ShredUtilityTest {
         int[] bucketMaxes = IntStream.range(0, numBuckets)
                 .map(i -> min + (max - min) * (i + 1) / numBuckets)
                 .toArray();
+
+        // filter sorted to fit between min and max, just in case
+        sorted = sorted
+                .stream()
+                .filter(i -> i >= min && i <= max)
+                .collect(Collectors.toList());
 
         // do the recursive placement into buckets
         addToBuckets(bucketMaxes, buckets, sorted);
