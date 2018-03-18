@@ -57,7 +57,7 @@ public class ShredServiceImpl implements ShredOperations {
     }
 
     @Override
-    public List<DtoShred> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
+    public List<List<DtoShred>> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
         List<DtoEmail> emails = emailClient.allEmails(after, before, names);
         System.out.println(emails.size());
         List<List<DtoEmail>> buckets = shredUtility.putInBuckets(
@@ -76,9 +76,8 @@ public class ShredServiceImpl implements ShredOperations {
                 .stream()
                 .map(l -> l
                         .stream()
-                        .map(e -> toDto(e))
+                        .map(ShredServiceImpl::toDto)
                         .collect(Collectors.toList()))
-                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
