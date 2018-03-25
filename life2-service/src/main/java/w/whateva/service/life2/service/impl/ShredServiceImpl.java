@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class ShredServiceImpl implements ShredOperations {
 
     @Autowired
-    List<ShredProvider> providers;
+    private List<ShredProvider> providers;
 
     private final ShredUtility shredUtility;
 
@@ -40,34 +40,31 @@ public class ShredServiceImpl implements ShredOperations {
     }
 
     @Override
-    public void addShred(DtoShred shred) {
-
-    }
-
-    @Override
-    public DtoShred readShred(String key) {
+    public DtoShred readShred(String trove, String key) {
         return null;
     }
 
     @Override
-    public List<DtoShred> allShreds() {
-        return null;
+    public List<DtoShred> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
+        return providers
+                .parallelStream()
+                .map(p -> p.allShreds(after, before, names))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<List<DtoShred>> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
-
-        List<List<DtoShred>> shreds = providers.get(0).allShreds(after, before, names);
+    public List<List<DtoShred>> allShreds(LocalDate after, LocalDate before, HashSet<String> names, Integer numBuckets) {
 
         List<List<DtoShred>> buckets = shredUtility.putInBuckets(
-                shreds.get(0),
+                allShreds(after, before, names),
                 new AbstractLocalDateTimeOperator<DtoShred>() {
                     @Override
                     public LocalDateTime apply(DtoShred shred) {
                         return shred.getSent();
                     }
                 },
-                100,
+                numBuckets,
                 after.atStartOfDay(),
                 before.plusDays(1).atStartOfDay()
         );

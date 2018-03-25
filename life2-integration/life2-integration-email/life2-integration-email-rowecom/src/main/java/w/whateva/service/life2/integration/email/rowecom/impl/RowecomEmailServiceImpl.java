@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @EnableFeignClients(basePackageClasses = RowecomEmailClient.class)
 public class RowecomEmailServiceImpl implements ShredProvider {
 
+
     @Autowired
     private RowecomEmailClient emailClient;
 
@@ -27,28 +28,22 @@ public class RowecomEmailServiceImpl implements ShredProvider {
     }
 
     @Override
-    public void addShred(DtoShred shred) {
-
-    }
-
-    @Override
-    public DtoShred readShred(String key) {
+    public DtoShred readShred(String trove, String key) {
         return null;
     }
 
     @Override
-    public List<DtoShred> allShreds() {
-        return null;
-    }
-
-    @Override
-    public List<List<DtoShred>> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
-        List<List<DtoShred>> result = Lists.newArrayList();
-        List<DtoShred> emails = emailClient.allEmails(after, before, names)
+    public List<DtoShred> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
+        return emailClient.allEmails(after, before, names)
                 .stream()
                 .map(RowecomEmailServiceImpl::toDto)
                 .collect(Collectors.toList());
-        result.add(emails);
+    }
+
+    @Override
+    public List<List<DtoShred>> allShreds(LocalDate after, LocalDate before, HashSet<String> names, Integer integer) {
+        List<List<DtoShred>> result = Lists.newArrayList();
+        result.add(allShreds(after, before, names));
         return result;
     }
 
