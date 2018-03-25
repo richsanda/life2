@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>w.whateva</groupId>
-        <artifactId>life2-parent</artifactId>
+        <artifactId>life2-integration-email</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>life2-service</artifactId>
+    <artifactId>life2-integration-email-rowecom</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>life2-service</name>
+    <name>life2-integration-email-rowecom</name>
+
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -21,27 +24,23 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-service-api</artifactId>
-            <version>${project.version}</version>
+            <artifactId>email-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>life2-data</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>life2-integration-email-rowecom</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
     </dependencies>
