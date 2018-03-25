@@ -8,6 +8,7 @@ import w.whateva.service.email.api.dto.DtoEmail;
 import w.whateva.service.life2.api.dto.DtoShred;
 import w.whateva.service.life2.integration.api.ShredProvider;
 import w.whateva.service.life2.integration.email.rowecom.RowecomEmailClient;
+import w.whateva.service.life2.integration.email.util.EmailUtil;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ public class RowecomEmailServiceImpl implements ShredProvider {
     public List<DtoShred> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
         return emailClient.allEmails(after, before, names)
                 .stream()
-                .map(RowecomEmailServiceImpl::toDto)
+                .map(EmailUtil::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -45,12 +46,5 @@ public class RowecomEmailServiceImpl implements ShredProvider {
         List<List<DtoShred>> result = Lists.newArrayList();
         result.add(allShreds(after, before, names));
         return result;
-    }
-
-    private static DtoShred toDto(DtoEmail email) {
-        DtoShred shred = new DtoShred();
-        shred.setFrom(email.getFrom());
-        shred.setSent(email.getSent());
-        return shred;
     }
 }

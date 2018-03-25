@@ -1,4 +1,4 @@
-package w.whateva.service.life2.integration.email;
+package w.whateva.service.life2.integration.email.netflix;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.codec.Decoder;

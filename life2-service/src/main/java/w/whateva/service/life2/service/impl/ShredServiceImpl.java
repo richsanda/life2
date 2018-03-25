@@ -73,11 +73,4 @@ public class ShredServiceImpl implements ShredOperations {
                 .map(ArrayList::new)
                 .collect(Collectors.toList());
     }
-
-    private static DtoShred toDto(DtoEmail email) {
-        DtoShred shred = new DtoShred();
-        shred.setFrom(email.getFrom());
-        shred.setSent(email.getSent());
-        return shred;
-    }
 }
