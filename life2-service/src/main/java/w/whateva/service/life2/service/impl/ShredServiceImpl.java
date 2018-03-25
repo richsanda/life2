@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 import w.whateva.service.email.api.dto.DtoEmail;
 import w.whateva.service.life2.api.ShredOperations;
 import w.whateva.service.life2.api.dto.DtoShred;
-import w.whateva.service.life2.integration.email.EmailClient;
+import w.whateva.service.life2.integration.email.Trove1Client;
+import w.whateva.service.life2.integration.email.Trove2Client;
 import w.whateva.service.life2.service.util.ShredUtility;
 import w.whateva.service.life2.service.util.bucket.AbstractLocalDateTimeOperator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,11 +23,14 @@ import java.util.stream.Collectors;
  */
 @Primary
 @Service
-@EnableFeignClients(basePackageClasses = EmailClient.class)
+@EnableFeignClients(basePackageClasses = Trove1Client.class)
 public class ShredServiceImpl implements ShredOperations {
 
     @Autowired
-    EmailClient emailClient;
+    private Trove1Client trove1Client;
+
+    @Autowired
+    private Trove2Client trove2Client;
 
     private final ShredUtility shredUtility;
 
@@ -58,7 +61,7 @@ public class ShredServiceImpl implements ShredOperations {
 
     @Override
     public List<List<DtoShred>> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
-        List<DtoEmail> emails = emailClient.allEmails(after, before, names);
+        List<DtoEmail> emails = trove1Client.allEmails(after, before, names);
         System.out.println(emails.size());
         List<List<DtoEmail>> buckets = shredUtility.putInBuckets(
                 emails,
