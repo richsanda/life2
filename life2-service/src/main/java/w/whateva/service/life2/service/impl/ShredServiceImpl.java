@@ -1,19 +1,18 @@
 package w.whateva.service.life2.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import w.whateva.service.email.api.dto.DtoEmail;
 import w.whateva.service.life2.api.ShredOperations;
 import w.whateva.service.life2.api.dto.DtoShred;
-import w.whateva.service.life2.integration.email.Trove1Client;
-import w.whateva.service.life2.integration.email.Trove2Client;
+import w.whateva.service.life2.integration.api.ShredProvider;
 import w.whateva.service.life2.service.util.ShredUtility;
 import w.whateva.service.life2.service.util.bucket.AbstractLocalDateTimeOperator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,14 +22,10 @@ import java.util.stream.Collectors;
  */
 @Primary
 @Service
-@EnableFeignClients(basePackageClasses = Trove1Client.class)
 public class ShredServiceImpl implements ShredOperations {
 
     @Autowired
-    private Trove1Client trove1Client;
-
-    @Autowired
-    private Trove2Client trove2Client;
+    List<ShredProvider> providers;
 
     private final ShredUtility shredUtility;
 
@@ -61,13 +56,14 @@ public class ShredServiceImpl implements ShredOperations {
 
     @Override
     public List<List<DtoShred>> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
-        List<DtoEmail> emails = trove1Client.allEmails(after, before, names);
-        System.out.println(emails.size());
-        List<List<DtoEmail>> buckets = shredUtility.putInBuckets(
-                emails,
-                new AbstractLocalDateTimeOperator<DtoEmail>() {
+
+        List<List<DtoShred>> shreds = providers.get(0).allShreds(after, before, names);
+
+        List<List<DtoShred>> buckets = shredUtility.putInBuckets(
+                shreds.get(0),
+                new AbstractLocalDateTimeOperator<DtoShred>() {
                     @Override
-                    public LocalDateTime apply(DtoEmail shred) {
+                    public LocalDateTime apply(DtoShred shred) {
                         return shred.getSent();
                     }
                 },
@@ -77,10 +73,7 @@ public class ShredServiceImpl implements ShredOperations {
         );
         return buckets
                 .stream()
-                .map(l -> l
-                        .stream()
-                        .map(ShredServiceImpl::toDto)
-                        .collect(Collectors.toList()))
+                .map(ArrayList::new)
                 .collect(Collectors.toList());
     }
 

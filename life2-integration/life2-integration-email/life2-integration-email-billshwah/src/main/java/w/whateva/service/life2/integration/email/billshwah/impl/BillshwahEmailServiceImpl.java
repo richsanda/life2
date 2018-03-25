@@ -1,0 +1,61 @@
+package w.whateva.service.life2.integration.email.billshwah.impl;
+
+import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.stereotype.Service;
+import w.whateva.service.email.api.dto.DtoEmail;
+import w.whateva.service.life2.api.dto.DtoShred;
+import w.whateva.service.life2.integration.api.ShredProvider;
+import w.whateva.service.life2.integration.email.billshwah.BillshwahEmailClient;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@EnableFeignClients(basePackageClasses = BillshwahEmailClient.class)
+public class BillshwahEmailServiceImpl implements ShredProvider {
+
+    @Autowired
+    private BillshwahEmailClient emailClient;
+
+    @Override
+    public List<String> allKeys() {
+        return null;
+    }
+
+    @Override
+    public void addShred(DtoShred shred) {
+
+    }
+
+    @Override
+    public DtoShred readShred(String key) {
+        return null;
+    }
+
+    @Override
+    public List<DtoShred> allShreds() {
+        return null;
+    }
+
+    @Override
+    public List<List<DtoShred>> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
+        List<List<DtoShred>> result = Lists.newArrayList();
+        List<DtoShred> emails = emailClient.allEmails(after, before, names)
+                .stream()
+                .map(BillshwahEmailServiceImpl::toDto)
+                .collect(Collectors.toList());
+        result.add(emails);
+        return result;
+    }
+
+    private static DtoShred toDto(DtoEmail email) {
+        DtoShred shred = new DtoShred();
+        shred.setFrom(email.getFrom());
+        shred.setSent(email.getSent());
+        return shred;
+    }
+}

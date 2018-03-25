@@ -89,7 +89,8 @@
         <module>life2-web</module>
         <module>life2-service-api</module>
         <module>life2-integration</module>
-    </modules>
+    <module>life2-integration-api</module>
+  </modules>
 
     <repositories>
         <repository>

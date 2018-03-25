@@ -10,9 +10,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>life2-integration-email-rowecom</artifactId>
+    <artifactId>life2-integration-email-billshwah</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>life2-integration-email-rowecom</name>
+    <name>life2-integration-email-billshwah</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -28,4 +28,3 @@
     </dependencies>
 
 </project>
-
