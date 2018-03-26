@@ -1,5 +1,6 @@
 package w.whateva.service.life2.service.impl;
 
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -48,9 +49,17 @@ public class ShredServiceImpl implements ShredOperations {
     public List<DtoShred> allShreds(LocalDate after, LocalDate before, HashSet<String> names) {
         return providers
                 .parallelStream()
-                .map(p -> p.allShreds(after, before, names))
+                .map(p -> allShreds(p, after, before, names))
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    private List<DtoShred> allShreds(ShredProvider provider, LocalDate after, LocalDate before, HashSet<String> names) {
+        try {
+            return provider.allShreds(after, before, names);
+        } catch (Exception e) {
+            return Lists.newArrayList();
+        }
     }
 
     @Override
