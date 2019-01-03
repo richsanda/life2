@@ -52,7 +52,6 @@
         </plugins>
     </build>
 
-    <groupId>w.whateva</groupId>
     <artifactId>life2-app</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>life2-app</name>
