@@ -1,4 +1,4 @@
-package w.whateva.service.artifact;
+package w.whateva.life2.service.artifact;
 
 import static org.junit.Assert.assertTrue;
 

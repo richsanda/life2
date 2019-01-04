@@ -1,4 +1,4 @@
-package w.whateva.service.life2.service.util;
+package w.whateva.life2.service.artifact.util;
 
 import org.junit.Test;
 import org.springframework.util.CollectionUtils;

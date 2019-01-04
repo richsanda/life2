@@ -1,8 +1,6 @@
-package w.whateva.service.life2.service.util.bucket;
+package w.whateva.life2.service.artifact.util.bucket;
 
 import org.junit.Test;
-import w.whateva.service.life2.service.util.bucket.AbstractLocalDateTimeOperator;
-import w.whateva.service.life2.service.util.bucket.BucketDistributor;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;

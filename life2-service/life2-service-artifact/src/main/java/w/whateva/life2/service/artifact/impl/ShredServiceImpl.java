@@ -1,15 +1,14 @@
-package w.whateva.service.life2.service.impl;
+package w.whateva.life2.service.artifact.impl;
 
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import w.whateva.service.email.api.dto.DtoEmail;
+import w.whateva.life2.service.artifact.util.ShredUtility;
 import w.whateva.service.life2.api.ShredOperations;
 import w.whateva.service.life2.api.dto.DtoShred;
 import w.whateva.service.life2.integration.api.ShredProvider;
-import w.whateva.service.life2.service.util.ShredUtility;
-import w.whateva.service.life2.service.util.bucket.AbstractLocalDateTimeOperator;
+import w.whateva.life2.service.artifact.util.bucket.AbstractLocalDateTimeOperator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

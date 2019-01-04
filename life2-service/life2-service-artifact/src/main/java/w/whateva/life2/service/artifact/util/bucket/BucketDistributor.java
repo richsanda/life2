@@ -1,4 +1,4 @@
-package w.whateva.service.life2.service.util.bucket;
+package w.whateva.life2.service.artifact.util.bucket;
 
 import org.springframework.util.CollectionUtils;
 

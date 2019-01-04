@@ -1,8 +1,8 @@
-package w.whateva.service.life2.service.util;
+package w.whateva.life2.service.artifact.util;
 
 import org.springframework.stereotype.Service;
-import w.whateva.service.life2.service.util.bucket.Operator;
-import w.whateva.service.life2.service.util.bucket.BucketDistributor;
+import w.whateva.life2.service.artifact.util.bucket.Operator;
+import w.whateva.life2.service.artifact.util.bucket.BucketDistributor;
 
 import java.time.LocalDateTime;
 import java.util.List;
