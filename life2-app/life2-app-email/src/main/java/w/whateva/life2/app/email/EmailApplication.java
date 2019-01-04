@@ -16,7 +16,7 @@ import w.whateva.service.utilities.controller.AutoControllers;
 @SpringBootApplication
 @EnableAutoConfiguration (exclude = { DataSourceAutoConfiguration.class })
 @ComponentScan(basePackages = {
-        "w.whateva.life2.app.email",
+        "w.whateva.life2.app.email.controller",
         "w.whateva.life2.service.email",
         "w.whateva.life2.data.email"
 })
@@ -30,7 +30,6 @@ import w.whateva.service.utilities.controller.AutoControllers;
 public class EmailApplication {
 
     public static void main(String[] args) throws Exception {
-
         SpringApplication.run(EmailApplication.class, args);
     }
 }
