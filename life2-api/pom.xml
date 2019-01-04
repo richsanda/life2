@@ -4,17 +4,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <artifactId>life2-parent</artifactId>
         <groupId>w.whateva</groupId>
-        <artifactId>life2-integration</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <artifactId>life2-api</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <artifactId>life2-integration-email</artifactId>
-
-    <version>1.0-SNAPSHOT</version>
-    <name>life2-integration-email</name>
+    <name>life2-api</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -22,10 +21,20 @@
     </properties>
 
     <modules>
-        <module>life2-integration-email-common</module>
-        <module>life2-integration-email-rowecom</module>
-        <module>life2-integration-email-billshwah</module>
-        <module>life2-integration-email-bbjones</module>
+        <module>life2-api-email</module>
+        <module>life2-api-artifact</module>
     </modules>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

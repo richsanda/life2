@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
+        <artifactId>life2-service</artifactId>
         <groupId>w.whateva</groupId>
-        <artifactId>life2-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>life2-service</artifactId>
+    <artifactId>life2-service-email</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>life2-service</name>
-    <packaging>pom</packaging>
+
+    <name>life2-service-email</name>
+    <url>http://www.example.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,31 +23,13 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-service-api</artifactId>
+            <artifactId>life2-api-email</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-data</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>life2-integration-email-rowecom</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>life2-integration-email-billshwah</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>life2-integration-email-bbjones</artifactId>
+            <artifactId>life2-data-email</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -54,10 +39,6 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
-  <modules>
-    <module>life2-service-artifact</module>
-    <module>life2-service-email</module>
-  </modules>
+
 </project>
