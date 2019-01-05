@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Deprecated
 @EnableFeignClients(basePackageClasses = RowecomEmailClient.class)
 public class RowecomEmailServiceImpl implements ArtifactProvider {
 
