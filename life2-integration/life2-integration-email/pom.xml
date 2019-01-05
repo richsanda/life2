@@ -23,9 +23,6 @@
 
     <modules>
         <module>life2-integration-email-common</module>
-        <module>life2-integration-email-rowecom</module>
-        <module>life2-integration-email-billshwah</module>
-        <module>life2-integration-email-bbjones</module>
     </modules>
 
 </project>
