@@ -34,7 +34,6 @@ public class BillshwahEmailServiceImpl implements ArtifactProvider {
                 .collect(Collectors.toList());
     }
 
-    // @Override
     public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> names, Integer integer) {
         List<List<ApiArtifact>> result = Lists.newArrayList();
         result.add(search(after, before, names));
