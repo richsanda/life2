@@ -1,4 +1,4 @@
-package w.whateva.service.life2.web;
+package w.whateva.life2.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

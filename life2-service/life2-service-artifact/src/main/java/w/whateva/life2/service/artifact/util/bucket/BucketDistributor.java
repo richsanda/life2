@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 public class BucketDistributor<DomainType, RangeType extends Comparable<? super RangeType>> {
 
-    private final List<DomainType> shreds;
+    private final List<DomainType> artifacts;
     private final Operator<DomainType, RangeType> operator;
     private final int numBuckets;
     private final RangeType min;
@@ -18,13 +18,13 @@ public class BucketDistributor<DomainType, RangeType extends Comparable<? super 
 
     private final List<List<DomainType>> buckets;
 
-    public BucketDistributor(List<DomainType> shreds,
+    public BucketDistributor(List<DomainType> artifacts,
                              Operator<DomainType, RangeType> operator,
                              int numBuckets,
                              RangeType min,
                              RangeType max) {
 
-        this.shreds = shreds
+        this.artifacts = artifacts
                 .stream()
                 .filter(i -> {
                     RangeType r = operator.apply(i);
@@ -60,32 +60,32 @@ public class BucketDistributor<DomainType, RangeType extends Comparable<? super 
                 .collect(Collectors.toList());
 
         // do the recursive placement into buckets
-        addToBuckets(bucketMaxes, buckets, shreds);
+        addToBuckets(bucketMaxes, buckets, artifacts);
 
         return buckets;
     }
 
-    private int whichBucket(List<RangeType> maxes, DomainType shred) {
+    private int whichBucket(List<RangeType> maxes, DomainType artifact) {
         int result = 0;
-        while (operator.compare(operator.apply(shred), maxes.get(result)) > 0 && result < maxes.size() - 1) {
+        while (operator.compare(operator.apply(artifact), maxes.get(result)) > 0 && result < maxes.size() - 1) {
             result++;
         }
         return result;
     }
 
-    private void addToBuckets(List<RangeType> maxes, List<List<DomainType>> buckets, List<DomainType> shreds) {
+    private void addToBuckets(List<RangeType> maxes, List<List<DomainType>> buckets, List<DomainType> artifacts) {
 
-        if (CollectionUtils.isEmpty(shreds)) return;
+        if (CollectionUtils.isEmpty(artifacts)) return;
 
-        int size = shreds.size();
-        int lowBucket = whichBucket(maxes, shreds.get(0));
-        int highBucket = whichBucket(maxes, shreds.get(size - 1));
+        int size = artifacts.size();
+        int lowBucket = whichBucket(maxes, artifacts.get(0));
+        int highBucket = whichBucket(maxes, artifacts.get(size - 1));
         if (lowBucket == highBucket) {
-            buckets.get(lowBucket).addAll(shreds);
+            buckets.get(lowBucket).addAll(artifacts);
         } else {
             int mid = size / 2;
-            addToBuckets(maxes, buckets, shreds.subList(0, mid));
-            addToBuckets(maxes, buckets, shreds.subList(mid, size));
+            addToBuckets(maxes, buckets, artifacts.subList(0, mid));
+            addToBuckets(maxes, buckets, artifacts.subList(mid, size));
         }
     }
 }

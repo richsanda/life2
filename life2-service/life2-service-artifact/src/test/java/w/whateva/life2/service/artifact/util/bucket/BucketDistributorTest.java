@@ -35,8 +35,8 @@ public class BucketDistributorTest {
         }
 
             @Override
-            public LocalDateTime apply(Thing shred) {
-                return shred.getLocalDateTime();
+            public LocalDateTime apply(Thing thing) {
+                return thing.getLocalDateTime();
             }
 
         public LocalDateTime getLocalDateTime() {

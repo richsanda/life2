@@ -6,12 +6,12 @@ import w.whateva.life2.api.email.dto.ApiEmail;
 public class EmailUtil {
 
     public static ApiArtifact toDto(ApiEmail email) {
-        ApiArtifact shred = new ApiArtifact();
-        shred.setFrom(email.getFrom());
-        shred.setSent(email.getSent());
-        shred.setTo(email.getTo());
-        shred.setSubject(email.getSubject());
-        shred.setBody(email.getBody());
-        return shred;
+        ApiArtifact artifact = new ApiArtifact();
+        artifact.setFrom(email.getFrom());
+        artifact.setSent(email.getSent());
+        artifact.setTo(email.getTo());
+        artifact.setSubject(email.getSubject());
+        artifact.setBody(email.getBody());
+        return artifact;
     }
 }

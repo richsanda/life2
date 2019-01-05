@@ -35,12 +35,9 @@ public class RowecomEmailServiceImpl implements ArtifactProvider {
                 .collect(Collectors.toList());
     }
 
-    /*
-    @Override
-    public List<List<ApiArtifact>> allShreds(LocalDate after, LocalDate before, HashSet<String> names, Integer integer) {
+    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> names, Integer integer) {
         List<List<ApiArtifact>> result = Lists.newArrayList();
-        result.add(allShreds(after, before, names));
+        result.add(search(after, before, names));
         return result;
     }
-    */
 }

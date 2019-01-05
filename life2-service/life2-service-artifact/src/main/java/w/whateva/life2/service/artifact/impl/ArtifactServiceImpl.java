@@ -24,13 +24,12 @@ import java.util.stream.Collectors;
 @Service
 public class ArtifactServiceImpl implements ArtifactOperations {
 
-    @Autowired
-    private List<ArtifactProvider> providers;
-
+    private final List<ArtifactProvider> providers;
     private final ArtifactUtility artifactUtility;
 
     @Autowired
-    public ArtifactServiceImpl(ArtifactUtility artifactUtility) {
+    public ArtifactServiceImpl(List<ArtifactProvider> providers, ArtifactUtility artifactUtility) {
+        this.providers = providers;
         this.artifactUtility = artifactUtility;
     }
 
@@ -43,12 +42,12 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> names) {
         return providers
                 .parallelStream()
-                .map(p -> allShreds(p, after, before, names))
+                .map(p -> search(p, after, before, names))
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
-    private List<ApiArtifact> allShreds(ArtifactProvider provider, LocalDate after, LocalDate before, HashSet<String> names) {
+    private List<ApiArtifact> search(ArtifactProvider provider, LocalDate after, LocalDate before, HashSet<String> names) {
         try {
             return provider.search(after, before, names);
         } catch (Exception e) {
@@ -56,16 +55,14 @@ public class ArtifactServiceImpl implements ArtifactOperations {
         }
     }
 
-    /*
-    @Override
-    public List<List<ApiArtifact>> allShreds(LocalDate after, LocalDate before, HashSet<String> names, Integer numBuckets) {
+    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> names, Integer numBuckets) {
 
         List<List<ApiArtifact>> buckets = artifactUtility.putInBuckets(
-                allShreds(after, before, names),
+                search(after, before, names),
                 new AbstractLocalDateTimeOperator<ApiArtifact>() {
                     @Override
-                    public LocalDateTime apply(ApiArtifact shred) {
-                        return shred.getSent();
+                    public LocalDateTime apply(ApiArtifact artifact) {
+                        return artifact.getSent();
                     }
                 },
                 numBuckets,
@@ -77,5 +74,4 @@ public class ArtifactServiceImpl implements ArtifactOperations {
                 .map(ArrayList::new)
                 .collect(Collectors.toList());
     }
-    */
 }

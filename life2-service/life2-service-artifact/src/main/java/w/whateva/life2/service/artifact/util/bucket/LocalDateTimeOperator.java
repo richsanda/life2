@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class LocalDateTimeOperator extends AbstractLocalDateTimeOperator<LocalDateTime> {
 
     @Override
-    public LocalDateTime apply(LocalDateTime shred) {
-        return shred;
+    public LocalDateTime apply(LocalDateTime localDateTime) {
+        return localDateTime;
     }
 }

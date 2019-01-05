@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public abstract class AbstractLocalDateTimeOperator<DomainType> implements Operator<DomainType, LocalDateTime> {
 
     @Override
-    public abstract LocalDateTime apply(DomainType shred);
+    public abstract LocalDateTime apply(DomainType artifact);
 
     public LocalDateTime getBucketMax(LocalDateTime min, LocalDateTime max, int i, int numBuckets) {
         return min.plus(Duration.between(min, max).dividedBy(numBuckets).multipliedBy(i + 1));
