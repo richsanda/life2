@@ -25,25 +25,6 @@ public class Life2Configuration {
     @Value("${async.thread.name.prefix}")
     private String asyncThreadNamePrefix;
 
-    @Bean
-    public WebMvcRegistrations serviceWebRegistrations() {
-        return new WebMvcRegistrations() {
-            @Override
-            public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
-                return new ServiceFilterRequestMappingHandlerMapping();
-            }
-        };
-    }
-
-    private static class ServiceFilterRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
-        @Override
-        protected boolean isHandler(Class<?> beanType) {
-            return super.isHandler(beanType)
-                    && AnnotationUtils.findAnnotation(beanType, Service.class) == null
-                    && AnnotationUtils.findAnnotation(beanType, FeignClient.class) == null;
-        }
-    }
-
     /*
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {

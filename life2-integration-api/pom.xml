@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-interface</artifactId>
+            <artifactId>life2-api-artifact</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

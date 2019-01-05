@@ -14,9 +14,6 @@ import java.util.List;
 @RequestMapping
 public interface ArtifactOperations {
 
-    @RequestMapping(value = "/email", method = RequestMethod.POST)
-    void add(ApiArtifact email);
-
     @RequestMapping(value = "/email/{key}", method = RequestMethod.GET, produces = "application/json")
     ApiArtifact read(@PathVariable("key") String key);
 
