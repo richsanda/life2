@@ -98,7 +98,6 @@
         <module>life2-data</module>
         <module>life2-web</module>
         <module>life2-integration</module>
-        <module>life2-integration-api</module>
         <module>life2-api</module>
     </modules>
 

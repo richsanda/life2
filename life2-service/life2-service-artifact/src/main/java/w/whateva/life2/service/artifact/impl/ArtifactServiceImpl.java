@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import w.whateva.life2.api.common.ArtifactOperations;
 import w.whateva.life2.api.common.dto.ApiArtifact;
 import w.whateva.life2.service.artifact.util.ArtifactUtility;
-import w.whateva.life2.integration.email.api.ArtifactProvider;
+import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.service.artifact.util.bucket.AbstractLocalDateTimeOperator;
 
 import java.time.LocalDate;

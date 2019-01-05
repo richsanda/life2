@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.stereotype.Service;
 import w.whateva.life2.api.common.dto.ApiArtifact;
 import w.whateva.life2.integration.email.billshwah.BillshwahEmailClient;
-import w.whateva.life2.integration.email.api.ArtifactProvider;
+import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
 import java.time.LocalDate;
