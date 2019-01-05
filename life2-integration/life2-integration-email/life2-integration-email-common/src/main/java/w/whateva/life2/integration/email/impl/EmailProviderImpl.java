@@ -1,12 +1,9 @@
-package w.whateva.life2.integration.email.bbjones.impl;
+package w.whateva.life2.integration.email.impl;
 
 import com.google.common.collect.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.stereotype.Service;
 import w.whateva.life2.api.common.dto.ApiArtifact;
+import w.whateva.life2.api.email.EmailOperations;
 import w.whateva.life2.integration.api.ArtifactProvider;
-import w.whateva.life2.integration.email.bbjones.BBJonesEmailClient;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
 import java.time.LocalDate;
@@ -14,12 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Deprecated
-@EnableFeignClients(basePackageClasses = BBJonesEmailClient.class)
-public class BBJonesEmailServiceImpl implements ArtifactProvider {
+public class EmailProviderImpl implements ArtifactProvider {
 
-    @Autowired
-    private BBJonesEmailClient emailClient;
+    private EmailOperations emailClient;
+
+    public EmailProviderImpl(EmailOperations client) {
+        this.emailClient = client;
+    }
 
     @Override
     public ApiArtifact read(String key) {

@@ -3,10 +3,13 @@ package w.whateva.life2.integration.email.billshwah.impl;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
 import w.whateva.life2.api.common.dto.ApiArtifact;
+import w.whateva.life2.api.email.EmailOperations;
 import w.whateva.life2.integration.email.billshwah.BillshwahEmailClient;
 import w.whateva.life2.integration.api.ArtifactProvider;
+import w.whateva.life2.integration.email.netflix.EmailClientConfiguration;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
 import java.time.LocalDate;
@@ -14,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Deprecated
 @EnableFeignClients(basePackageClasses = BillshwahEmailClient.class)
 public class BillshwahEmailServiceImpl implements ArtifactProvider {
 
