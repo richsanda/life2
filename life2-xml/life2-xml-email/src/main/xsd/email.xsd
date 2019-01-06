@@ -1,0 +1,34 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="Emails">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Email" type="Email" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Email" type="Email"/>
+
+    <!--
+
+    <Email id="22">
+      <Sent>1998-10-05T13:44:05</Sent>
+      <From>Richard Sanda</From>
+      <To>Erika Winkler; wcrosby@rowe.com; ezimmerman@rowe.com</To>
+      <Subject>RE: kStore 3.0 beta server is UP</Subject>
+    <Body>Hi Erika,
+
+    -->
+
+    <xs:complexType name="Email">
+        <xs:sequence>
+            <xs:element name="Sent" type="xs:dateTime"/>
+            <xs:element name="From" type="xs:string"/>
+            <xs:element name="To" type="xs:string"/>
+            <xs:element name="Subject" type="xs:string"/>
+            <xs:element name="Body" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
