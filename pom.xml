@@ -100,7 +100,8 @@
         <module>life2-integration</module>
         <module>life2-api</module>
         <module>life2-job</module>
-    </modules>
+    <module>life2-xml</module>
+  </modules>
 
     <repositories>
         <repository>

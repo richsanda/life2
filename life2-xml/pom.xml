@@ -9,13 +9,14 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>life2-job</artifactId>
+    <artifactId>life2-xml</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>life2-job</name>
+
+    <name>life2-xml</name>
 
     <modules>
-        <module>life2-job-email</module>
+        <module>life2-xml-email</module>
     </modules>
 
 </project>
