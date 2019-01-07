@@ -29,8 +29,18 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-integration-email</artifactId>
+            <artifactId>life2-integration-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
         </dependency>
 
         <dependency>
