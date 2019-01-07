@@ -16,7 +16,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 @Configuration
-public class EmailClientConfiguration {
+public class EmailFeignConfiguration {
 
     @Bean
     public Encoder feignEncoder() {
