@@ -9,10 +9,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>life2-app-email</artifactId>
+    <artifactId>life2-app-email-index</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>life2-app-email</name>
+    <name>life2-app-email-index</name>
     <url>http://www.example.com</url>
 
     <properties>
@@ -23,6 +23,12 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
+            <artifactId>life2-job-email</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>w.whateva</groupId>
             <artifactId>life2-service-email</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -30,7 +36,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>${spring.boot.version}</version>
         </dependency>
 
         <dependency>
