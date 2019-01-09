@@ -1,6 +1,5 @@
 package w.whateva.life2.job.email.beans;
 
-import org.apache.commons.mail.util.MimeMessageParser;
 import org.apache.tika.extractor.EmbeddedDocumentExtractor;
 import org.apache.tika.extractor.EmbeddedDocumentUtil;
 import org.apache.tika.io.IOUtils;
@@ -13,17 +12,13 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
-import org.springframework.util.StringUtils;
-import w.whateva.life2.api.email.dto.ApiEmail;
 
-import javax.mail.Header;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import java.io.*;
-import java.time.ZoneId;
 import java.util.*;
 
-public class MboxReader extends MboxParser implements ItemReader<ApiEmail> {
+public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
 
     private static final String charsetName = "utf-8";
 
@@ -46,7 +41,7 @@ public class MboxReader extends MboxParser implements ItemReader<ApiEmail> {
     }
 
     @Override
-    public ApiEmail read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public MimeMessage read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 
         if (curLine == null || Thread.currentThread().isInterrupted()) {
 
@@ -83,7 +78,7 @@ public class MboxReader extends MboxParser implements ItemReader<ApiEmail> {
             ByteArrayInputStream messageStream = new ByteArrayInputStream(message.toByteArray());
 
             try {
-                return buildEmail(messageStream);
+                return buildMimeMessage(messageStream);
             } catch (Exception e) {
                 System.out.println("OWELL");
             }
@@ -103,37 +98,14 @@ public class MboxReader extends MboxParser implements ItemReader<ApiEmail> {
         return close();
     }
 
-    private ApiEmail buildEmail(ByteArrayInputStream s) throws Exception {
+    private MimeMessage buildMimeMessage(ByteArrayInputStream s) throws Exception {
         String content = IOUtils.toString(s);
         Session session = Session.getInstance(new Properties());
         InputStream is = new ByteArrayInputStream(content.getBytes());
-        MimeMessage message = new MimeMessage(session, is);
-        MimeMessageParser parser = new MimeMessageParser(message).parse();
-        Map<String, String> headers = new HashMap<>();
-        message.getAllHeaderLines();
-        for (Enumeration<Header> e = message.getAllHeaders(); e.hasMoreElements();) {
-            Header h = e.nextElement();
-            headers.put(h.getName(), h.getValue());
-        }
-
-        if (!headers.containsKey("Message-ID")) {
-            System.out.println(String.format("%s has no message id", "THISONE"));
-        } else {
-            System.out.println(headers.get("Message-ID"));
-        }
-
-        ApiEmail result = new ApiEmail();
-        result.setId(headers.get("Message-ID"));
-        result.setFrom(headers.get("From"));
-        result.setTo(headers.get("To"));
-        result.setSubject(headers.get("Subject"));
-        result.setSent(parser.getMimeMessage().getSentDate().toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
-        result.setBody(!StringUtils.isEmpty(parser.getHtmlContent()) ? parser.getHtmlContent() : parser.getPlainContent());
-        result.setMessage(content);
-        return result;
+        return new MimeMessage(session, is);
     }
 
-    private ApiEmail close() {
+    private MimeMessage close() {
         IOUtils.closeQuietly(reader);
         return null;
     }

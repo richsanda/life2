@@ -5,6 +5,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +17,10 @@ import w.whateva.life2.api.email.EmailOperations;
 import w.whateva.life2.api.email.PersonOperations;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.api.email.dto.ApiPerson;
-import w.whateva.life2.job.email.beans.EmailProcessor;
-import w.whateva.life2.job.email.beans.EmailWriter;
-import w.whateva.life2.job.email.beans.PersonProcessor;
-import w.whateva.life2.job.email.beans.PersonWriter;
+import w.whateva.life2.job.email.beans.*;
+
+import javax.mail.internet.MimeMessage;
+import java.util.Arrays;
 
 @Configuration
 @EnableBatchProcessing
@@ -49,8 +50,22 @@ public class MboxEmailBatchConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
+    ItemProcessor<MimeMessage, ApiEmail> mimeProcessor() {
+        return new MboxProcesor();
+    }
+
+    @Bean
+    @StepScope
     ItemProcessor<ApiEmail, ApiEmail> emailProcessor() {
         return new EmailProcessor(emailAddressParserType, emailToDefault);
+    }
+
+    @Bean
+    @StepScope
+    ItemProcessor<MimeMessage, ApiEmail> mboxProcessor() {
+        CompositeItemProcessor<MimeMessage, ApiEmail> result = new CompositeItemProcessor<>();
+        result.setDelegates(Arrays.asList(mimeProcessor(), emailProcessor()));
+        return result;
     }
 
     @Bean

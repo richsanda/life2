@@ -20,6 +20,7 @@ import w.whateva.life2.api.email.dto.ApiGroupMessage;
 import w.whateva.life2.api.email.dto.ApiPerson;
 import w.whateva.life2.job.email.beans.MboxReader;
 
+import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,9 +57,9 @@ public class MboxEmailJobConfiguration {
     @Bean
     public Step loadEmailStep() throws Exception {
         return this.steps.get("loadEmailStep")
-                .<ApiEmail, ApiEmail>chunk(10)
+                .<MimeMessage, ApiEmail>chunk(10)
                 .reader(emailReader())
-                .processor(config.emailProcessor())
+                .processor(config.mboxProcessor())
                 .writer(config.emailWriter())
                 .build();
     }
@@ -75,7 +76,7 @@ public class MboxEmailJobConfiguration {
 
     @Bean
     @StepScope
-    public ItemReader<ApiEmail> emailReader() throws IOException {
+    public ItemReader<MimeMessage> emailReader() throws IOException {
         InputStream input = new FileInputStream(emailMboxFile);
         MboxReader reader = new MboxReader(input);
         return reader;
