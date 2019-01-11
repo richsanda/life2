@@ -16,9 +16,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.email.dto.ApiGroupMessage;
 import w.whateva.life2.api.email.dto.ApiPerson;
 import w.whateva.life2.job.email.beans.MboxReader;
+import w.whateva.life2.xml.email.def.XmlEmail;
+import w.whateva.life2.xml.email.def.XmlPerson;
 
 import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
@@ -67,7 +68,7 @@ public class MboxEmailJobConfiguration {
     @Bean
     public Step loadPersonStep() throws Exception {
         return this.steps.get("loadPersonStep")
-                .<ApiPerson, ApiPerson>chunk(10)
+                .<XmlPerson, ApiPerson>chunk(10)
                 .reader(personReader())
                 .processor(config.personProcessor())
                 .writer(config.personWriter())
@@ -85,15 +86,15 @@ public class MboxEmailJobConfiguration {
     @Bean
     public Jaxb2Marshaller emailUnmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(ApiEmail.class, ApiPerson.class, ApiGroupMessage.class);
+        marshaller.setClassesToBeBound(XmlEmail.class);
         marshaller.setCheckForXmlRootElement(true);
         return marshaller;
     }
 
     @Bean
     @StepScope
-    public ResourceAwareItemReaderItemStream<ApiPerson> personReader() {
-        StaxEventItemReader<ApiPerson> reader = new StaxEventItemReader<>();
+    public ResourceAwareItemReaderItemStream<XmlPerson> personReader() {
+        StaxEventItemReader<XmlPerson> reader = new StaxEventItemReader<>();
         reader.setFragmentRootElementName("person");
         reader.setResource(new FileSystemResource(personXmlFile));
         reader.setUnmarshaller(emailUnmarshaller());

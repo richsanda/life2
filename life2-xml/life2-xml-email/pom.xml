@@ -20,16 +20,28 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
 
-    <build>
+    <!--build>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -50,9 +62,10 @@
                     <sources>
                         <source>src/main/xsd/email.xsd</source>
                     </sources>
+                    <packageName>w.whateva.life2.xml.email</packageName>
                 </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build-->
 
 </project>

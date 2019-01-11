@@ -1,4 +1,4 @@
-package w.whateva.life2.api.email.adapter;
+package w.whateva.life2.xml.email.adapter;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.time.LocalDateTime;

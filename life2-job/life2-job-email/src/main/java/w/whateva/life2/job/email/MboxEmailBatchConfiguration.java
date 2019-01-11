@@ -18,6 +18,7 @@ import w.whateva.life2.api.email.PersonOperations;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.api.email.dto.ApiPerson;
 import w.whateva.life2.job.email.beans.*;
+import w.whateva.life2.xml.email.def.XmlPerson;
 
 import javax.mail.internet.MimeMessage;
 import java.util.Arrays;
@@ -51,7 +52,7 @@ public class MboxEmailBatchConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemProcessor<MimeMessage, ApiEmail> mimeProcessor() {
-        return new MboxProcesor();
+        return new MboxEmailProcesor();
     }
 
     @Bean
@@ -75,7 +76,7 @@ public class MboxEmailBatchConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
-    ItemProcessor<ApiPerson, ApiPerson> personProcessor() {
+    ItemProcessor<XmlPerson, ApiPerson> personProcessor() {
         return new PersonProcessor();
     }
 

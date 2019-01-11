@@ -1,4 +1,4 @@
-package w.whateva.life2.api.email.dto;
+package w.whateva.life2.xml.email.def;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Getter
 @Setter
-public class ApiGroupMessage extends ApiEmail {
+public class XmlGroupMessage extends XmlEmail {
 
     @XmlElement(name = "Topic")
     private String topic;

@@ -16,7 +16,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MboxProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
+public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
 
 
     @Override

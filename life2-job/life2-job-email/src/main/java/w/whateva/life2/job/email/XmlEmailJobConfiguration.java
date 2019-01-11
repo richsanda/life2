@@ -20,8 +20,10 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.email.dto.ApiGroupMessage;
 import w.whateva.life2.api.email.dto.ApiPerson;
+import w.whateva.life2.xml.email.def.XmlEmail;
+import w.whateva.life2.xml.email.def.XmlGroupMessage;
+import w.whateva.life2.xml.email.def.XmlPerson;
 
 import java.io.IOException;
 
@@ -60,9 +62,9 @@ public class XmlEmailJobConfiguration {
     @Bean
     public Step loadEmailStep() throws Exception {
         return this.steps.get("loadEmailStep")
-                .<ApiEmail, ApiEmail>chunk(10)
+                .<XmlEmail, ApiEmail>chunk(10)
                 .reader(emailReader())
-                .processor(config.emailProcessor())
+                .processor(config.compositeEmailProcessor())
                 .writer(config.emailWriter())
                 .build();
     }
@@ -70,7 +72,7 @@ public class XmlEmailJobConfiguration {
     @Bean
     public Step loadPersonStep() throws Exception {
         return this.steps.get("loadPersonStep")
-                .<ApiPerson, ApiPerson>chunk(10)
+                .<XmlPerson, ApiPerson>chunk(10)
                 .reader(personReader())
                 .processor(config.personProcessor())
                 .writer(config.personWriter())
@@ -79,8 +81,8 @@ public class XmlEmailJobConfiguration {
 
     @Bean
     @StepScope
-    public ItemReader<ApiEmail> emailReader() throws IOException {
-        MultiResourceItemReader<ApiEmail> reader = new MultiResourceItemReader<ApiEmail>();
+    public ItemReader<XmlEmail> emailReader() throws IOException {
+        MultiResourceItemReader<XmlEmail> reader = new MultiResourceItemReader<XmlEmail>();
         ClassLoader classLoader = this.getClass().getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
         Resource[] resources = resolver.getResources("file:" + emailXmlFilePattern);
@@ -91,8 +93,8 @@ public class XmlEmailJobConfiguration {
 
     @Bean
     @StepScope
-    public ResourceAwareItemReaderItemStream<ApiEmail> oneEmailReader() {
-        StaxEventItemReader<ApiEmail> reader = new StaxEventItemReader<>();
+    public ResourceAwareItemReaderItemStream<XmlEmail> oneEmailReader() {
+        StaxEventItemReader<XmlEmail> reader = new StaxEventItemReader<>();
         reader.setFragmentRootElementName(fragmentRootElementName);
         //Resource resource = resourceLoader.getResource("file:/Users/rich/Downloads/games/2005.1.1.xml");
         //reader.setResource(resource);
@@ -103,15 +105,15 @@ public class XmlEmailJobConfiguration {
     @Bean
     public Jaxb2Marshaller emailUnmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(ApiEmail.class, ApiPerson.class, ApiGroupMessage.class);
+        marshaller.setClassesToBeBound(XmlEmail.class, XmlPerson.class, XmlGroupMessage.class);
         marshaller.setCheckForXmlRootElement(true);
         return marshaller;
     }
 
     @Bean
     @StepScope
-    public ResourceAwareItemReaderItemStream<ApiPerson> personReader() {
-        StaxEventItemReader<ApiPerson> reader = new StaxEventItemReader<>();
+    public ResourceAwareItemReaderItemStream<XmlPerson> personReader() {
+        StaxEventItemReader<XmlPerson> reader = new StaxEventItemReader<>();
         reader.setFragmentRootElementName("person");
         reader.setResource(new FileSystemResource(personXmlFile));
         reader.setUnmarshaller(emailUnmarshaller());
