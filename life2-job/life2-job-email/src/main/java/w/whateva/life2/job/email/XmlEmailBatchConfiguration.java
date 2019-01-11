@@ -52,22 +52,8 @@ public class XmlEmailBatchConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
-    ItemProcessor<XmlEmail, ApiEmail> xmlEmailProcessor() {
-        return new XmlEmailProcessor();
-    }
-
-    @Bean
-    @StepScope
-    ItemProcessor<ApiEmail, ApiEmail> emailProcessor() {
+    ItemProcessor<XmlEmail, ApiEmail> emailProcessor() {
         return new EmailProcessor(emailAddressParserType, emailToDefault);
-    }
-
-    @Bean
-    @StepScope
-    ItemProcessor<XmlEmail, ApiEmail> compositeEmailProcessor() {
-        CompositeItemProcessor<XmlEmail, ApiEmail> result = new CompositeItemProcessor<>();
-        result.setDelegates(Arrays.asList(xmlEmailProcessor(), emailProcessor()));
-        return result;
     }
 
     @Bean

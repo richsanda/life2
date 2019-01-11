@@ -3,6 +3,8 @@ package w.whateva.life2.job.email.beans;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.util.StringUtils;
 import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.api.email.dto.ApiGroupMessage;
+import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlGroupMessage;
 
 import javax.mail.internet.InternetAddress;
@@ -11,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EmailProcessor implements ItemProcessor<ApiEmail, ApiEmail> {
+public class EmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
 
     private final String emailAddressParserType;
     private final String defaultTo;
@@ -21,7 +23,11 @@ public class EmailProcessor implements ItemProcessor<ApiEmail, ApiEmail> {
         this.defaultTo = defaultTo;
     }
 
-    public ApiEmail process(ApiEmail apiEmail) {
+    public ApiEmail process(XmlEmail xmlEmail) {
+
+        ApiEmail apiEmail = xmlEmail instanceof XmlGroupMessage
+                ? convert((XmlGroupMessage) xmlEmail)
+                : convert(xmlEmail);
 
         if (null == apiEmail.getTo()) {
             apiEmail.setTo(defaultTo);
@@ -38,13 +44,41 @@ public class EmailProcessor implements ItemProcessor<ApiEmail, ApiEmail> {
                 throw new IllegalArgumentException("Unknown email address parser type");
         }
 
-        /*
         if (apiEmail instanceof ApiGroupMessage && null == apiEmail.getSubject()) {
             apiEmail.setSubject(apiEmail.getSubject());
         }
-        */
 
         return apiEmail;
+    }
+
+    private static ApiEmail convert(XmlGroupMessage groupMessage) {
+
+        ApiGroupMessage result = new ApiGroupMessage();
+
+        result.setFrom(groupMessage.getFrom());
+        result.setSent(groupMessage.getSent());
+        result.setTo(groupMessage.getTo());
+        result.setSubject(groupMessage.getSubject());
+        result.setBody(groupMessage.getBody());
+
+        result.setGroupType(groupMessage.getGroupType());
+        result.setGroupName(groupMessage.getGroupName());
+        result.setMessageId(groupMessage.getMessageId());
+
+        result.setTopic(groupMessage.getTopic());
+
+        return result;
+    }
+
+    private static ApiEmail convert(XmlEmail email) {
+
+        ApiEmail result = new ApiEmail();
+        result.setFrom(email.getFrom());
+        result.setSent(email.getSent());
+        result.setTo(email.getTo());
+        result.setSubject(email.getSubject());
+        result.setBody(email.getBody());
+        return result;
     }
 
     private static Set<String> toSimpleAddresses(String addressList) {

@@ -51,22 +51,8 @@ public class MboxEmailBatchConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
-    ItemProcessor<MimeMessage, ApiEmail> mimeProcessor() {
+    ItemProcessor<MimeMessage, ApiEmail> emailProcessor() {
         return new MboxEmailProcesor();
-    }
-
-    @Bean
-    @StepScope
-    ItemProcessor<ApiEmail, ApiEmail> emailProcessor() {
-        return new EmailProcessor(emailAddressParserType, emailToDefault);
-    }
-
-    @Bean
-    @StepScope
-    ItemProcessor<MimeMessage, ApiEmail> mboxProcessor() {
-        CompositeItemProcessor<MimeMessage, ApiEmail> result = new CompositeItemProcessor<>();
-        result.setDelegates(Arrays.asList(mimeProcessor(), emailProcessor()));
-        return result;
     }
 
     @Bean

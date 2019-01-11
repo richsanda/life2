@@ -5,10 +5,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import w.whateva.life2.xml.email.adapter.LocalDateTimeXmlAdapter;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -19,6 +16,7 @@ import java.util.Set;
 @Setter
 public class XmlEmail {
 
+    @XmlAttribute
     private String id;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

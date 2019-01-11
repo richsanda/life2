@@ -64,7 +64,7 @@ public class XmlEmailJobConfiguration {
         return this.steps.get("loadEmailStep")
                 .<XmlEmail, ApiEmail>chunk(10)
                 .reader(emailReader())
-                .processor(config.compositeEmailProcessor())
+                .processor(config.emailProcessor())
                 .writer(config.emailWriter())
                 .build();
     }

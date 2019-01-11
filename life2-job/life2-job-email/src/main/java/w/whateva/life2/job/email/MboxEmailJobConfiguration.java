@@ -60,7 +60,7 @@ public class MboxEmailJobConfiguration {
         return this.steps.get("loadEmailStep")
                 .<MimeMessage, ApiEmail>chunk(10)
                 .reader(emailReader())
-                .processor(config.mboxProcessor())
+                .processor(config.emailProcessor())
                 .writer(config.emailWriter())
                 .build();
     }
