@@ -45,7 +45,7 @@ public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
         }
 
         if (apiEmail instanceof ApiGroupMessage && null == apiEmail.getSubject()) {
-            apiEmail.setSubject(apiEmail.getSubject());
+            apiEmail.setSubject(((ApiGroupMessage) apiEmail).getTopic());
         }
 
         return apiEmail;
