@@ -27,7 +27,6 @@ public class XmlEmail {
     private String from;
     @XmlElement(name = "To")
     private String to;
-    private Set<String> tos;
     @XmlElement(name = "Subject")
     private String subject;
     @XmlElement(name = "Body")

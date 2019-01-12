@@ -20,9 +20,13 @@ public class PersonServiceImpl implements PersonOperations {
     }
 
     @Override
-    public void addPerson(ApiPerson ApiPerson) {
+    public void addPerson(ApiPerson apiPerson) {
+
+        if (null == apiPerson.getName()) return;
+
         Person person = new Person();
-        BeanUtils.copyProperties(ApiPerson, person);
+        person.setId(apiPerson.getName());
+        BeanUtils.copyProperties(apiPerson, person);
         personRepository.save(person);
     }
 

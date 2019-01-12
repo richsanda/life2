@@ -53,7 +53,7 @@ class PipelineLookupOperation implements FieldsExposingAggregationOperation, Fie
        pipeline: [
          {$match:
            {$expr: {$and: [
-             {$in: ["$$address", "$tos"]},
+             {$in: ["$$address", "$toIndex"]},
              {$gt: ["$sent", ISODate("2013-01-01T00:00:00Z")]},
              {$lte: ["$sent", ISODate("2013-04-01T00:00:00Z")]}
            ]}}

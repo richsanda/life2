@@ -31,9 +31,6 @@ public class MboxEmailBatchConfiguration extends DefaultBatchConfigurer {
     private final EmailOperations emailService;
     private final PersonOperations personService;
 
-    @Value("${email.address.parser.type}")
-    private String emailAddressParserType;
-
     @Value("${email.to.default}")
     private String emailToDefault;
 

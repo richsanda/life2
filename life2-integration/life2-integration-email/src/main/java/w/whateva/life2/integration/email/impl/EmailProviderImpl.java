@@ -26,7 +26,7 @@ public class EmailProviderImpl implements ArtifactProvider {
 
     @Override
     public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> names) {
-        return emailClient.search(after, before, names)
+        return emailClient.search(after, before, names, names, names)
                 .stream()
                 .map(EmailUtil::toDto)
                 .collect(Collectors.toList());

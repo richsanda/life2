@@ -23,11 +23,16 @@ public class Email {
     private String id;
 
     @Indexed
+    private String key;
+
+    @Indexed
     private LocalDateTime sent;
     private String from;
+    @Indexed
+    private String fromIndex;
     private String to;
     @Indexed
-    private Set<String> tos;
+    private Set<String> toIndex;
     private String subject;
     private String body;
 }
