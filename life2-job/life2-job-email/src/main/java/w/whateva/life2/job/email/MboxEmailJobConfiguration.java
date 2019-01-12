@@ -86,7 +86,7 @@ public class MboxEmailJobConfiguration {
     @Bean
     public Jaxb2Marshaller emailUnmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(XmlEmail.class);
+        marshaller.setClassesToBeBound(XmlPerson.class);
         marshaller.setCheckForXmlRootElement(true);
         return marshaller;
     }

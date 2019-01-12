@@ -4,21 +4,19 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.Fields;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.domain.Person;
 import w.whateva.life2.data.email.repository.PersonDao;
 import w.whateva.life2.data.email.repository.util.AggregationUtility;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
@@ -35,7 +33,7 @@ public class PersonDaoImpl implements PersonDao {
 
     {"$group": {"_id": "$name", "emails": {$addToSet: "$emails"}}},
 
-    {"$lookup": {"from": "email", "localField": "emails", "foreignField": "tos", "as": "join"}},
+    {"$lookup": {"from": "email", "localField": "emails", "foreignField": "toIndex", "as": "join"}},
 
     {"$unwind": "$join"},
 
@@ -54,7 +52,7 @@ public class PersonDaoImpl implements PersonDao {
                 //match(Criteria.where("name").is("rich.s")),
                 unwind("emails"),
                 group("name").addToSet("emails").as("emails"),
-                lookup("email", "emails", "tos", "join"),
+                lookup("email", "emails", "toIndex", "join"),
                 unwind("join"),
                 group("_id", "join").count().as("count"),
                 sort(Sort.Direction.DESC, "count")
@@ -68,16 +66,72 @@ public class PersonDaoImpl implements PersonDao {
     */
 
     @Override
-    public List<Email> getEmails(Set<String> names, LocalDateTime after, LocalDateTime before) {
+    public List<Email> getEmails(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before) {
+
+        /*
+        AggregationOperation[] args = new AggregationOperation[]{};
+        int i = 0;
+
+        Set<String> names = Stream.of(who, from, to)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+
+        if (!CollectionUtils.isEmpty(names)) {
+            args[i++] = match(Criteria.where("name").in(names));
+        }
+
+        args[i++] = unwind("emails");
+        args[i++] = group("name").addToSet("emails").as("emails");
+        args[i++] = lookup("email", "emails", "toIndex", "join");
+        args[i++] = unwind("join");
+
+        if (null != after || null != before) {
+            Criteria criteria = Criteria.where("join.sent");
+            if (null != after) criteria = criteria.gte(after);
+            if (null != after) criteria = criteria.lt(before);
+            args[i++] = match(criteria);
+        }
+
+        args[i++] = sort(Sort.Direction.ASC, "join.sent");
+
+        if (!CollectionUtils.isEmpty(who)) {
+            args[i++] = match(Criteria.where("join.").in(names));
+        }
+
+        args[i] = project(Fields.fields("name", "join.sent", "join.from", "join.to", "join.subject", "join.body"));
+
+
+        Aggregation agg = newAggregation(args);
+
+        */
+
+        Aggregation agg = newAggregation(
+                match(Criteria.where("name").in(who)),
+                unwind("emails"),
+                group("name").addToSet("emails").as("emails"),
+                lookup("email", "emails", "fromIndex", "join"),
+                unwind("join"),
+                match(Criteria.where("join.sent").gte(after).lt(before)),
+                // group("_id", "emails").count().as("count"),
+                sort(Sort.Direction.ASC, "join.sent"),
+                project(Fields.fields("name", "join.key", "join.sent", "join.from", "join.to", "join.subject", "join.body"))
+        );
+
+        //Convert the aggregation result into a List
+        AggregationResults<Email> groupResults  = mongoTemplate.aggregate(agg, Person.class, Email.class);
+
+        return groupResults.getMappedResults();
+    }
+
+    private List<Email> getEmails(Set<String> names, EmailRole role, LocalDateTime after, LocalDateTime before) {
 
         Aggregation agg = newAggregation(
                 match(Criteria.where("name").in(names)),
                 unwind("emails"),
                 group("name").addToSet("emails").as("emails"),
-                lookup("email", "emails", "tos", "join"),
+                lookup("email", "emails", fieldForRole(role), "join"),
                 unwind("join"),
                 match(Criteria.where("join.sent").gte(after).lt(before)),
-                // group("_id", "emails").count().as("count"),
                 sort(Sort.Direction.ASC, "join.sent"),
                 project(Fields.fields("name", "join.sent", "join.from", "join.to", "join.subject", "join.body"))
         );
@@ -88,6 +142,13 @@ public class PersonDaoImpl implements PersonDao {
         return groupResults.getMappedResults();
     }
 
+    private static String fieldForRole(EmailRole role) {
+        switch (role) {
+            case FROM: return "fromIndex";
+            case TO: return "toIndex";
+            default: return "toAndFromIndex";
+        }
+    }
 
     //@Override
     public List<Email> getEmailsUsingPipeline(Set<String> names, LocalDateTime after, LocalDateTime before) {
@@ -101,7 +162,7 @@ public class PersonDaoImpl implements PersonDao {
                 match(Criteria.where("name").in(names)),
                 unwind("emails"),
                 // group("name").addToSet("emails").as("emails"),
-                // lookup("email", "emails", "tos", "join"),
+                // lookup("email", "emails", "toIndex", "join"),
                 AggregationUtility.lookup("email", "join", let, emailPipeline),
                 //new JsonAggregationOperation(query),
                 unwind("join"),
@@ -133,7 +194,7 @@ public class PersonDaoImpl implements PersonDao {
        pipeline: [
          {$match:
            {$expr: {$and: [
-             {$in: ["$$address", "$tos"]},
+             {$in: ["$$address", "$toIndex"]},
              {$gt: ["$sent", ISODate("2013-01-01T00:00:00Z")]},
              {$lte: ["$sent", ISODate("2013-04-01T00:00:00Z")]}
            ]}}
@@ -151,4 +212,8 @@ public class PersonDaoImpl implements PersonDao {
 
 
      */
+
+    enum EmailRole {
+        FROM, TO, EITHER
+    }
 }

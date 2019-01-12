@@ -11,13 +11,12 @@ import java.util.Set;
 @Setter
 public class ApiArtifact {
 
-    private String id;
+    private String key;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime sent;
     private String from;
     private String to;
-    private Set<String> tos;
     private String subject;
     private String body;
     private String message;

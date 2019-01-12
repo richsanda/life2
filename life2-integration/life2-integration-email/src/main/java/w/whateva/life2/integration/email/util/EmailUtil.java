@@ -7,6 +7,7 @@ public class EmailUtil {
 
     public static ApiArtifact toDto(ApiEmail email) {
         ApiArtifact artifact = new ApiArtifact();
+        artifact.setKey(email.getKey());
         artifact.setFrom(email.getFrom());
         artifact.setSent(email.getSent());
         artifact.setTo(email.getTo());

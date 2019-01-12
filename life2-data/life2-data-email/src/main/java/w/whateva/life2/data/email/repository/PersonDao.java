@@ -8,5 +8,5 @@ import java.util.Set;
 
 public interface PersonDao {
 
-    List<Email> getEmails(Set<String> names, LocalDateTime after, LocalDateTime before);
+    List<Email> getEmails(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before);
 }

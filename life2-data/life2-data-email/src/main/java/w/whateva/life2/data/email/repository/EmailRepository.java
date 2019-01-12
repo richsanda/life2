@@ -10,4 +10,6 @@ import java.util.List;
 public interface EmailRepository extends MongoRepository<Email, String> {
 
     List<Email> findAllByOrderBySentAsc();
+
+    Email findUniqueByKey();
 }

@@ -28,9 +28,6 @@ public class XmlEmailBatchConfiguration extends DefaultBatchConfigurer {
     private final EmailOperations emailService;
     private final PersonOperations personService;
 
-    @Value("${email.address.parser.type}")
-    private String emailAddressParserType;
-
     @Value("${email.to.default}")
     private String emailToDefault;
 
@@ -49,7 +46,7 @@ public class XmlEmailBatchConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemProcessor<XmlEmail, ApiEmail> emailProcessor() {
-        return new XmlEmailProcessor(emailAddressParserType, emailToDefault);
+        return new XmlEmailProcessor(emailToDefault);
     }
 
     @Bean

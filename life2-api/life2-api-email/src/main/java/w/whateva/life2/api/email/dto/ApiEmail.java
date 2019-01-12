@@ -11,13 +11,13 @@ import java.util.Set;
 @Setter
 public class ApiEmail {
 
-    private String id;
+    private String key;
 
+    private String messageId;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime sent;
     private String from;
     private String to;
-    private Set<String> tos;
     private String subject;
     private String body;
     private String message;
