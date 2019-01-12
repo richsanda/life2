@@ -5,7 +5,6 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,9 +19,6 @@ import w.whateva.life2.api.email.dto.ApiPerson;
 import w.whateva.life2.job.email.beans.*;
 import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlPerson;
-
-import javax.mail.internet.MimeMessage;
-import java.util.Arrays;
 
 @Configuration
 @EnableBatchProcessing
@@ -53,7 +49,7 @@ public class XmlEmailBatchConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemProcessor<XmlEmail, ApiEmail> emailProcessor() {
-        return new EmailProcessor(emailAddressParserType, emailToDefault);
+        return new XmlEmailProcessor(emailAddressParserType, emailToDefault);
     }
 
     @Bean
