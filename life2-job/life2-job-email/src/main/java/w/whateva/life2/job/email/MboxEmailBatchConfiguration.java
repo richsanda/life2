@@ -5,23 +5,23 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import w.whateva.life2.api.email.EmailOperations;
-import w.whateva.life2.api.email.PersonOperations;
+import w.whateva.life2.api.email.PersonService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.api.email.dto.ApiPerson;
-import w.whateva.life2.job.email.beans.*;
+import w.whateva.life2.job.email.beans.EmailWriter;
+import w.whateva.life2.job.email.beans.MboxEmailProcesor;
+import w.whateva.life2.job.email.beans.PersonProcessor;
+import w.whateva.life2.job.email.beans.PersonWriter;
 import w.whateva.life2.xml.email.def.XmlPerson;
 
 import javax.mail.internet.MimeMessage;
-import java.util.Arrays;
 
 @Configuration
 @EnableBatchProcessing
@@ -29,13 +29,10 @@ import java.util.Arrays;
 public class MboxEmailBatchConfiguration extends DefaultBatchConfigurer {
 
     private final EmailOperations emailService;
-    private final PersonOperations personService;
-
-    @Value("${email.to.default}")
-    private String emailToDefault;
+    private final PersonService personService;
 
     @Autowired
-    public MboxEmailBatchConfiguration(EmailOperations emailService, PersonOperations personService) {
+    public MboxEmailBatchConfiguration(EmailOperations emailService, PersonService personService) {
         this.emailService = emailService;
         this.personService = personService;
     }

@@ -41,7 +41,7 @@ public class XmlEmailJobConfiguration {
     @Value("${person.xml.file}")
     private String personXmlFile;
 
-    @Value("${email.xml.root.name}")
+    @Value("${email.xml.root}")
     private String fragmentRootElementName;
 
     @Autowired
@@ -56,6 +56,7 @@ public class XmlEmailJobConfiguration {
         return this.jobs.get("loadEmailJob")
                 .start(loadEmailStep())
                 .next(loadPersonStep())
+                .next(addGroupAddressToSendersStep())
                 .build();
     }
 
@@ -76,6 +77,13 @@ public class XmlEmailJobConfiguration {
                 .reader(personReader())
                 .processor(config.personProcessor())
                 .writer(config.personWriter())
+                .build();
+    }
+
+    @Bean
+    public Step addGroupAddressToSendersStep() {
+        return this.steps.get("addGroupAddressToSendersStep")
+                .tasklet(config.addGroupAddressToSendersTasklet())
                 .build();
     }
 

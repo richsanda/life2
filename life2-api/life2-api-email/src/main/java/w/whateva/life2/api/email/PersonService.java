@@ -4,7 +4,7 @@ import w.whateva.life2.api.email.dto.ApiPerson;
 
 import java.util.List;
 
-public interface PersonOperations {
+public interface PersonService {
 
     List<ApiPerson> allPersons();
 

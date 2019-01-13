@@ -12,21 +12,11 @@ public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
 
     private static final String KEY_SEPARATOR = ":";
 
-    private final String defaultTo;
-
-    public XmlEmailProcessor(String defaultTo) {
-        this.defaultTo = defaultTo;
-    }
-
     public ApiEmail process(XmlEmail xmlEmail) {
 
         ApiEmail apiEmail = xmlEmail instanceof XmlGroupMessage
                 ? convert((XmlGroupMessage) xmlEmail)
                 : convert(xmlEmail);
-
-        if (null == apiEmail.getTo()) {
-            apiEmail.setTo(defaultTo);
-        }
 
         System.out.println(apiEmail.getKey());
 

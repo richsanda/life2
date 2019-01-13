@@ -1,13 +1,18 @@
 package w.whateva.life2.service.email;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "email")
+@Getter
+@Setter
 public class EmailServiceConfigurationProperties {
 
     private Address address;
+    private Group group;
 
     public Address getAddress() {
         return address;
@@ -17,20 +22,21 @@ public class EmailServiceConfigurationProperties {
         this.address = address;
     }
 
+    @Getter
+    @Setter
     public static class Address {
 
-        AddressType type;
-
-        public AddressType getType() {
-            return type;
-        }
-
-        public void setType(AddressType type) {
-            this.type = type;
-        }
+        private AddressStyle style;
     }
 
-    enum AddressType {
+    @Getter
+    @Setter
+    public static class Group {
+
+        private String recipient;
+    }
+
+    enum AddressStyle {
 
         INTERNET, SIMPLE;
     }

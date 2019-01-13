@@ -5,21 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import w.whateva.life2.api.email.EmailOperations;
-import w.whateva.life2.api.email.PersonOperations;
+import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.email.repository.PersonDao;
+import w.whateva.life2.data.email.repository.PersonRepository;
 
 import javax.mail.internet.InternetAddress;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -27,31 +24,47 @@ import java.util.stream.Collectors;
  */
 @Primary
 @Service
-public class EmailServiceImpl implements EmailOperations {
+public class EmailServiceImpl implements EmailService {
 
-    private final EmailServiceConfigurationProperties configurationProperties;
     private final EmailRepository emailRepository;
-    private final PersonOperations personService;
+    private final PersonRepository personRepository;
     private final PersonDao personDao;
 
+    private final EmailServiceConfigurationProperties.AddressStyle addressStyle;
+    private final String groupAddress;
+
     @Autowired
-    public EmailServiceImpl(EmailServiceConfigurationProperties configurationProperties, EmailRepository emailRepository, PersonOperations personService, PersonDao personDao) {
-        this.configurationProperties = configurationProperties;
+    public EmailServiceImpl(EmailServiceConfigurationProperties configurationProperties, EmailRepository emailRepository, PersonRepository personRepository, PersonDao personDao) {
+
         this.emailRepository = emailRepository;
-        this.personService = personService;
+        this.personRepository = personRepository;
         this.personDao = personDao;
+
+        this.groupAddress = null != configurationProperties.getGroup() &&
+                null != configurationProperties.getGroup().getRecipient() ?
+                configurationProperties.getGroup().getRecipient() :
+                null;
+
+        this.addressStyle = null != configurationProperties.getAddress() &&
+                null != configurationProperties.getAddress().getStyle() ?
+                configurationProperties.getAddress().getStyle() :
+                null;
     }
 
     public void add(ApiEmail apiEmail) {
 
         Email email = new Email();
 
-        // TODO: figure out if i really want to use the id field
-        email.setId(apiEmail.getKey());
+        email.setId(apiEmail.getKey()); // eh, for now
 
         BeanUtils.copyProperties(apiEmail, email);
 
-        switch (configurationProperties.getAddress().getType()) {
+        if (null != groupAddress) {
+            email.setTo(groupAddress);
+            email.setGroup(true);
+        }
+
+        switch (addressStyle) {
             case SIMPLE:
                 email.setToIndex(toSimpleAddresses(apiEmail.getTo()));
                 email.setFromIndex(toSimpleAddresses(apiEmail.getFrom()).stream().findFirst().orElse(null));
@@ -84,6 +97,19 @@ public class EmailServiceImpl implements EmailOperations {
                 .stream()
                 .map(EmailServiceImpl::toApi)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void addGroupAddressToSenders() {
+
+        if (null == groupAddress) return;
+
+        personDao.getSenders().forEach(person -> {
+            if (null == person.getEmails()) person.setEmails(Collections.emptySet());
+            System.out.println("name is: " + person.getName());
+            person.getEmails().add(groupAddress);
+            personRepository.save(person);
+        });
     }
 
     private static ApiEmail toApi(Email email) {

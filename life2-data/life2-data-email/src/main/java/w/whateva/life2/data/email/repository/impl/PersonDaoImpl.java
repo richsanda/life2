@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.domain.Person;
 import w.whateva.life2.data.email.repository.PersonDao;
+import w.whateva.life2.data.email.repository.PersonRepository;
 import w.whateva.life2.data.email.repository.util.AggregationUtility;
 
 import java.time.LocalDateTime;
@@ -119,6 +120,46 @@ public class PersonDaoImpl implements PersonDao {
 
         //Convert the aggregation result into a List
         AggregationResults<Email> groupResults  = mongoTemplate.aggregate(agg, Person.class, Email.class);
+
+        return groupResults.getMappedResults();
+    }
+
+    /*
+
+db.email.aggregate([
+
+    {"$group": {"_id": "$fromIndex", "emails": {$addToSet: "$fromIndex"}, "count": {$sum: 1}}},
+
+    {"$unwind": "$_id"},
+
+    {"$lookup": {"from": "person", "localField": "_id", "foreignField": "emails", "as": "person"}},
+
+    {"$unwind": "$person"},
+
+    {"$group": {"_id": "$person.name", "emails": {$addToSet: "$person.emails"}, "count": {$sum: "$count"}}},
+
+    {"$sort": { "count": -1} },
+
+    {$project: {"_id": "$_id", "emails": "$emails", "count": "$count"}},
+
+])
+
+     */
+
+    public List<Person> getSenders() {
+
+        Aggregation agg = newAggregation(
+                group("fromIndex").addToSet("fromIndex").as("emails").count().as("count"),
+                unwind("_id"),
+                lookup("person", "_id", "emails", "person"),
+                unwind("person"),
+                project("person._id", "person.name", "person.emails", "count"),
+                group("name").sum("count").as("count").first("name").as("name").first("emails").as("emails"),
+                sort(Sort.Direction.DESC, "count")
+        );
+
+        //Convert the aggregation result into a List
+        AggregationResults<Person> groupResults  = mongoTemplate.aggregate(agg, Email.class, Person.class);
 
         return groupResults.getMappedResults();
     }

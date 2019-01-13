@@ -1,20 +1,23 @@
 package w.whateva.life2.service.email;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import w.whateva.life2.api.email.PersonOperations;
+import w.whateva.life2.api.email.PersonService;
 import w.whateva.life2.api.email.dto.ApiPerson;
 import w.whateva.life2.data.email.domain.Person;
 import w.whateva.life2.data.email.repository.PersonRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PersonServiceImpl implements PersonOperations {
+public class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;
 
+    @Autowired
     public PersonServiceImpl(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
