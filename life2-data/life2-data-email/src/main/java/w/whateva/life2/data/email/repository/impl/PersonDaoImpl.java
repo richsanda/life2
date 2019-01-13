@@ -115,7 +115,7 @@ public class PersonDaoImpl implements PersonDao {
                 match(Criteria.where("join.sent").gte(after).lt(before)),
                 // group("_id", "emails").count().as("count"),
                 sort(Sort.Direction.ASC, "join.sent"),
-                project(Fields.fields("name", "join.key", "join.sent", "join.from", "join.to", "join.subject", "join.body"))
+                project(Fields.fields("name", "join.key", "join.sent", "join.from", "join.to", "join.subject")) // , "join.body"))
         );
 
         //Convert the aggregation result into a List

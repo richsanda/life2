@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
  */
 @Primary
 @Service
-// @EnableFeignClients(basePackages = "w.whateva.life2.integration")
 public class ArtifactServiceImpl implements ArtifactOperations {
 
     private final GenericWebApplicationContext context;
@@ -45,6 +44,7 @@ public class ArtifactServiceImpl implements ArtifactOperations {
                 .parallelStream()
                 .map(p -> search(p, after, before, names))
                 .flatMap(List::stream)
+                .sorted(Comparator.comparing(ApiArtifact::getSent))
                 .collect(Collectors.toList());
     }
 
