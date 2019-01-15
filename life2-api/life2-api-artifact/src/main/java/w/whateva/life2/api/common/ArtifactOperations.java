@@ -18,7 +18,10 @@ public interface ArtifactOperations {
     ApiArtifact read(@PathVariable("key") String key);
 
     @RequestMapping(value = "/emails", method = RequestMethod.GET, produces = "application/json")
-    List<ApiArtifact> search(@RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,
-                          @RequestParam(value = "before", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate before,
-                          @RequestParam(value = "names", required = false) HashSet<String> names);
+    List<ApiArtifact> search(
+            @RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,
+            @RequestParam(value = "before", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate before,
+            @RequestParam(value = "who", required = false) HashSet<String> who,
+            @RequestParam(value = "from", required = false) HashSet<String> from,
+            @RequestParam(value = "to", required = false) HashSet<String> to);
 }

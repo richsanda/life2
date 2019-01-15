@@ -13,10 +13,12 @@ import java.util.stream.Collectors;
 
 public class EmailProviderImpl implements ArtifactProvider {
 
-    private EmailOperations emailClient;
+    private final EmailOperations emailClient;
+    private final String trove;
 
-    public EmailProviderImpl(EmailOperations client) {
+    public EmailProviderImpl(EmailOperations client, String trove) {
         this.emailClient = client;
+        this.trove = trove;
     }
 
     @Override
@@ -25,16 +27,24 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> names) {
-        return emailClient.search(after, before, names, names, names)
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+        return emailClient.search(after, before, who, from, to)
                 .stream()
                 .map(EmailUtil::toDto)
+                .map(this::embellish)
                 .collect(Collectors.toList());
     }
 
-    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> names, Integer integer) {
+    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer integer) {
         List<List<ApiArtifact>> result = Lists.newArrayList();
-        result.add(search(after, before, names));
+        result.add(search(after, before, who, from, to));
         return result;
+    }
+
+    private ApiArtifact embellish(ApiArtifact artifact) {
+
+        artifact.setTrove(trove);
+
+        return artifact;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import w.whateva.life2.data.email.domain.Email;
@@ -69,6 +70,34 @@ public class PersonDaoImpl implements PersonDao {
     @Override
     public List<Email> getEmails(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before) {
 
+        ArrayList<Criteria> criteria = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(who)) {
+            criteria.add(new Criteria().orOperator(Criteria.where("toIndex").in(who), Criteria.where("fromIndex").in(who)));
+        }
+
+        if (!CollectionUtils.isEmpty(from)) {
+            criteria.add(Criteria.where("fromIndex").in(from));
+        }
+
+        if (!CollectionUtils.isEmpty(to)) {
+            criteria.add(Criteria.where("toIndex").in(to));
+        }
+
+        if (null != after || null != before) {
+            Criteria sentCriteria = Criteria.where("sent");
+            if (null != after) sentCriteria.gt(after);
+            if (null != from) sentCriteria.lte(before);
+            criteria.add(sentCriteria);
+        }
+
+        Criteria[] queryCriteria = new Criteria[criteria.size()];
+        queryCriteria = criteria.toArray(queryCriteria);
+
+        Query query = new Query(new Criteria().andOperator(queryCriteria)).with(new Sort(Sort.Direction.ASC, "sent"));
+
+        return mongoTemplate.find(query, Email.class);
+
         /*
         AggregationOperation[] args = new AggregationOperation[]{};
         int i = 0;
@@ -106,8 +135,9 @@ public class PersonDaoImpl implements PersonDao {
 
         */
 
+        /*
         Aggregation agg = newAggregation(
-                match(Criteria.where("name").in(who)),
+                match(Criteria.where("name").in(from)),
                 unwind("emails"),
                 group("name").addToSet("emails").as("emails"),
                 lookup("email", "emails", "fromIndex", "join"),
@@ -122,6 +152,8 @@ public class PersonDaoImpl implements PersonDao {
         AggregationResults<Email> groupResults  = mongoTemplate.aggregate(agg, Person.class, Email.class);
 
         return groupResults.getMappedResults();
+
+                */
     }
 
     /*

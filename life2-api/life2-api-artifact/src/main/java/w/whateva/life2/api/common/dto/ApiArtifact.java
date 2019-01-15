@@ -15,6 +15,8 @@ public class ApiArtifact {
 
     private String key;
 
+    private String trove;
+
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime sent;
     private String from;

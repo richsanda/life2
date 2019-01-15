@@ -12,7 +12,7 @@ public class EmailUtil {
         artifact.setSent(email.getSent());
         artifact.setTo(email.getTo());
         artifact.setSubject(email.getSubject());
-        artifact.setBody(email.getBody());
+        // artifact.setBody(email.getBody());
         return artifact;
     }
 }

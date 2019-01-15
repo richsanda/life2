@@ -1,5 +1,6 @@
 package w.whateva.life2.integration.email.config;
 
+import feign.Client;
 import feign.Feign;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class EmailClientRegistrar {
 
     @Getter
     @Setter
-    private Map<String, EmailConfiguration> clients;
+    private Map<String, EmailConfiguration> troves;
 
     @Autowired
     EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration) {
@@ -39,10 +40,15 @@ public class EmailClientRegistrar {
     private void postConstruct() {
 
         // dynamically register an artifact provider for each email client
-        for (Map.Entry<String, EmailConfiguration> entry : clients.entrySet()) {
+        for (Map.Entry<String, EmailConfiguration> entry : troves.entrySet()) {
             context.registerBean(entry.getKey() + CLIENT_BEAN_SUFFIX,
                     ArtifactProvider.class,
-                    () -> new EmailProviderImpl(emailClient(entry.getValue().getUrl())));
+                    () -> {
+                        EmailConfiguration config = entry.getValue();
+                        EmailOperations client = emailClient(config.getUrl());
+                        String trove = null != config.getName() ? config.getName() : entry.getKey();
+                        return new EmailProviderImpl(client, trove);
+                    });
         }
     }
 
