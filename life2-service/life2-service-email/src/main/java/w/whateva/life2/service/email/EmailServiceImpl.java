@@ -4,18 +4,18 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.data.email.domain.Email;
+import w.whateva.life2.data.email.domain.Person;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.email.repository.PersonDao;
 import w.whateva.life2.data.email.repository.PersonRepository;
 
 import javax.mail.internet.InternetAddress;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,12 +66,12 @@ public class EmailServiceImpl implements EmailService {
 
         switch (addressStyle) {
             case SIMPLE:
-                email.setToIndex(toSimpleAddresses(apiEmail.getTo()));
-                email.setFromIndex(toSimpleAddresses(apiEmail.getFrom()).stream().findFirst().orElse(null));
+                email.setToIndex(toSimpleAddresses(email.getTo()));
+                email.setFromIndex(toSimpleAddresses(email.getFrom()).stream().findFirst().orElse(null));
                 break;
             case INTERNET:
-                email.setToIndex(toEmailAddresses(apiEmail.getTo()));
-                email.setFromIndex(toEmailAddresses(apiEmail.getFrom()).stream().findFirst().orElse(null));
+                email.setToIndex(toEmailAddresses(email.getTo()));
+                email.setFromIndex(toEmailAddresses(email.getFrom()).stream().findFirst().orElse(null));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown email address parser type");
@@ -91,12 +91,31 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public List<ApiEmail> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
-        return personDao.getEmails(who, from, to,
-                LocalDateTime.of(after, LocalTime.parse("00:00")),
-                LocalDateTime.of(before, LocalTime.parse("23:59")))
+
+        Set<String> whoEmails = getEmailAddresses(who);
+        Set<String> fromEmails = getEmailAddresses(from);
+        Set<String> toEmails = getEmailAddresses(to);
+
+        return personDao.getEmails(
+                whoEmails,
+                fromEmails,
+                toEmails,
+                null == after ? null : after.atStartOfDay(),
+                null == before ? null : before.atStartOfDay().plusDays(1))
                 .stream()
                 .map(EmailServiceImpl::toApi)
                 .collect(Collectors.toList());
+    }
+
+    private Set<String> getEmailAddresses(Set<String> names) {
+
+        if (CollectionUtils.isEmpty(names)) return Collections.emptySet();
+
+        return personRepository.findByNameIn(names)
+                .stream()
+                .map(Person::getEmails)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -112,10 +131,10 @@ public class EmailServiceImpl implements EmailService {
         });
     }
 
-    private static ApiEmail toApi(Email email) {
+    public static ApiEmail toApi(Email email) {
         if (null == email) return null;
         ApiEmail ApiEmail = new ApiEmail();
-        BeanUtils.copyProperties(email, ApiEmail);
+        BeanUtils.copyProperties(email, ApiEmail, "body");
         return ApiEmail;
     }
 

@@ -39,27 +39,27 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> names) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
         return providers()
                 .parallelStream()
-                .map(p -> search(p, after, before, names))
+                .map(p -> search(p, after, before, who, from, to))
                 .flatMap(List::stream)
                 .sorted(Comparator.comparing(ApiArtifact::getSent))
                 .collect(Collectors.toList());
     }
 
-    private List<ApiArtifact> search(ArtifactProvider provider, LocalDate after, LocalDate before, HashSet<String> names) {
+    private List<ApiArtifact> search(ArtifactProvider provider, LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
         try {
-            return provider.search(after, before, names);
+            return provider.search(after, before, who, from, to);
         } catch (Exception e) {
             return Lists.newArrayList();
         }
     }
 
-    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> names, Integer numBuckets) {
+    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer numBuckets) {
 
         List<List<ApiArtifact>> buckets = artifactUtility.putInBuckets(
-                search(after, before, names),
+                search(after, before, who, from, to),
                 new AbstractLocalDateTimeOperator<ApiArtifact>() {
                     @Override
                     public LocalDateTime apply(ApiArtifact artifact) {
