@@ -21,7 +21,8 @@ import w.whateva.service.utilities.controller.AutoControllers;
 @ComponentScan(basePackages = {
         "w.whateva.life2.app.artifact",
         "w.whateva.life2.service.artifact",
-        "w.whateva.life2.integration"
+        "w.whateva.life2.integration",
+        "w.whateva.life2.web"
 })
 @EnableAsync
 @AutoControllers(apis = { ArtifactOperations.class })

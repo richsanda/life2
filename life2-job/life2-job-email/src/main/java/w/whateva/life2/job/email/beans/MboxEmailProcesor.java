@@ -14,10 +14,7 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
 
@@ -26,13 +23,20 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
     @Override
     public ApiEmail process(MimeMessage message) throws Exception {
 
-        MimeMessageParser parser = new MimeMessageParser(message).parse();
+        MimeMessageParser parser;
+
+        try {
+            parser = new MimeMessageParser(message).parse();
+        } catch (Exception e) {
+            return null;
+        }
         Map<String, String> headers = new HashMap<>();
         message.getAllHeaderLines();
         for (Enumeration<Header> e = message.getAllHeaders(); e.hasMoreElements();) {
             Header h = e.nextElement();
             headers.put(h.getName(), h.getValue());
         }
+        Date sentDate = getSentDate(headers, parser);
 
         ApiEmail result = new ApiEmail();
         result.setKey(createKey(headers, parser));
@@ -40,7 +44,7 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
         result.setFrom(headers.get("From"));
         result.setTo(headers.get("To"));
         result.setSubject(headers.get("Subject"));
-        result.setSent(parser.getMimeMessage().getSentDate().toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
+        result.setSent(null == sentDate ? null : sentDate.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
         result.setBody(!StringUtils.isEmpty(parser.getHtmlContent()) ? parser.getHtmlContent() : parser.getPlainContent());
         result.setMessage(toString(message));
 
@@ -55,8 +59,12 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
 
         try {
 
+            Date sentDate = getSentDate(headers, parser);
+
+            if (null == sentDate) return null;
+
             return "<" +
-                    getSentDate(parser) +
+                    String.valueOf(sentDate.toInstant().getEpochSecond()) +
                     KEY_SEPARATOR +
                     parser.getFrom() +
                     ">";
@@ -74,11 +82,24 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
         return os.toString();
     }
 
-    private static String getSentDate(MimeMessageParser parser) {
+    private static Date getSentDate(Map<String, String> headers, MimeMessageParser parser) {
         try {
-            return String.valueOf(parser.getMimeMessage().getSentDate().toInstant().getEpochSecond());
+            return parser.getMimeMessage().getSentDate();
         } catch (MessagingException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            String result =  makeKeyFromHeaders(headers);
+            System.out.println("Could not get a date out of this one: " + result);
+            return null;
+        }
+        return null;
+    }
+
+    private static String makeKeyFromHeaders(Map<String, String> headers) {
+        Iterator<Map.Entry<String, String>> headerIterator = headers.entrySet().iterator();
+        if (headerIterator.hasNext()) {
+            Map.Entry<String, String> entry = headerIterator.next();
+            return entry.getKey() + entry.getValue();
         }
         return null;
     }

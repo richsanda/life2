@@ -14,8 +14,8 @@ import java.util.List;
 @RequestMapping
 public interface ArtifactOperations {
 
-    @RequestMapping(value = "/email/{key}", method = RequestMethod.GET, produces = "application/json")
-    ApiArtifact read(@PathVariable("key") String key);
+    @RequestMapping(value = "/email/{trove}/{key}", method = RequestMethod.GET, produces = "application/json")
+    ApiArtifact read(@PathVariable("trove") String trove, @PathVariable("key") String key);
 
     @RequestMapping(value = "/emails", method = RequestMethod.GET, produces = "application/json")
     List<ApiArtifact> search(

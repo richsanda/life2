@@ -29,7 +29,7 @@ function go() {
     var before = $('#before').val();
     var names = $('#names').val();
 
-    var url = "/person/emails?after=" + after + "&before=" + before + "&names=" + names;
+    var url = "/emails?after=" + after + "&before=" + before + "&from=" + names;
 
     $.ajax({
         url: url,
@@ -144,20 +144,6 @@ function buildStoryButtonDiv(showStories) {
 
 function showEmail(entry, count) {
 
-    var timelineDiv = showTimeline();
-
-    var releaseCircleDiv = showCircle(entry.releasePosition, 5, "hi");
-    var soundtrackCircleDiv = showCircle(entry.soundtrackPosition, Math.max(5, Math.sqrt(entry.score) * 1.5), "hi");
-    var timespanDiv = $("<div class='timespan' title='" + "hi" + "'></div>");
-    timespanDiv.css({
-        'left': entry.releasePosition + '%',
-        'right': 100 - entry.soundtrackPosition + '%'
-    });
-
-    timelineDiv.append(releaseCircleDiv);
-    timelineDiv.append(soundtrackCircleDiv);
-    timelineDiv.append(timespanDiv);
-
     var titleDiv = $("<div class='title toggle-story'/>");
 
     var fromDiv = $(
@@ -178,7 +164,6 @@ function showEmail(entry, count) {
 
     titleDiv.append(fromDiv);
     titleDiv.append(subjectDiv);
-    titleDiv.append(timelineDiv);
 
     var entryDiv = $("<div class='entry' id='" + entry.key + "'/>");
     entryDiv.append(titleDiv);
@@ -190,89 +175,6 @@ function showEmail(entry, count) {
     $(storyDiv).hide();
 
     return entryDiv;
-}
-
-function showTimeline() {
-
-    return $(
-        "<div class='timeline-container'>" +
-        "<div class='timeline-segment'>62</div>" +
-        "<div class='timeline-segment'>67</div>" +
-        "<div class='timeline-segment'>72</div>" +
-        "<div class='timeline-segment'>77</div>" +
-        "<div class='timeline-segment'>82</div>" +
-        "<div class='timeline-segment'>87</div>" +
-        "<div class='timeline-segment soundtrack-segment'>92</div>" +
-        "<div class='timeline-segment soundtrack-segment'>97</div>" +
-        "<div class='timeline-segment soundtrack-segment'>02</div>" +
-        "<div class='timeline-segment soundtrack-segment'>07</div>" +
-        "<div class='timeline-segment-last soundtrack-segment'>12</div>" +
-        "</div>"
-    );
-}
-
-function showCircle(p, d, t) {
-
-    var circleDiv = $("<div class='soundtrack-circle' title='" + t + "'></div>");
-
-    circleDiv.css({
-        "left": "" + p + "%",
-        'height': d + 'px',
-        'width': d + 'px',
-        'margin-left': '-' + d / 2 + 'px',
-        'margin-top': '-' + d / 2 + 'px'
-    });
-
-    return circleDiv;
-}
-
-function showTag(tag) {
-
-    var titleDiv = $("<div class='title'><div class='tag-title title-button' id='" + tag.tag + "'>" + tag.tag + " " + appearanceify(tag.appearances) + "</div> " + valuify(tag.fullTag) + "</div>");
-    var storyDiv = $("<div class='story'>" + storyify(tag.story) + "</div>");
-    var tagDiv = $("<div class='tag' id='" + tag.key + "'/>");
-    tagDiv.append(titleDiv);
-    tagDiv.append(storyDiv);
-    tagDiv.append("<hr/>");
-
-    return tagDiv;
-}
-
-function buildTagLink(tag) {
-    var tagLink = $(nameify(null, "#", tag.tag));
-    tagLink.text(tagLink.text() + " " + appearanceify(tag.appearances));
-    return tagLink;
-}
-
-function buildPerson(person) {
-
-    var titleDiv = $("<div class='title'><div class='person-title title-button' id='" + person.tag + "'> " + person.tag + " " + appearanceify(person.appearances) + "</div> " + valuify(person.name) + "</div>");
-    var storyDiv = $("<div class='story'>" + storyify(person.story) + "</div>");
-    var personDiv = $("<div class='person' id='" + person.key + "'/>");
-    personDiv.append(titleDiv);
-    personDiv.append(storyDiv);
-    storyDiv.append("<hr/>");
-
-    return personDiv;
-}
-
-function buildPersonLink(person) {
-    var personLink = $(nameify(null, "@", person.tag));
-    personLink.append(" " + appearanceify(person.appearances));
-    return personLink;
-}
-
-function readNameTag(id) {
-
-    var url = "/entries?personTags=" + id;
-
-    $.ajax({
-        url: url,
-        type: "get",
-        contentType: "application/json"
-    }).success(function (data) {
-        showPane(buildPeoplePane(id), buildEntries(data, true));
-    });
 }
 
 function storyify(text) {

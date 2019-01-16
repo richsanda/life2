@@ -34,8 +34,22 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     }
 
     @Override
-    public ApiArtifact read(String key) {
-        return null;
+    public ApiArtifact read(String trove, String key) {
+
+        return providers()
+                .parallelStream()
+                .map(p -> read(p, trove, key))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElse(null);
+    }
+
+    private ApiArtifact read(ArtifactProvider provider, String trove, String key) {
+        try {
+            return provider.read(trove, key);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override

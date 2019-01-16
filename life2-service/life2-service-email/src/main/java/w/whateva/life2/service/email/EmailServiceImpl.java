@@ -77,16 +77,20 @@ public class EmailServiceImpl implements EmailService {
                 throw new IllegalArgumentException("Unknown email address parser type");
         }
 
-        emailRepository.save(email);
+        try {
+            emailRepository.save(email);
+        } catch (Exception e) {
+            System.out.println("This one failed to save" + email.getKey());
+        }
     }
 
     @Override
     public ApiEmail read(String key) {
         Email email = emailRepository.findById(key).orElse(null);
         if (null == email) return null;
-        ApiEmail ApiEmail = new ApiEmail();
-        BeanUtils.copyProperties(email, ApiEmail);
-        return ApiEmail;
+        ApiEmail apiEmail = new ApiEmail();
+        BeanUtils.copyProperties(email, apiEmail);
+        return apiEmail;
     }
 
     @Override
@@ -109,7 +113,7 @@ public class EmailServiceImpl implements EmailService {
 
     private Set<String> getEmailAddresses(Set<String> names) {
 
-        if (CollectionUtils.isEmpty(names)) return Collections.emptySet();
+        if (CollectionUtils.isEmpty(names)) return null; // null means unspecified
 
         return personRepository.findByNameIn(names)
                 .stream()
@@ -132,6 +136,13 @@ public class EmailServiceImpl implements EmailService {
     }
 
     public static ApiEmail toApi(Email email) {
+        if (null == email) return null;
+        ApiEmail ApiEmail = new ApiEmail();
+        BeanUtils.copyProperties(email, ApiEmail);
+        return ApiEmail;
+    }
+
+    public static ApiEmail toSummaryApi(Email email) {
         if (null == email) return null;
         ApiEmail ApiEmail = new ApiEmail();
         BeanUtils.copyProperties(email, ApiEmail, "body");

@@ -3,6 +3,7 @@ package w.whateva.life2.integration.email.impl;
 import com.google.common.collect.Lists;
 import w.whateva.life2.api.common.dto.ApiArtifact;
 import w.whateva.life2.api.email.EmailOperations;
+import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
@@ -21,9 +22,20 @@ public class EmailProviderImpl implements ArtifactProvider {
         this.trove = trove;
     }
 
+    private String getTrove() {
+        return trove;
+    }
+
     @Override
-    public ApiArtifact read(String key) {
-        return null;
+    public ApiArtifact read(String trove, String key) {
+
+        if (null == getTrove() || !getTrove().equals(trove)) return null;
+
+        ApiEmail email = emailClient.read(key);
+
+        if (null == email) return null;
+
+        return embellish(EmailUtil.toDto(email));
     }
 
     @Override

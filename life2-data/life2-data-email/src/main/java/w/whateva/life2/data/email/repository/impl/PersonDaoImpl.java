@@ -72,23 +72,29 @@ public class PersonDaoImpl implements PersonDao {
 
         ArrayList<Criteria> criteria = new ArrayList<>();
 
-        if (!CollectionUtils.isEmpty(who)) {
+        if (null != who) {
             criteria.add(new Criteria().orOperator(Criteria.where("toIndex").in(who), Criteria.where("fromIndex").in(who)));
         }
 
-        if (!CollectionUtils.isEmpty(from)) {
+        if (null != from) {
             criteria.add(Criteria.where("fromIndex").in(from));
         }
 
-        if (!CollectionUtils.isEmpty(to)) {
+        if (null != to) {
             criteria.add(Criteria.where("toIndex").in(to));
         }
 
         if (null != after || null != before) {
-            Criteria sentCriteria = Criteria.where("sent");
-            if (null != after) sentCriteria.gt(after);
-            if (null != from) sentCriteria.lte(before);
-            criteria.add(sentCriteria);
+            ArrayList<Criteria> sentCriteriaList = new ArrayList<>();
+            if (null != after) {
+                sentCriteriaList.add(Criteria.where("sent").gte(after));
+            }
+            if (null != before) {
+                sentCriteriaList.add(Criteria.where("sent").lt(before));
+            }
+            Criteria[] sentCriteriaArray = new Criteria[sentCriteriaList.size()];
+            sentCriteriaArray = sentCriteriaList.toArray(sentCriteriaArray);
+            criteria.add(new Criteria().andOperator(sentCriteriaArray));
         }
 
         Criteria[] queryCriteria = new Criteria[criteria.size()];
