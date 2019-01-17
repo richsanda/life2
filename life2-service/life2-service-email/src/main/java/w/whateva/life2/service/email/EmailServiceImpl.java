@@ -87,10 +87,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public ApiEmail read(String key) {
         Email email = emailRepository.findById(key).orElse(null);
-        if (null == email) return null;
-        ApiEmail apiEmail = new ApiEmail();
-        BeanUtils.copyProperties(email, apiEmail);
-        return apiEmail;
+        return toApi(email);
     }
 
     @Override
@@ -107,7 +104,7 @@ public class EmailServiceImpl implements EmailService {
                 null == after ? null : after.atStartOfDay(),
                 null == before ? null : before.atStartOfDay().plusDays(1))
                 .stream()
-                .map(EmailServiceImpl::toApi)
+                .map(EmailServiceImpl::toSummaryApi)
                 .collect(Collectors.toList());
     }
 

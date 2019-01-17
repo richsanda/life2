@@ -40,6 +40,7 @@ public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
 
         ApiEmail result = new ApiEmail();
         BeanUtils.copyProperties(email, result);
+        result.setKey(createKey(email));
         return result;
     }
 
@@ -54,8 +55,10 @@ public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
 
     private static String createKey(XmlEmail email) {
 
-        return email.getFrom() +
-                KEY_SEPARATOR +
-                email.getId();
+        return email.getId();
+
+        //return email.getFrom() +
+        //        KEY_SEPARATOR +
+        //        email.getId();
     }
 }

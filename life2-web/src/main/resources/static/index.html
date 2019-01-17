@@ -1,24 +1,59 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-<head>
-    <title>emails</title>
-    <!--script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script-->
-    <script src="jquery-1.12.0.min.js"></script>
-    <!--script type="text/javascript" src="jquery-ui.min.js"></script-->
-    <script type="text/javascript" src="w.js"></script>
-    <link rel="Stylesheet" type="text/css" href="w.css"/>
-</head>
+<!DOCTYPE html>
+<html lang="en-US">
 <body>
-<div class="tabs">
-    <label for='after' class='tab after'><span>after</span><input type='text' id='after' value='1991-12-03'/></label>
-    <label for='before' class='tab before'><span>before</span><input type='text' id='before' value=''/></label>
-    <label for='names' class='tab names'><span>names</span><input type='text' id='names' value='rich.s'/></label>
-    <div class='tab'><div class='go title-button nav-button'>go</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<div data-ng-app="app" data-ng-controller="controller" data-ng-init="names=['word','werd','w']">
+
+    <p> after: <input type="text" data-ng-model="after">
+        before: <input type="text" data-ng-model="before">
+        from: <input type="text" data-ng-model="from">
+        who: <input type="text" data-ng-model="to">
+        either: <input type="text" data-ng-model="who"></p>
+
+    <button ng-click="go()">go</button>
+
+    <ol>
+        <li data-ng-repeat="email in emails">
+            {{ prettyDateify(email.sent) }}  {{ email.trove }}  {{ email.subject }}
+        </li>
+    </ol>
 </div>
-<div class="pane">
-    <div id="pane"></div>
-</div>
+
+<script>
+
+var app = angular.module('app', []);
+
+app.controller('controller', function($scope, $http) {
+
+    $scope.after = '2006-06-01';
+    $scope.before = '2006-09-30';
+    $scope.from = 'rich.s';
+
+    $scope.go = function() {
+
+    $scope.emails = [];
+
+    $http.get('http://localhost:11000/emails?after=' + $scope.after + '&before=' + $scope.before + '&from=' + $scope.from)
+        .then(function(response) {
+            $scope.emails = response.data;
+        });
+    }
+
+    $scope.prettyDateify = function(text) {
+
+     if (!text) return null;
+     var d = new Date(text);
+     var months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+     var year = d.getFullYear();
+     var month = d.getMonth();
+     var date = d.getDate();
+     return months[month] + " " + date + ", " + year;
+    }
+});
+
+</script>
+
 </body>
 </html>
