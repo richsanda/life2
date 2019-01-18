@@ -2,58 +2,43 @@
 <html lang="en-US">
 <body>
 
+<script src="jquery-1.12.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script type="text/javascript" src="w.js"></script>
+<link rel="Stylesheet" type="text/css" href="w.css"/>
 
 <div data-ng-app="app" data-ng-controller="controller" data-ng-init="names=['word','werd','w']">
 
     <p> after: <input type="text" data-ng-model="after">
         before: <input type="text" data-ng-model="before">
         from: <input type="text" data-ng-model="from">
-        who: <input type="text" data-ng-model="to">
+        to: <input type="text" data-ng-model="to">
         either: <input type="text" data-ng-model="who"></p>
 
-    <button ng-click="go()">go</button>
+    <button ng-click="search()">search</button>
 
-    <ol>
-        <li data-ng-repeat="email in emails">
-            {{ prettyDateify(email.sent) }}  {{ email.trove }}  {{ email.subject }}
-        </li>
-    </ol>
+    <div id="results">
+        <div class="artifact-link" data-ng-repeat="artifact in artifacts">
+            <div data-ng-click="read(artifact.trove, artifact.key)">
+                <div class="artifact-link-col">{{ $index + 1 }}. {{ prettyDateify(artifact.sent) }}</div>
+                <div class="artifact-link-col">{{ artifact.from }}</div>
+                <div class="artifact-link-col">{{ artifact.to }}</div>
+                <div class="artifact-link-col">{{ artifact.subject }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="feature-background" data-ng-click="hideFeature()">
+        <div id="feature">
+            <div>Sent: {{ prettyDateify(feature.sent) }}</div>
+            <div>From: {{ feature.from }}</div>
+            <div>To: {{ feature.to }}</div>
+            <div>Subject: {{ feature.subject }}</div>
+            <div><pre>{{ feature.body }}</pre></div>
+        </div>
+    </div>
+
 </div>
-
-<script>
-
-var app = angular.module('app', []);
-
-app.controller('controller', function($scope, $http) {
-
-    $scope.after = '2006-06-01';
-    $scope.before = '2006-09-30';
-    $scope.from = 'rich.s';
-
-    $scope.go = function() {
-
-    $scope.emails = [];
-
-    $http.get('http://localhost:11000/emails?after=' + $scope.after + '&before=' + $scope.before + '&from=' + $scope.from)
-        .then(function(response) {
-            $scope.emails = response.data;
-        });
-    }
-
-    $scope.prettyDateify = function(text) {
-
-     if (!text) return null;
-     var d = new Date(text);
-     var months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-     var year = d.getFullYear();
-     var month = d.getMonth();
-     var date = d.getDate();
-     return months[month] + " " + date + ", " + year;
-    }
-});
-
-</script>
 
 </body>
 </html>
