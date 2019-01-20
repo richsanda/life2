@@ -14,10 +14,10 @@ import java.util.List;
 @RequestMapping
 public interface ArtifactOperations {
 
-    @RequestMapping(value = "/email/{trove}/{key}", method = RequestMethod.GET, produces = "application/json")
-    ApiArtifact read(@PathVariable("trove") String trove, @PathVariable("key") String key);
+    @RequestMapping(value = "/artifact/{owner}/{trove}/{key}", method = RequestMethod.GET, produces = "application/json")
+    ApiArtifact read(@PathVariable("owner") String owner, @PathVariable("trove") String trove, @PathVariable("key") String key);
 
-    @RequestMapping(value = "/emails", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/artifacts", method = RequestMethod.GET, produces = "application/json")
     List<ApiArtifact> search(
             @RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,
             @RequestParam(value = "before", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate before,

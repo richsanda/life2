@@ -1,4 +1,4 @@
-var app = angular.module('app', []);
+var app = angular.module('app', ['ngSanitize']);
 
 app.controller('controller', function($scope, $http) {
 
@@ -10,7 +10,7 @@ app.controller('controller', function($scope, $http) {
 
     $scope.emails = [];
 
-        var url = 'http://localhost:11000/emails';
+        var url = 'http://localhost:11000/artifacts';
 
         var params = new Object();
         if ($scope.after) params['after'] = $scope.after;
@@ -29,6 +29,7 @@ app.controller('controller', function($scope, $http) {
         $http.get(url)
             .then(function(response) {
                 $scope.artifacts = response.data;
+                $scope.body = "<div><b>hello</b></div>";
             });
     }
 
@@ -36,7 +37,7 @@ app.controller('controller', function($scope, $http) {
 
         showFeature();
 
-        $http.get('http://localhost:11000/email/' + trove + '/' + key)
+        $http.get('http://localhost:11000/artifact/rich.s/' + trove + '/' + key)
             .then(function(response) {
                 $scope.feature = response.data;
             });
@@ -55,6 +56,11 @@ app.controller('controller', function($scope, $http) {
         var month = d.getMonth();
         var date = d.getDate();
         return months[month] + " " + date + ", " + year;
+    }
+
+    $scope.bodyify = function(text) {
+        if (!text) return null;
+        return "<div><br/>" + text.replace(/(?:\r\n|\r|\n)/g, "<br/>") + "</div>";
     }
 });
 
