@@ -26,12 +26,4 @@
         <module>life2-integration-email</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>life2-integration-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-
 </project>

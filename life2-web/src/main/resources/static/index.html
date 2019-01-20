@@ -4,6 +4,7 @@
 
 <script src="jquery-1.12.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="w.js"></script>
 <link rel="Stylesheet" type="text/css" href="w.css"/>
 
@@ -34,7 +35,7 @@
             <div>From: {{ feature.from }}</div>
             <div>To: {{ feature.to }}</div>
             <div>Subject: {{ feature.subject }}</div>
-            <div><pre>{{ feature.body }}</pre></div>
+            <div ng-bind-html="bodyify(feature.body)"></div>
         </div>
     </div>
 

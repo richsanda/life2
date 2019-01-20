@@ -27,7 +27,7 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public ApiArtifact read(String trove, String key) {
+    public ApiArtifact read(String owner, String trove, String key) {
 
         if (null == getTrove() || !getTrove().equals(trove)) return null;
 
@@ -47,7 +47,7 @@ public class EmailProviderImpl implements ArtifactProvider {
                 .collect(Collectors.toList());
     }
 
-    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer integer) {
+    public List<List<ApiArtifact>> search(String owner, LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer integer) {
         List<List<ApiArtifact>> result = Lists.newArrayList();
         result.add(search(after, before, who, from, to));
         return result;

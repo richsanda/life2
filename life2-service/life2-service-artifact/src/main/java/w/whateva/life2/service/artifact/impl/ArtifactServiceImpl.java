@@ -2,8 +2,9 @@ package w.whateva.life2.service.artifact.impl;
 
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.common.ArtifactOperations;
@@ -34,19 +35,19 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     }
 
     @Override
-    public ApiArtifact read(String trove, String key) {
+    public ApiArtifact read(String owner, String trove, String key) {
 
         return providers()
                 .parallelStream()
-                .map(p -> read(p, trove, key))
+                .map(p -> read(p, owner, trove, key))
                 .filter(Objects::nonNull)
                 .findAny()
                 .orElse(null);
     }
 
-    private ApiArtifact read(ArtifactProvider provider, String trove, String key) {
+    private ApiArtifact read(ArtifactProvider provider, String owner, String trove, String key) {
         try {
-            return provider.read(trove, key);
+            return provider.read(owner, trove, key);
         } catch (Exception e) {
             return null;
         }
@@ -54,6 +55,14 @@ public class ArtifactServiceImpl implements ArtifactOperations {
 
     @Override
     public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            System.out.println(((UserDetails)principal).getUsername());
+        } else {
+            System.out.println(principal.toString());
+        }
+
         return providers()
                 .parallelStream()
                 .map(p -> search(p, after, before, who, from, to))
