@@ -15,22 +15,30 @@ app.controller('controller', function($scope, $http) {
         var params = new Object();
         if ($scope.after) params['after'] = $scope.after;
         if ($scope.before) params['before'] = $scope.before;
-        if ($scope.from) params['from'] = $scope.from;
-        if ($scope.to) params['to'] = $scope.to;
-        if ($scope.who) params['who'] = $scope.who;
+        if ($scope.from) params['from'] = [{ owner: "rich.s", name_key: $scope.from }];
+        if ($scope.to) params['to'] = [{ owner: "rich.s", name_key: $scope.to }];
+        if ($scope.who) params['who'] = [{ owner: "rich.s", name_key: $scope.who }];
 
+        $http.post(url, JSON.stringify(params))
+            .then(function(response) {
+                $scope.artifacts = response.data;
+            });
+
+/*
         var firstParam = true;
         Object.keys(params).forEach( function(key) {
             url += firstParam ? '?' : '&';
             url += key + '=' + params[key];
             firstParam = false;
         })
+        *
 
         $http.get(url)
             .then(function(response) {
                 $scope.artifacts = response.data;
                 $scope.body = "<div><b>hello</b></div>";
             });
+            */
     }
 
     $scope.read = function(trove, key) {

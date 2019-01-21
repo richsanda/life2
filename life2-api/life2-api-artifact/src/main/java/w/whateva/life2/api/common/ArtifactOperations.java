@@ -1,11 +1,9 @@
 package w.whateva.life2.api.common;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import w.whateva.life2.api.common.dto.ApiArtifact;
+import w.whateva.life2.api.common.dto.ApiArtifactSearchSpec;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -24,4 +22,7 @@ public interface ArtifactOperations {
             @RequestParam(value = "who", required = false) HashSet<String> who,
             @RequestParam(value = "from", required = false) HashSet<String> from,
             @RequestParam(value = "to", required = false) HashSet<String> to);
+
+    @RequestMapping(value = "/artifacts", method = RequestMethod.POST, produces = "application/json")
+    List<ApiArtifact> search(@RequestBody ApiArtifactSearchSpec searchSpec);
 }

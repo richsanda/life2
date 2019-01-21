@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.common.ArtifactOperations;
 import w.whateva.life2.api.common.dto.ApiArtifact;
+import w.whateva.life2.api.common.dto.ApiArtifactSearchSpec;
+import w.whateva.life2.api.common.dto.ApiPersonKey;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.service.artifact.util.ArtifactUtility;
 import w.whateva.life2.service.artifact.util.bucket.AbstractLocalDateTimeOperator;
@@ -71,9 +73,28 @@ public class ArtifactServiceImpl implements ArtifactOperations {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ApiArtifact> search(ApiArtifactSearchSpec searchSpec) {
+
+        return providers()
+                .parallelStream()
+                .map(p -> search(p, searchSpec))
+                .flatMap(List::stream)
+                .sorted(Comparator.comparing(ApiArtifact::getSent))
+                .collect(Collectors.toList());
+    }
+
     private List<ApiArtifact> search(ArtifactProvider provider, LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
         try {
             return provider.search(after, before, who, from, to);
+        } catch (Exception e) {
+            return Lists.newArrayList();
+        }
+    }
+
+    private List<ApiArtifact> search(ArtifactProvider provider, ApiArtifactSearchSpec searchSpec) {
+        try {
+            return provider.search(searchSpec);
         } catch (Exception e) {
             return Lists.newArrayList();
         }
