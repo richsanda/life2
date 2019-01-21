@@ -13,9 +13,9 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiArtifact {
 
-    private String key;
-
+    private String owner;
     private String trove;
+    private String key;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime sent;
