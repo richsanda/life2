@@ -9,10 +9,10 @@ import org.springframework.util.StringUtils;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.data.email.domain.Email;
-import w.whateva.life2.data.email.domain.Person;
 import w.whateva.life2.data.email.repository.EmailRepository;
-import w.whateva.life2.data.email.repository.PersonDao;
-import w.whateva.life2.data.email.repository.PersonRepository;
+import w.whateva.life2.data.email.repository.EmailDao;
+import w.whateva.life2.data.person.domain.Person;
+import w.whateva.life2.data.person.repository.PersonRepository;
 
 import javax.mail.internet.InternetAddress;
 import java.time.LocalDate;
@@ -28,17 +28,17 @@ public class EmailServiceImpl implements EmailService {
 
     private final EmailRepository emailRepository;
     private final PersonRepository personRepository;
-    private final PersonDao personDao;
+    private final EmailDao emailDao;
 
     private final EmailServiceConfigurationProperties.AddressStyle addressStyle;
     private final String groupAddress;
 
     @Autowired
-    public EmailServiceImpl(EmailServiceConfigurationProperties configurationProperties, EmailRepository emailRepository, PersonRepository personRepository, PersonDao personDao) {
+    public EmailServiceImpl(EmailServiceConfigurationProperties configurationProperties, EmailRepository emailRepository, PersonRepository personRepository, EmailDao emailDao) {
 
         this.emailRepository = emailRepository;
         this.personRepository = personRepository;
-        this.personDao = personDao;
+        this.emailDao = emailDao;
 
         this.groupAddress = null != configurationProperties.getGroup() &&
                 null != configurationProperties.getGroup().getRecipient() ?
@@ -97,7 +97,7 @@ public class EmailServiceImpl implements EmailService {
         Set<String> fromEmails = getEmailAddresses(from);
         Set<String> toEmails = getEmailAddresses(to);
 
-        return personDao.getEmails(
+        return emailDao.getEmails(
                 whoEmails,
                 fromEmails,
                 toEmails,
@@ -124,7 +124,7 @@ public class EmailServiceImpl implements EmailService {
 
         if (null == groupAddress) return;
 
-        personDao.getSenders().forEach(person -> {
+        emailDao.getSenders().forEach(person -> {
             if (null == person.getEmails()) person.setEmails(Collections.emptySet());
             System.out.println("name is: " + person.getName());
             person.getEmails().add(groupAddress);

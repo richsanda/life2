@@ -16,9 +16,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.email.dto.ApiPerson;
+import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.job.email.beans.MboxReader;
-import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlPerson;
 
 import javax.mail.internet.MimeMessage;

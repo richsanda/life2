@@ -21,7 +21,8 @@ import w.whateva.service.utilities.controller.AutoControllers;
         "w.whateva.life2.data.email"
 })
 @EnableMongoRepositories(basePackages = {
-        "w.whateva.life2.data.email.repository"
+        "w.whateva.life2.data.email.repository",
+        "w.whateva.life2.data.person.repository"
 })
 @EntityScan(basePackages = {
         "w.whateva.life2.data.email.domain"

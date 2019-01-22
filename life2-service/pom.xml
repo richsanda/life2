@@ -19,6 +19,8 @@
     <modules>
         <module>life2-service-artifact</module>
         <module>life2-service-email</module>
+        <module>life2-service-person</module>
+        <module>life2-service-user</module>
     </modules>
 
 </project>

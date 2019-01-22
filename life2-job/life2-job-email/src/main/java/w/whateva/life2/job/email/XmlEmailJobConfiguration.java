@@ -20,7 +20,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.email.dto.ApiPerson;
+import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlGroupMessage;
 import w.whateva.life2.xml.email.def.XmlPerson;

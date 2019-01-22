@@ -1,6 +1,6 @@
 package w.whateva.life2.integration.email.util;
 
-import w.whateva.life2.api.common.dto.ApiArtifact;
+import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.email.dto.ApiEmail;
 
 public class EmailUtil {
