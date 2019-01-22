@@ -12,7 +12,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import w.whateva.life2.api.common.ArtifactOperations;
+import w.whateva.life2.api.artifact.ArtifactOperations;
 import w.whateva.service.utilities.controller.AutoControllers;
 
 /**
@@ -23,7 +23,10 @@ import w.whateva.service.utilities.controller.AutoControllers;
 @ComponentScan(basePackages = {
         "w.whateva.life2.app.artifact",
         "w.whateva.life2.service.artifact",
+        "w.whateva.life2.service.user",
+        "w.whateva.life2.service.person",
         "w.whateva.life2.data.user",
+        "w.whateva.life2.data.person",
         "w.whateva.life2.integration",
         "w.whateva.life2.web"
 })

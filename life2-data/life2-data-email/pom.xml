@@ -20,6 +20,13 @@
 
     <dependencies>
 
+        <!-- TODO: remove this dependency once Person is completely removed from email -->
+        <dependency>
+            <groupId>w.whateva</groupId>
+            <artifactId>life2-data-person</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- MongoDB database driver -->
         <dependency>
             <groupId>org.mongodb</groupId>

@@ -16,6 +16,7 @@
     <modules>
         <module>life2-data-email</module>
         <module>life2-data-user</module>
-    </modules>
+    <module>life2-data-person</module>
+  </modules>
 
 </project>

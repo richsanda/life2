@@ -2,7 +2,7 @@ package w.whateva.life2.job.email.beans;
 
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.util.CollectionUtils;
-import w.whateva.life2.api.email.dto.ApiPerson;
+import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.xml.email.def.XmlPerson;
 
 import java.util.Set;

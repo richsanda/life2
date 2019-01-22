@@ -2,8 +2,8 @@ package w.whateva.life2.job.email.beans;
 
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import w.whateva.life2.api.email.PersonService;
-import w.whateva.life2.api.email.dto.ApiPerson;
+import w.whateva.life2.api.person.PersonService;
+import w.whateva.life2.api.person.dto.ApiPerson;
 
 import java.util.List;
 

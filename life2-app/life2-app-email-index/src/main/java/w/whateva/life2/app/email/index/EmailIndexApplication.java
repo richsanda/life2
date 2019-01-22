@@ -18,11 +18,14 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 })
 @ComponentScan(basePackages = {
         "w.whateva.life2.service.email",
+        "w.whateva.life2.service.person",
         "w.whateva.life2.data.email",
+        "w.whateva.life2.data.person",
         "w.whateva.life2.job.email",
 })
 @EnableMongoRepositories(basePackages = {
-        "w.whateva.life2.data.email.repository"
+        "w.whateva.life2.data.email.repository",
+        "w.whateva.life2.data.person.repository",
 })
 @EntityScan(basePackages = {
         "w.whateva.life2.data.email.domain"
