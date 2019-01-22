@@ -12,10 +12,11 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiArtifactSearchSpec {
 
-    private Set<ApiTroveKey> troves;
+    private String owner;
+    private Set<String> troves;
     private LocalDate after;
     private LocalDate before;
-    private Set<ApiPersonKey> who;
-    private Set<ApiPersonKey> from;
-    private Set<ApiPersonKey> to;
+    private Set<String> who;
+    private Set<String> from;
+    private Set<String> to;
 }

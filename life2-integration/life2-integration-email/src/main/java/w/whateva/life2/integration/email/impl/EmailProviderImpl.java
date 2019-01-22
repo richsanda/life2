@@ -1,6 +1,8 @@
 package w.whateva.life2.integration.email.impl;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.common.dto.ApiArtifact;
 import w.whateva.life2.api.common.dto.ApiArtifactSearchSpec;
@@ -11,25 +13,23 @@ import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EmailProviderImpl implements ArtifactProvider {
 
     private final EmailOperations emailClient;
-    private final Set<String> troves;
+    private final Multimap<String, String> troves = HashMultimap.create();
 
-    public EmailProviderImpl(EmailOperations client, Set<String> troves) {
+    public EmailProviderImpl(EmailOperations client, Map<String, List<String>> troves) {
         this.emailClient = client;
-        this.troves = troves;
+        troves.forEach(this.troves::putAll);
     }
 
     @Override
     public ApiArtifact read(String owner, String trove, String key) {
 
-        if (!hasTrove(trove)) return null;
+        if (!hasTrove(owner, trove)) return null;
 
         ApiEmail email = emailClient.read(key);
 
@@ -41,9 +41,9 @@ public class EmailProviderImpl implements ArtifactProvider {
         return result;
     }
 
-    // TODO: almost time for a search spec
     @Override
     public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+
         return emailClient.search(after, before, who, from, to)
                 .stream()
                 .map(EmailUtil::toDto)
@@ -57,9 +57,9 @@ public class EmailProviderImpl implements ArtifactProvider {
         return search(
                 searchSpec.getAfter(),
                 searchSpec.getBefore(),
-                convertToNameKeys(searchSpec.getWho()),
-                convertToNameKeys(searchSpec.getFrom()),
-                convertToNameKeys(searchSpec.getTo()));
+                CollectionUtils.isEmpty(searchSpec.getWho()) ? null : new HashSet<>(searchSpec.getWho()),
+                CollectionUtils.isEmpty(searchSpec.getFrom()) ? null : new HashSet<>(searchSpec.getFrom()),
+                CollectionUtils.isEmpty(searchSpec.getTo()) ? null : new HashSet<>(searchSpec.getTo()));
     }
 
     public List<List<ApiArtifact>> search(String owner, LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer integer) {
@@ -68,20 +68,18 @@ public class EmailProviderImpl implements ArtifactProvider {
         return result;
     }
 
+    // for now still assume only one trove is supported here...
     private ApiArtifact embellish(ApiArtifact artifact) {
 
-        artifact.setTrove(troves.stream().findFirst().orElseThrow(RuntimeException::new));
+        Map.Entry<String, String> trove = troves.entries().stream().findFirst().orElseThrow(RuntimeException::new);
+
+        artifact.setOwner(trove.getKey());
+        artifact.setTrove(trove.getValue());
 
         return artifact;
     }
 
-    private boolean hasTrove(String trove) {
-        return troves.contains(trove);
-    }
-
-    // TODO: remove this, it's just for temporary backwards compatibility
-    private static HashSet<String> convertToNameKeys(Set<ApiPersonKey> personKeys) {
-        if (CollectionUtils.isEmpty(personKeys)) return null;
-        return personKeys.stream().map(ApiPersonKey::getNameKey).distinct().collect(Collectors.toCollection(HashSet::new));
+    private boolean hasTrove(String owner, String trove) {
+        return troves.containsKey(owner) && troves.get(owner).contains(trove);
     }
 }

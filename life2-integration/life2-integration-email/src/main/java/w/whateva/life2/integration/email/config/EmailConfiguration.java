@@ -3,6 +3,8 @@ package w.whateva.life2.integration.email.config;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -10,5 +12,5 @@ import java.util.Set;
 public class EmailConfiguration {
 
     private String url;
-    private Set<String> troves; // TODO: these troves need owners... so need some structure
+    private Map<String, List<String>> troves;
 }

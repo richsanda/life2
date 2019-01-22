@@ -15,6 +15,7 @@ import w.whateva.life2.integration.email.impl.EmailProviderImpl;
 import w.whateva.life2.integration.email.netflix.EmailFeignConfiguration;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +57,7 @@ public class EmailClientRegistrar {
                     () -> {
                         EmailConfiguration config = entry.getValue();
                         EmailOperations client = emailClient(config.getUrl());
-                        Set<String> troves = config.getTroves();
+                        Map<String, List<String>> troves = config.getTroves();
                         return new EmailProviderImpl(client, troves);
                     });
         }
