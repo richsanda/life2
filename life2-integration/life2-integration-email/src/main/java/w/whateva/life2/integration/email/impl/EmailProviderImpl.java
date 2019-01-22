@@ -13,10 +13,7 @@ import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EmailProviderImpl implements ArtifactProvider {
@@ -46,6 +43,7 @@ public class EmailProviderImpl implements ArtifactProvider {
 
     @Override
     public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+
         return emailClient.search(after, before, who, from, to)
                 .stream()
                 .map(EmailUtil::toDto)
@@ -59,9 +57,9 @@ public class EmailProviderImpl implements ArtifactProvider {
         return search(
                 searchSpec.getAfter(),
                 searchSpec.getBefore(),
-                convertToNameKeys(searchSpec.getWho()),
-                convertToNameKeys(searchSpec.getFrom()),
-                convertToNameKeys(searchSpec.getTo()));
+                CollectionUtils.isEmpty(searchSpec.getWho()) ? null : new HashSet<>(searchSpec.getWho()),
+                CollectionUtils.isEmpty(searchSpec.getFrom()) ? null : new HashSet<>(searchSpec.getFrom()),
+                CollectionUtils.isEmpty(searchSpec.getTo()) ? null : new HashSet<>(searchSpec.getTo()));
     }
 
     public List<List<ApiArtifact>> search(String owner, LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer integer) {
@@ -83,11 +81,5 @@ public class EmailProviderImpl implements ArtifactProvider {
 
     private boolean hasTrove(String owner, String trove) {
         return troves.containsKey(owner) && troves.get(owner).contains(trove);
-    }
-
-    // TODO: remove this, it's just for temporary backwards compatibility
-    private static HashSet<String> convertToNameKeys(Set<ApiPersonKey> personKeys) {
-        if (CollectionUtils.isEmpty(personKeys)) return null;
-        return personKeys.stream().map(ApiPersonKey::getNameKey).distinct().collect(Collectors.toCollection(HashSet::new));
     }
 }

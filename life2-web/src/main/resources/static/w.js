@@ -13,11 +13,12 @@ app.controller('controller', function($scope, $http) {
         var url = 'http://localhost:11000/artifacts';
 
         var params = new Object();
+        params.owner = "rich.s";
         if ($scope.after) params['after'] = $scope.after;
         if ($scope.before) params['before'] = $scope.before;
-        if ($scope.from) params['from'] = [{ owner: "rich.s", name_key: $scope.from }];
-        if ($scope.to) params['to'] = [{ owner: "rich.s", name_key: $scope.to }];
-        if ($scope.who) params['who'] = [{ owner: "rich.s", name_key: $scope.who }];
+        if ($scope.from) params['from'] = [ $scope.from ];
+        if ($scope.to) params['to'] = [ $scope.to ];
+        if ($scope.who) params['who'] = [ $scope.who ];
 
         $http.post(url, JSON.stringify(params))
             .then(function(response) {
