@@ -9,11 +9,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>life2-app-email-index</artifactId>
+    <artifactId>life2-app-person-index</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>life2-app-email-index</name>
-    <url>http://www.example.com</url>
+    <name>life2-app-person-index</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,13 +22,7 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-job-email</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>life2-service-email</artifactId>
+            <artifactId>life2-job-person</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -45,5 +38,4 @@
         </dependency>
 
     </dependencies>
-
 </project>

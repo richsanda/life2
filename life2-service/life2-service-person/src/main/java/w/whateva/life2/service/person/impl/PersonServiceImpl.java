@@ -3,6 +3,7 @@ package w.whateva.life2.service.person.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.data.person.domain.Person;
@@ -30,6 +31,27 @@ public class PersonServiceImpl implements PersonService {
         person.setId(apiPerson.getName());
         BeanUtils.copyProperties(apiPerson, person);
         personRepository.save(person);
+    }
+
+    @Override
+    public void updatePerson(ApiPerson apiPerson) {
+
+        if (null == apiPerson.getName()) return;
+
+        Person person = personRepository.findById(apiPerson.getName()).orElse(createPerson(apiPerson.getName()));
+
+        if (!CollectionUtils.isEmpty(apiPerson.getEmails())) {
+            person.getEmails().addAll(apiPerson.getEmails());
+        }
+
+        personRepository.save(person);
+    }
+
+    private static Person createPerson(String name) {
+        Person result = new Person();
+        result.setId(name);
+        result.setName(name);
+        return result;
     }
 
     @Override

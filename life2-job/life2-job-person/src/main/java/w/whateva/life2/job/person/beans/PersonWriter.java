@@ -1,4 +1,4 @@
-package w.whateva.life2.job.email.beans;
+package w.whateva.life2.job.person.beans;
 
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class PersonWriter implements ItemWriter<ApiPerson> {
 
     public void write(List<? extends ApiPerson> ApiPersons) throws Exception {
         for (ApiPerson ApiPerson : ApiPersons) {
-            personService.addPerson(ApiPerson);
+            personService.updatePerson(ApiPerson);
         }
     }
 }

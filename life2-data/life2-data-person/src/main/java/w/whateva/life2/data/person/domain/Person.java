@@ -7,6 +7,7 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Document(collection = "person")
@@ -20,5 +21,5 @@ public class Person {
 
     private String name;
     @Indexed
-    private Set<String> emails;
+    private Set<String> emails = new HashSet<>();
 }

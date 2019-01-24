@@ -97,6 +97,7 @@
         <module>life2-app-artifact</module>
         <module>life2-app-email</module>
         <module>life2-app-email-index</module>
-    </modules>
+    <module>life2-app-person-index</module>
+  </modules>
 
 </project>

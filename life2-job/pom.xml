@@ -16,6 +16,7 @@
 
     <modules>
         <module>life2-job-email</module>
-    </modules>
+    <module>life2-job-person</module>
+  </modules>
 
 </project>

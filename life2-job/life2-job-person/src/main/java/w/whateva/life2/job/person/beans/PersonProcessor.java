@@ -1,4 +1,4 @@
-package w.whateva.life2.job.email.beans;
+package w.whateva.life2.job.person.beans;
 
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.util.CollectionUtils;
@@ -11,9 +11,13 @@ import java.util.stream.Collectors;
 public class PersonProcessor implements ItemProcessor<XmlPerson, ApiPerson> {
 
     public ApiPerson process(XmlPerson xmlPerson) {
+
         ApiPerson result = new ApiPerson();
         result.setName(xmlPerson.getName());
         result.setEmails(processEmails(xmlPerson.getEmails()));
+
+        System.out.println(result.getName());
+
         return result;
     }
 

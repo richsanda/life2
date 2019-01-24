@@ -10,5 +10,7 @@ public interface PersonService {
 
     void addPerson(ApiPerson dtoPerson);
 
+    void updatePerson(ApiPerson dtoPerson);
+
     ApiPerson readPerson(String key);
 }

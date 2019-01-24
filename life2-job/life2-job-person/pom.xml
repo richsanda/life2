@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <artifactId>life2-app</artifactId>
+        <artifactId>life2-job</artifactId>
         <groupId>w.whateva</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>life2-app-email-index</artifactId>
+    <artifactId>life2-job-person</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>life2-app-email-index</name>
-    <url>http://www.example.com</url>
+    <name>life2-job-person</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,25 +20,34 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-job-email</artifactId>
+            <artifactId>life2-api-email</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-service-email</artifactId>
+            <artifactId>life2-xml-email</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>w.whateva</groupId>
-            <artifactId>life2-service-person</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-batch -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+
+        <!-- Spring XML to/back object -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.oxm.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
