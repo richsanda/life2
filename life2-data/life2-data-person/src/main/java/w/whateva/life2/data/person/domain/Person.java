@@ -19,7 +19,11 @@ public class Person {
     @Id
     private String id;
 
+    @Indexed
     private String name;
+    @Indexed
+    private String owner;
+
     @Indexed
     private Set<String> emails = new HashSet<>();
 }

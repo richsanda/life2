@@ -10,5 +10,6 @@ import java.util.Set;
 public class ApiPerson {
 
     private String name;
+    private String owner;
     private Set<String> emails;
 }

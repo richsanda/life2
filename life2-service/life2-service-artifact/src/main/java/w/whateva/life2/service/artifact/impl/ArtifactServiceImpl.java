@@ -3,16 +3,16 @@ package w.whateva.life2.service.artifact.impl;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
+import w.whateva.life2.data.user.domain.User;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.service.artifact.util.ArtifactUtility;
 import w.whateva.life2.service.artifact.util.bucket.AbstractLocalDateTimeOperator;
+import w.whateva.life2.service.user.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,11 +28,13 @@ public class ArtifactServiceImpl implements ArtifactOperations {
 
     private final GenericWebApplicationContext context;
     private final ArtifactUtility artifactUtility;
+    private final UserService userService;
 
     @Autowired
-    public ArtifactServiceImpl(GenericWebApplicationContext context, ArtifactUtility artifactUtility) {
+    public ArtifactServiceImpl(GenericWebApplicationContext context, ArtifactUtility artifactUtility, UserService userService) {
         this.context = context;
         this.artifactUtility = artifactUtility;
+        this.userService = userService;
     }
 
     @Override
@@ -57,13 +59,6 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     @Override
     public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            System.out.println(((UserDetails)principal).getUsername());
-        } else {
-            System.out.println(principal.toString());
-        }
-
         return providers()
                 .parallelStream()
                 .map(p -> search(p, after, before, who, from, to))
@@ -74,6 +69,12 @@ public class ArtifactServiceImpl implements ArtifactOperations {
 
     @Override
     public List<ApiArtifact> search(ApiArtifactSearchSpec searchSpec) {
+
+        // TODO: consider getting the current user with people and with trove access list
+        User currentUser = userService.getCurrentUser();
+        if (null != currentUser) {
+            System.out.println("Current user is: " + currentUser.getUsername() + ":" + currentUser.getPassword());
+        }
 
         return providers()
                 .parallelStream()

@@ -44,6 +44,8 @@ public class PersonServiceImpl implements PersonService {
             person.getEmails().addAll(apiPerson.getEmails());
         }
 
+        person.setOwner(apiPerson.getOwner());
+
         personRepository.save(person);
     }
 

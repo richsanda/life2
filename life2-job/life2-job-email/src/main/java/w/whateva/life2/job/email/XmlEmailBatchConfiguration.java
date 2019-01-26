@@ -14,15 +14,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import w.whateva.life2.api.email.EmailService;
-import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.person.dto.ApiPerson;
+import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.job.email.beans.EmailWriter;
-import w.whateva.life2.job.email.beans.PersonProcessor;
-import w.whateva.life2.job.email.beans.PersonWriter;
 import w.whateva.life2.job.email.beans.XmlEmailProcessor;
 import w.whateva.life2.xml.email.def.XmlEmail;
-import w.whateva.life2.xml.email.def.XmlPerson;
 
 @Configuration
 @EnableBatchProcessing
@@ -30,12 +26,10 @@ import w.whateva.life2.xml.email.def.XmlPerson;
 public class XmlEmailBatchConfiguration extends DefaultBatchConfigurer {
 
     private final EmailService emailService;
-    private final PersonService personService;
 
     @Autowired
-    public XmlEmailBatchConfiguration(EmailService emailService, PersonService personService) {
+    public XmlEmailBatchConfiguration(EmailService emailService) {
         this.emailService = emailService;
-        this.personService = personService;
     }
 
     // ensure the job launched at startup uses the same transaction manager as the data module
@@ -53,17 +47,6 @@ public class XmlEmailBatchConfiguration extends DefaultBatchConfigurer {
     @Bean
     ItemWriter<ApiEmail> emailWriter() {
         return new EmailWriter(emailService);
-    }
-
-    @Bean
-    @StepScope
-    ItemProcessor<XmlPerson, ApiPerson> personProcessor() {
-        return new PersonProcessor();
-    }
-
-    @Bean
-    ItemWriter<ApiPerson> personWriter() {
-        return new PersonWriter(personService);
     }
 
     @Bean

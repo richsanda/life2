@@ -6,19 +6,13 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
-import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.job.email.beans.MboxReader;
-import w.whateva.life2.xml.email.def.XmlPerson;
 
 import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
@@ -36,9 +30,6 @@ public class MboxEmailJobConfiguration {
     @Value("${email.mbox.file}")
     private String emailMboxFile;
 
-    @Value("${person.xml.file}")
-    private String personXmlFile;
-
     @Autowired
     public MboxEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, MboxEmailBatchConfiguration config) {
         this.jobs = jobs;
@@ -50,7 +41,6 @@ public class MboxEmailJobConfiguration {
     public Job loadEmailJob() throws Exception {
         return this.jobs.get("loadEmailJob")
                 .start(loadEmailStep())
-                .next(loadPersonStep())
                 .build();
     }
 
@@ -65,38 +55,10 @@ public class MboxEmailJobConfiguration {
     }
 
     @Bean
-    public Step loadPersonStep() throws Exception {
-        return this.steps.get("loadPersonStep")
-                .<XmlPerson, ApiPerson>chunk(10)
-                .reader(personReader())
-                .processor(config.personProcessor())
-                .writer(config.personWriter())
-                .build();
-    }
-
-    @Bean
     @StepScope
     public ItemReader<MimeMessage> emailReader() throws IOException {
         InputStream input = new FileInputStream(emailMboxFile);
         MboxReader reader = new MboxReader(input);
-        return reader;
-    }
-
-    @Bean
-    public Jaxb2Marshaller emailUnmarshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(XmlPerson.class);
-        marshaller.setCheckForXmlRootElement(true);
-        return marshaller;
-    }
-
-    @Bean
-    @StepScope
-    public ResourceAwareItemReaderItemStream<XmlPerson> personReader() {
-        StaxEventItemReader<XmlPerson> reader = new StaxEventItemReader<>();
-        reader.setFragmentRootElementName("person");
-        reader.setResource(new FileSystemResource(personXmlFile));
-        reader.setUnmarshaller(emailUnmarshaller());
         return reader;
     }
 }

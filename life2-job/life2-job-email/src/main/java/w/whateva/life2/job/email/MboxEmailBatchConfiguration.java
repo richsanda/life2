@@ -12,14 +12,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import w.whateva.life2.api.email.EmailOperations;
-import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.person.dto.ApiPerson;
+import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.MboxEmailProcesor;
-import w.whateva.life2.job.email.beans.PersonProcessor;
-import w.whateva.life2.job.email.beans.PersonWriter;
-import w.whateva.life2.xml.email.def.XmlPerson;
 
 import javax.mail.internet.MimeMessage;
 
@@ -29,12 +25,10 @@ import javax.mail.internet.MimeMessage;
 public class MboxEmailBatchConfiguration extends DefaultBatchConfigurer {
 
     private final EmailOperations emailService;
-    private final PersonService personService;
 
     @Autowired
     public MboxEmailBatchConfiguration(EmailOperations emailService, PersonService personService) {
         this.emailService = emailService;
-        this.personService = personService;
     }
 
     // ensure the job launched at startup uses the same transaction manager as the data module
@@ -52,16 +46,5 @@ public class MboxEmailBatchConfiguration extends DefaultBatchConfigurer {
     @Bean
     ItemWriter<ApiEmail> emailWriter() {
         return new EmailWriter(emailService);
-    }
-
-    @Bean
-    @StepScope
-    ItemProcessor<XmlPerson, ApiPerson> personProcessor() {
-        return new PersonProcessor();
-    }
-
-    @Bean
-    ItemWriter<ApiPerson> personWriter() {
-        return new PersonWriter(personService);
     }
 }

@@ -10,10 +10,17 @@ import java.util.stream.Collectors;
 
 public class PersonProcessor implements ItemProcessor<XmlPerson, ApiPerson> {
 
+    private String owner;
+
+    public PersonProcessor(String owner) {
+        this.owner = owner;
+    }
+
     public ApiPerson process(XmlPerson xmlPerson) {
 
         ApiPerson result = new ApiPerson();
         result.setName(xmlPerson.getName());
+        result.setOwner(owner);
         result.setEmails(processEmails(xmlPerson.getEmails()));
 
         System.out.println(result.getName());

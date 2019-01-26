@@ -38,9 +38,6 @@ public class XmlEmailJobConfiguration {
     @Value("${email.xml.file.pattern}")
     private String emailXmlFilePattern;
 
-    @Value("${person.xml.file}")
-    private String personXmlFile;
-
     @Value("${email.xml.root}")
     private String fragmentRootElementName;
 
@@ -55,8 +52,6 @@ public class XmlEmailJobConfiguration {
     public Job loadEmailJob() throws Exception {
         return this.jobs.get("loadEmailJob")
                 .start(loadEmailStep())
-                .next(loadPersonStep())
-                .next(addGroupAddressToSendersStep())
                 .build();
     }
 
@@ -67,23 +62,6 @@ public class XmlEmailJobConfiguration {
                 .reader(emailReader())
                 .processor(config.emailProcessor())
                 .writer(config.emailWriter())
-                .build();
-    }
-
-    @Bean
-    public Step loadPersonStep() throws Exception {
-        return this.steps.get("loadPersonStep")
-                .<XmlPerson, ApiPerson>chunk(10)
-                .reader(personReader())
-                .processor(config.personProcessor())
-                .writer(config.personWriter())
-                .build();
-    }
-
-    @Bean
-    public Step addGroupAddressToSendersStep() {
-        return this.steps.get("addGroupAddressToSendersStep")
-                .tasklet(config.addGroupAddressToSendersTasklet())
                 .build();
     }
 
@@ -113,18 +91,8 @@ public class XmlEmailJobConfiguration {
     @Bean
     public Jaxb2Marshaller emailUnmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(XmlEmail.class, XmlPerson.class, XmlGroupMessage.class);
+        marshaller.setClassesToBeBound(XmlEmail.class, XmlGroupMessage.class);
         marshaller.setCheckForXmlRootElement(true);
         return marshaller;
-    }
-
-    @Bean
-    @StepScope
-    public ResourceAwareItemReaderItemStream<XmlPerson> personReader() {
-        StaxEventItemReader<XmlPerson> reader = new StaxEventItemReader<>();
-        reader.setFragmentRootElementName("person");
-        reader.setResource(new FileSystemResource(personXmlFile));
-        reader.setUnmarshaller(emailUnmarshaller());
-        return reader;
     }
 }

@@ -2,6 +2,7 @@ package w.whateva.life2.service.user.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
@@ -24,17 +25,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = repository.findByUsername(username);
         if(user == null) {
             throw new UsernameNotFoundException("User not found");
         }
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("user"));
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        user.setAuthorities(authorities);
+        return user;
     }
 
     @Override
     public User addUser(User user) {
         return repository.save(user);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User) {
+            User user = (User)principal;
+            System.out.println(user.getUsername());
+            return user;
+        } else {
+            System.out.println(principal.toString());
+        }
+        return null;
     }
 }
