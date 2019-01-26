@@ -19,8 +19,10 @@ public class PersonProcessor implements ItemProcessor<XmlPerson, ApiPerson> {
     public ApiPerson process(XmlPerson xmlPerson) {
 
         ApiPerson result = new ApiPerson();
-        result.setName(xmlPerson.getName());
+
         result.setOwner(owner);
+        result.setName(xmlPerson.getName());
+        result.setUsername(xmlPerson.getUsername());
         result.setEmails(processEmails(xmlPerson.getEmails()));
 
         System.out.println(result.getName());

@@ -40,6 +40,12 @@
         </dependency>
 
         <dependency>
+            <groupId>w.whateva</groupId>
+            <artifactId>life2-service-person</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>

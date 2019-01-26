@@ -14,6 +14,8 @@ public class XmlPerson {
 
     @XmlAttribute
     private String name;
+    @XmlAttribute
+    private String username;
     @XmlElement(name = "email")
     private Set<String> emails;
 }

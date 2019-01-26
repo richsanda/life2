@@ -45,6 +45,7 @@ public class PersonServiceImpl implements PersonService {
         }
 
         person.setOwner(apiPerson.getOwner());
+        person.setUsername(apiPerson.getUsername());
 
         personRepository.save(person);
     }
@@ -75,7 +76,22 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public List<ApiPerson> allPersons() {
-        return personRepository.findAllByOrderByNameAsc().stream().map(PersonServiceImpl::toApi).collect(Collectors.toList());
+        return personRepository.findAllByOrderByNameAsc()
+                .stream()
+                .map(PersonServiceImpl::toApi)
+                .collect(Collectors.toList());
+    }
+
+    public List<ApiPerson> findOwnerPersons(String owner) {
+        return personRepository.findAllByOwner(owner)
+                .stream()
+                .map(PersonServiceImpl::toApi)
+                .collect(Collectors.toList());
+    }
+
+
+    public ApiPerson findMeAmongTheirs(String myUsername, String theirUsername) {
+        return toApi(personRepository.findByUsernameAndOwner(myUsername, theirUsername));
     }
 
     private static ApiPerson toApi(Person person) {

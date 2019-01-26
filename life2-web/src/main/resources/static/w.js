@@ -13,7 +13,7 @@ app.controller('controller', function($scope, $http) {
         var url = 'http://localhost:11000/artifacts';
 
         var params = new Object();
-        params.owner = "rich.s";
+        params.owner = "rich";
         if ($scope.after) params['after'] = $scope.after;
         if ($scope.before) params['before'] = $scope.before;
         if ($scope.from) params['from'] = [ $scope.from ];

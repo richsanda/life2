@@ -8,6 +8,10 @@ public interface PersonService {
 
     List<ApiPerson> allPersons();
 
+    List<ApiPerson> findOwnerPersons(String owner);
+
+    ApiPerson findMeAmongTheirs(String me, String them);
+
     void addPerson(ApiPerson dtoPerson);
 
     void updatePerson(ApiPerson dtoPerson);

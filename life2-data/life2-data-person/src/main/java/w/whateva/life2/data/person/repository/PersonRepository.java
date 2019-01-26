@@ -12,5 +12,9 @@ public interface PersonRepository extends MongoRepository<Person, String> {
 
     List<Person> findAllByOrderByNameAsc();
 
+    List<Person> findAllByOwner(String owner);
+
     List<Person> findByNameIn(Collection<String> names);
+
+    Person findByUsernameAndOwner(String myUsername, String theirUsername);
 }

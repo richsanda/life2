@@ -17,12 +17,14 @@ import java.util.Set;
 public class Person {
 
     @Id
-    private String id;
+    private String id; // handle for this person in the scope of owner
 
     @Indexed
-    private String name;
+    private String name; // nickname for this person
     @Indexed
-    private String owner;
+    private String owner; // which username owns this person
+    @Indexed
+    private String username; // which username this person maps to, if any
 
     @Indexed
     private Set<String> emails = new HashSet<>();

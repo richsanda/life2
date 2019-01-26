@@ -31,10 +31,12 @@ import w.whateva.service.utilities.controller.AutoControllers;
         "w.whateva.life2.web"
 })
 @EnableMongoRepositories(basePackages = {
-        "w.whateva.life2.data.user.repository"
+        "w.whateva.life2.data.user.repository",
+        "w.whateva.life2.data.person.repository"
 })
 @EntityScan(basePackages = {
-        "w.whateva.life2.data.user.domain"
+        "w.whateva.life2.data.user.domain",
+        "w.whateva.life2.data.person.domain"
 })
 @EnableAsync
 @AutoControllers(apis = { ArtifactOperations.class })

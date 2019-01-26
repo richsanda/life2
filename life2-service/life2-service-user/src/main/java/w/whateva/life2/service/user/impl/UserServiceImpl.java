@@ -3,30 +3,28 @@ package w.whateva.life2.service.user.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import w.whateva.life2.data.user.domain.User;
 import w.whateva.life2.data.user.repository.UserRepository;
 import w.whateva.life2.service.user.UserService;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Component
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository repository;
+    private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository repository) {
-        this.repository = repository;
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = repository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
         if(user == null) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -37,19 +35,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User user) {
-        return repository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
     public User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof User) {
-            User user = (User)principal;
-            System.out.println(user.getUsername());
-            return user;
+            return (User)principal;
         } else {
-            System.out.println(principal.toString());
+            return null;
         }
-        return null;
     }
 }

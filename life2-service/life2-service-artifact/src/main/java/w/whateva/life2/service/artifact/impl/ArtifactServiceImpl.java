@@ -8,6 +8,8 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
+import w.whateva.life2.api.person.PersonService;
+import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.data.user.domain.User;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.service.artifact.util.ArtifactUtility;
@@ -29,12 +31,14 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     private final GenericWebApplicationContext context;
     private final ArtifactUtility artifactUtility;
     private final UserService userService;
+    private final PersonService personService;
 
     @Autowired
-    public ArtifactServiceImpl(GenericWebApplicationContext context, ArtifactUtility artifactUtility, UserService userService) {
+    public ArtifactServiceImpl(GenericWebApplicationContext context, ArtifactUtility artifactUtility, UserService userService, PersonService personService) {
         this.context = context;
         this.artifactUtility = artifactUtility;
         this.userService = userService;
+        this.personService = personService;
     }
 
     @Override
@@ -70,10 +74,15 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     @Override
     public List<ApiArtifact> search(ApiArtifactSearchSpec searchSpec) {
 
-        // TODO: consider getting the current user with people and with trove access list
         User currentUser = userService.getCurrentUser();
-        if (null != currentUser) {
-            System.out.println("Current user is: " + currentUser.getUsername() + ":" + currentUser.getPassword());
+        if (null == currentUser) {
+            return new ArrayList<>();
+        }
+
+        ApiPerson person = personService.findMeAmongTheirs(currentUser.getUsername(), searchSpec.getOwner());
+
+        if (null != person) {
+            System.out.println("hey, found me among theirs, they call me: " + person.getName());
         }
 
         return providers()
