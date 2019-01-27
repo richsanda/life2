@@ -1,6 +1,7 @@
 package w.whateva.life2.service.artifact.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -81,13 +82,22 @@ public class ArtifactServiceImpl implements ArtifactOperations {
 
         ApiPerson person = personService.findMeAmongTheirs(currentUser.getUsername(), searchSpec.getOwner());
 
-        if (null != person) {
-            System.out.println("hey, found me among theirs, they call me: " + person.getName());
+        if (null == person) {
+            System.out.println("hm, couldn't find me...: " + currentUser);
+            return new ArrayList<>();
         }
+
+        ApiArtifactSearchSpec access = new ApiArtifactSearchSpec();
+        Set<String> param = Sets.newHashSet(person.getName());
+        access.setTo(param);
+        access.setFrom(param);
+        access.setWho(param);
+
+        ApiArtifactSearchSpec restrictedSearchSpec = ArtifactUtility.restrict(searchSpec, access);
 
         return providers()
                 .parallelStream()
-                .map(p -> search(p, searchSpec))
+                .map(p -> search(p, restrictedSearchSpec))
                 .flatMap(List::stream)
                 .sorted(Comparator.comparing(ApiArtifact::getSent))
                 .collect(Collectors.toList());

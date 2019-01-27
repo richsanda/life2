@@ -93,10 +93,15 @@ public class EmailDaoImpl implements EmailDao {
             criteria.add(new Criteria().andOperator(sentCriteriaArray));
         }
 
-        Criteria[] queryCriteria = new Criteria[criteria.size()];
-        queryCriteria = criteria.toArray(queryCriteria);
+        Criteria[] criteriaArray = new Criteria[criteria.size()];
+        criteriaArray = criteria.toArray(criteriaArray);
 
-        Query query = new Query(new Criteria().andOperator(queryCriteria)).with(new Sort(Sort.Direction.ASC, "sent"));
+        Criteria queryCriteria = new Criteria().andOperator(criteriaArray);
+
+        // *and* with the whoCriteria if it was provided
+        // if (null != whoCriteria) queryCriteria = queryCriteria.andOperator(whoCriteria);
+
+        Query query = new Query(queryCriteria).with(new Sort(Sort.Direction.ASC, "sent"));
 
         return mongoTemplate.find(query, Email.class);
 
