@@ -41,6 +41,11 @@ public class EmailClientRegistrar {
     @PostConstruct
     private void postConstruct() {
 
+        if (CollectionUtils.isEmpty(sources)) {
+            System.out.println("No email sources");
+            return;
+        }
+
         // dynamically register an artifact provider for each email client
         // TODO: at startup we could call these services to derive the "troves"... could be an aggregation
         // if we store the trove on each email... or a pointer to a trove on each email, if you want to be able

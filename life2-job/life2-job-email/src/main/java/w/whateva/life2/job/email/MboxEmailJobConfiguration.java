@@ -57,6 +57,7 @@ public class MboxEmailJobConfiguration {
     @Bean
     @StepScope
     public ItemReader<MimeMessage> emailReader() throws IOException {
+        System.out.println("reading email mbox from: " + emailMboxFile);
         InputStream input = new FileInputStream(emailMboxFile);
         MboxReader reader = new MboxReader(input);
         return reader;
