@@ -61,6 +61,7 @@ public class XmlPersonJobConfiguration {
     @Bean
     @StepScope
     public ResourceAwareItemReaderItemStream<XmlPerson> personReader() {
+        System.out.println("reading person file from: " + personXmlFile);
         StaxEventItemReader<XmlPerson> reader = new StaxEventItemReader<>();
         reader.setFragmentRootElementName("person");
         reader.setResource(new FileSystemResource(personXmlFile));

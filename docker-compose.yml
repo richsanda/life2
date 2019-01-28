@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo
+    ports:
+    - "27017:27017"
+  life2:
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-artifact/Dockerfile
+    ports:
+    - "11000:11000"
+    links:
+    - mongo
+  person.index:
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-person-index/Dockerfile
+    volumes:
+    - /Users/rich/life2/data:/data/life2/data
+    links:
+    - mongo
+  billshwah.index:
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-email-index/Dockerfile
+    volumes:
+    - /Users/rich/life2/data:/data/life2/data
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah
+    links:
+    - mongo
+ # billshwah:
+ #   build: './life2-app/life2-app-email'
