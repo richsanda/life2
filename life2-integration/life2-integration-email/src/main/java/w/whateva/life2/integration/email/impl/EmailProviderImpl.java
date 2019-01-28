@@ -3,6 +3,8 @@ package w.whateva.life2.integration.email.impl;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
@@ -16,6 +18,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EmailProviderImpl implements ArtifactProvider {
+
+    private Logger log = LoggerFactory.getLogger(EmailProviderImpl.class);
 
     private final EmailOperations emailClient;
     private final Multimap<String, String> troves = HashMultimap.create();
@@ -52,6 +56,8 @@ public class EmailProviderImpl implements ArtifactProvider {
 
     @Override
     public List<ApiArtifact> search(ApiArtifactSearchSpec searchSpec) {
+
+        log.info("Searching email troves: " + troves);
 
         return search(
                 searchSpec.getAfter(),

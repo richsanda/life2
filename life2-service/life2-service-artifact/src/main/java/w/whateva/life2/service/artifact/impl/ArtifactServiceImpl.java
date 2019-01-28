@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class ArtifactServiceImpl implements ArtifactOperations {
 
-    Logger log = LoggerFactory.getLogger(ArtifactServiceImpl.class);
+    private Logger log = LoggerFactory.getLogger(ArtifactServiceImpl.class);
 
     private final GenericWebApplicationContext context;
     private final ArtifactUtility artifactUtility;

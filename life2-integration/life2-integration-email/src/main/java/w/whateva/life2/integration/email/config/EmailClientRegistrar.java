@@ -59,6 +59,11 @@ public class EmailClientRegistrar {
             if (CollectionUtils.isEmpty(entry.getValue().getTroves()) || null == entry.getValue().getUrl()) {
                 log.info("NOT loading source " + entry.getKey() + " because it's not fully configured");
                 continue;
+            } else {
+                log.info(String.format("loading source %s (url: %s; troves: %s)",
+                        entry.getKey(),
+                        entry.getValue().getUrl(),
+                        entry.getValue().getTroves()));
             }
 
             context.registerBean(entry.getKey() + CLIENT_BEAN_SUFFIX,

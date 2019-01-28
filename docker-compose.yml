@@ -4,6 +4,7 @@ services:
   mongo:
     image: mongo
     ports:
+    - "27018:27017"
     - "27017:27017"
   life2:
     build:
@@ -15,7 +16,7 @@ services:
     - mongo
     - billshwah
     environment:
-    - life2_email_sources_billshwah_url=billshwah
+    - life2_email_billshwah_host=billshwah
   person.index:
     build:
       context: .

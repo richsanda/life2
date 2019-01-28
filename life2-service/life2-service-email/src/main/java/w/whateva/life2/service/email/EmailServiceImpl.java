@@ -97,21 +97,32 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public List<ApiEmail> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
 
-        log.info("Searching emails...");
+        log.info("Searching emails..." + after + " / " + before + " / " + who + " / " + from + " / " + to);
 
         Set<String> whoEmails = getEmailAddresses(who);
         Set<String> fromEmails = getEmailAddresses(from);
         Set<String> toEmails = getEmailAddresses(to);
 
-        return emailDao.getEmails(
-                whoEmails,
-                fromEmails,
-                toEmails,
-                null == after ? null : after.atStartOfDay(),
-                null == before ? null : before.atStartOfDay().plusDays(1))
-                .stream()
-                .map(EmailServiceImpl::toSummaryApi)
-                .collect(Collectors.toList());
+        try {
+
+            List<ApiEmail> result = emailDao.getEmails(
+                    whoEmails,
+                    fromEmails,
+                    toEmails,
+                    null == after ? null : after.atStartOfDay(),
+                    null == before ? null : before.atStartOfDay().plusDays(1))
+                    .stream()
+                    .map(EmailServiceImpl::toSummaryApi)
+                    .collect(Collectors.toList());
+
+            log.info(String.format("Found %d emails", result.size()));
+
+            return result;
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     private Set<String> getEmailAddresses(Set<String> names) {
