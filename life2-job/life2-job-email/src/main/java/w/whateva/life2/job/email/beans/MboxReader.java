@@ -8,6 +8,8 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.mbox.MboxParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.XHTMLContentHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
@@ -19,6 +21,8 @@ import java.io.*;
 import java.util.*;
 
 public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
+
+    private transient Logger log = LoggerFactory.getLogger(MboxReader.class);
 
     private static final String charsetName = "utf-8";
 
@@ -80,7 +84,7 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
             try {
                 return buildMimeMessage(messageStream);
             } catch (Exception e) {
-                System.out.println("OWELL");
+                log.error("Could not build mime message from message stream");
             }
 
             if (extractor.shouldParseEmbedded(mailMetadata)) {

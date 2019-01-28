@@ -13,6 +13,9 @@ services:
     - "11000:11000"
     links:
     - mongo
+    - billshwah
+    environment:
+    - life2_email_sources_billshwah_url=billshwah
   person.index:
     build:
       context: .
@@ -31,5 +34,15 @@ services:
     - SPRING_PROFILES_ACTIVE=billshwah
     links:
     - mongo
- # billshwah:
- #   build: './life2-app/life2-app-email'
+  billshwah:
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-email/Dockerfile
+    volumes:
+    - /Users/rich/life2/data:/data/life2/data
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah
+    ports:
+    - "11002:11002"
+    links:
+    - mongo

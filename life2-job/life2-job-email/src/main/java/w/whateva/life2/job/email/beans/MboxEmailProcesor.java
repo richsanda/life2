@@ -1,6 +1,8 @@
 package w.whateva.life2.job.email.beans;
 
 import org.apache.commons.mail.util.MimeMessageParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.util.StringUtils;
 import w.whateva.life2.api.email.dto.ApiEmail;
@@ -17,6 +19,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
+
+    private transient Logger log = LoggerFactory.getLogger(MboxEmailProcesor.class);
 
     private static final String KEY_SEPARATOR = ".";
 
@@ -48,12 +52,12 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
         result.setBody(!StringUtils.isEmpty(parser.getHtmlContent()) ? parser.getHtmlContent() : parser.getPlainContent());
         result.setMessage(toString(message));
 
-        System.out.println(result.getKey());
+        log.debug("Processed mime message resulting in key: " + result.getKey());
 
         return result;
     }
 
-    private static String createKey(Map<String, String> headers, MimeMessageParser parser) {
+    private String createKey(Map<String, String> headers, MimeMessageParser parser) {
 
         if (headers.get("Message-ID") != null) return headers.get("Message-ID");
 
@@ -82,14 +86,14 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
         return os.toString();
     }
 
-    private static Date getSentDate(Map<String, String> headers, MimeMessageParser parser) {
+    private Date getSentDate(Map<String, String> headers, MimeMessageParser parser) {
         try {
             return parser.getMimeMessage().getSentDate();
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (Exception e) {
             String result =  makeKeyFromHeaders(headers);
-            System.out.println("Could not get a date out of this one: " + result);
+            log.warn("Could not parse date so tried using headers: " + result);
             return null;
         }
         return null;

@@ -1,5 +1,7 @@
 package w.whateva.life2.job.person;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -18,6 +20,8 @@ import w.whateva.life2.xml.email.def.XmlPerson;
 
 @Configuration
 public class XmlPersonJobConfiguration {
+
+    private transient Logger log = LoggerFactory.getLogger(XmlPersonJobConfiguration.class);
 
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
@@ -61,7 +65,9 @@ public class XmlPersonJobConfiguration {
     @Bean
     @StepScope
     public ResourceAwareItemReaderItemStream<XmlPerson> personReader() {
-        System.out.println("reading person file from: " + personXmlFile);
+
+        log.info("reading person file from: " + personXmlFile);
+
         StaxEventItemReader<XmlPerson> reader = new StaxEventItemReader<>();
         reader.setFragmentRootElementName("person");
         reader.setResource(new FileSystemResource(personXmlFile));

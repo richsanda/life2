@@ -1,5 +1,7 @@
 package w.whateva.life2.job.email;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -22,6 +24,8 @@ import java.io.InputStream;
 @Configuration
 @ConditionalOnProperty(name = "email.mbox.file")
 public class MboxEmailJobConfiguration {
+
+    private transient Logger log = LoggerFactory.getLogger(MboxEmailJobConfiguration.class);
 
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
@@ -57,7 +61,9 @@ public class MboxEmailJobConfiguration {
     @Bean
     @StepScope
     public ItemReader<MimeMessage> emailReader() throws IOException {
-        System.out.println("reading email mbox from: " + emailMboxFile);
+
+        log.info("reading email mbox from: " + emailMboxFile);
+
         InputStream input = new FileInputStream(emailMboxFile);
         MboxReader reader = new MboxReader(input);
         return reader;

@@ -1,6 +1,8 @@
 package w.whateva.life2.service.artifact.util;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ArtifactUtilityTest {
+
+    private transient Logger log = LoggerFactory.getLogger(ArtifactUtilityTest.class);
 
     @Test
     public void putIntoBuckets() {
@@ -53,7 +57,7 @@ public class ArtifactUtilityTest {
         addToBuckets(bucketMaxes, buckets, sorted);
 
         // print the output
-        buckets.forEach(b -> System.out.println("bucket of size " + b.size()));
+        buckets.forEach(b -> log.info("bucket of size " + b.size()));
     }
 
 

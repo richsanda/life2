@@ -2,6 +2,8 @@ package w.whateva.life2.service.artifact.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 @Primary
 @Service
 public class ArtifactServiceImpl implements ArtifactOperations {
+
+    Logger log = LoggerFactory.getLogger(ArtifactServiceImpl.class);
 
     private final GenericWebApplicationContext context;
     private final ArtifactUtility artifactUtility;
@@ -83,8 +87,10 @@ public class ArtifactServiceImpl implements ArtifactOperations {
         ApiPerson person = personService.findMeAmongTheirs(currentUser.getUsername(), searchSpec.getOwner());
 
         if (null == person) {
-            System.out.println("hm, couldn't find me...: " + currentUser);
+            log.info("hm, couldn't find me...: " + currentUser.getUsername());
             return new ArrayList<>();
+        } else {
+            log.info("found myself: " + currentUser.getUsername());
         }
 
         ApiArtifactSearchSpec access = new ApiArtifactSearchSpec();

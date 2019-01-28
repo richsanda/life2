@@ -1,12 +1,16 @@
 package w.whateva.life2.service.artifact.util.bucket;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class BucketDistributorTest {
+
+    private transient Logger log = LoggerFactory.getLogger(BucketDistributorTest.class);
 
     @Test
     public void putIntoBuckets() {
@@ -23,7 +27,7 @@ public class BucketDistributorTest {
                 LocalDateTime.now().plusYears(20)
         );
 
-        System.out.println(w.getBuckets().size());
+        log.info("bucket size is: " + w.getBuckets().size());
     }
 
     protected class Thing extends AbstractLocalDateTimeOperator<Thing> {

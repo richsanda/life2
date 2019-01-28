@@ -1,10 +1,15 @@
 package w.whateva.life2.xml.email.adapter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 public class LocalDateTimeXmlAdapter extends XmlAdapter<String, LocalDateTime> {
+
+    private transient Logger log = LoggerFactory.getLogger(LocalDateTimeXmlAdapter.class);
 
     @Override
     public String marshal(LocalDateTime localDateTime) throws Exception {
@@ -39,7 +44,7 @@ public class LocalDateTimeXmlAdapter extends XmlAdapter<String, LocalDateTime> {
             //
         }
 
-        System.out.println("Problem with date: " + str);
+        log.warn("Problem parsing date: " + str);
 
         return null;
     }

@@ -1,6 +1,8 @@
 package w.whateva.life2.job.email.beans;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.BeanUtils;
 import w.whateva.life2.api.email.dto.ApiEmail;
@@ -10,6 +12,8 @@ import w.whateva.life2.xml.email.def.XmlGroupMessage;
 
 public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
 
+    private transient Logger log = LoggerFactory.getLogger(XmlEmailProcessor.class);
+
     private static final String KEY_SEPARATOR = ":";
 
     public ApiEmail process(XmlEmail xmlEmail) {
@@ -18,7 +22,7 @@ public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
                 ? convert((XmlGroupMessage) xmlEmail)
                 : convert(xmlEmail);
 
-        System.out.println(apiEmail.getKey());
+        log.debug("Processing XML email with key: " + apiEmail.getKey());
 
         return apiEmail;
     }

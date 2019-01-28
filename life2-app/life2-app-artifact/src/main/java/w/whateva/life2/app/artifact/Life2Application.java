@@ -1,5 +1,7 @@
 package w.whateva.life2.app.artifact;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -42,9 +44,13 @@ import w.whateva.service.utilities.controller.AutoControllers;
 @AutoControllers(apis = { ArtifactOperations.class })
 public class Life2Application {
 
+    private static transient Logger log = LoggerFactory.getLogger(Life2Application.class);
+
     public static void main(String[] args) throws Exception {
 
         SpringApplication.run(Life2Application.class, args);
+
+        log.info("Started life2");
     }
 
     @Value("${async.core.pool.size}")

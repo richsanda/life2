@@ -3,6 +3,8 @@ package w.whateva.life2.integration.email.config;
 import feign.Feign;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
@@ -23,6 +25,8 @@ import java.util.Set;
 @ConfigurationProperties(prefix = "life2.email")
 public class EmailClientRegistrar {
 
+    private transient Logger log = LoggerFactory.getLogger(EmailClientRegistrar.class);
+
     private static final String CLIENT_BEAN_SUFFIX = "EmailProvider";
 
     private final GenericWebApplicationContext context;
@@ -42,7 +46,7 @@ public class EmailClientRegistrar {
     private void postConstruct() {
 
         if (CollectionUtils.isEmpty(sources)) {
-            System.out.println("No email sources");
+            log.warn("No email sources");
             return;
         }
 
@@ -53,7 +57,7 @@ public class EmailClientRegistrar {
         for (Map.Entry<String, EmailConfiguration> entry : sources.entrySet()) {
 
             if (CollectionUtils.isEmpty(entry.getValue().getTroves()) || null == entry.getValue().getUrl()) {
-                System.out.println("NOT loading source " + entry.getKey() + " because it's not fully configured");
+                log.info("NOT loading source " + entry.getKey() + " because it's not fully configured");
                 continue;
             }
 

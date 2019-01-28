@@ -1,5 +1,7 @@
 package w.whateva.life2.service.email;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 @Primary
 @Service
 public class EmailServiceImpl implements EmailService {
+
+    private transient Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     private final EmailRepository emailRepository;
     private final PersonRepository personRepository;
@@ -80,7 +84,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             emailRepository.save(email);
         } catch (Exception e) {
-            System.out.println("This one failed to save" + email.getKey());
+            log.error("Failed to save email with key: " + email.getKey());
         }
     }
 
@@ -92,6 +96,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public List<ApiEmail> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+
+        log.info("Searching emails...");
 
         Set<String> whoEmails = getEmailAddresses(who);
         Set<String> fromEmails = getEmailAddresses(from);
@@ -126,7 +132,7 @@ public class EmailServiceImpl implements EmailService {
 
         emailDao.getSenders().forEach(person -> {
             if (null == person.getEmails()) person.setEmails(Collections.emptySet());
-            System.out.println("name is: " + person.getName());
+            log.info(String.format("Adding group address %s to: %s", groupAddress, person.getName()));
             person.getEmails().add(groupAddress);
             personRepository.save(person);
         });
@@ -154,7 +160,7 @@ public class EmailServiceImpl implements EmailService {
                 .collect(Collectors.toSet());
     }
 
-    private static Set<String> toEmailAddresses (String addressList) {
+    private Set<String> toEmailAddresses (String addressList) {
         if (StringUtils.isEmpty(addressList)) return new HashSet<>();
         try {
             return Arrays
@@ -163,8 +169,7 @@ public class EmailServiceImpl implements EmailService {
                     .map(String::toLowerCase)
                     .collect(Collectors.toSet());
         } catch (Exception e) {
-            System.out.println("Problem with: " + addressList);
-            // e.printStackTrace();
+            log.error("Problem parsing internet email address list: " + addressList);
         }
         return new HashSet<>();
     }
