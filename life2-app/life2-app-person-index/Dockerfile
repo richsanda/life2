@@ -4,6 +4,7 @@ COPY external /data/external
 ENTRYPOINT [ \
 "java", \
 "-jar", \
+"-Dspring.config.additional-location=/data/external/config/", \
 "-Dlife2.data=/data/life2/data", \
 "-Dlife2.mongo.host=mongo", \
 "person-index.jar" \

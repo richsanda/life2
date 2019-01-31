@@ -25,6 +25,16 @@ services:
     - /Users/rich/life2/data:/data/life2/data
     links:
     - mongo
+  person.index.2:
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-person-index/Dockerfile
+    volumes:
+    - /Users/rich/life2/data:/data/life2/data
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah
+    links:
+    - mongo
   billshwah.index:
     build:
       context: .
