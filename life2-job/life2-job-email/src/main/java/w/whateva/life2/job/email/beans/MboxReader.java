@@ -54,7 +54,6 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
         } else if (curLine.startsWith(MBOX_RECORD_DIVIDER)) {
 
             Metadata mailMetadata = new Metadata();
-            Queue<String> multiline = new LinkedList<>();
 
             XHTMLContentHandler xhtml = new XHTMLContentHandler(handler, mailMetadata);
             xhtml.startDocument();
@@ -65,14 +64,6 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
 
             ByteArrayOutputStream message = new ByteArrayOutputStream(100000);
             do {
-                if (curLine.startsWith(" ") || curLine.startsWith("\t")) {
-                    String latestLine = multiline.poll();
-                    latestLine += " " + curLine.trim();
-                    multiline.add(latestLine);
-                } else {
-                    multiline.add(curLine);
-                }
-
                 message.write(curLine.getBytes(charsetName));
                 message.write('\n');
                 curLine = reader.readLine();

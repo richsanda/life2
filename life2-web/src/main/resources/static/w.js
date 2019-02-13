@@ -10,7 +10,7 @@ app.controller('controller', function($scope, $http) {
 
     $scope.emails = [];
 
-        var url = 'http://localhost:11000/artifacts';
+        var url = '/artifacts';
 
         var params = new Object();
         params.owner = "rich";
@@ -46,7 +46,7 @@ app.controller('controller', function($scope, $http) {
 
         showFeature();
 
-        $http.get('http://localhost:11000/artifact/rich.s/' + trove + '/' + key)
+        $http.get('/artifact/rich.s/' + trove + '/' + key)
             .then(function(response) {
                 $scope.feature = response.data;
             });

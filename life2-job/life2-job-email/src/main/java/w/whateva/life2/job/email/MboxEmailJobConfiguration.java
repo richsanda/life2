@@ -55,7 +55,7 @@ public class MboxEmailJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     public Step loadEmailStep() throws Exception {
         return this.steps.get("loadEmailStep")
-                .<MimeMessage, ApiEmail>chunk(200)
+                .<MimeMessage, ApiEmail>chunk(20)
                 .reader(emailReader())
                 .processor(emailProcessor())
                 .writer(emailWriter())
