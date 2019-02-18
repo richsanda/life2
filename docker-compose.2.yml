@@ -1,0 +1,69 @@
+version: '3.4'
+
+x-extra:
+  email.index:
+    &email_index
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-email-index/Dockerfile
+    volumes:
+    - /Users/rich/life2/data:/data/life2/data
+    links:
+    - mongo
+  person.index:
+    &person_index
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-person-index/Dockerfile
+    volumes:
+    - /Users/rich/life2/data:/data/life2/data
+    links:
+    - mongo
+  email:
+    &email
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-email/Dockerfile
+    volumes:
+    - /Users/rich/life2/data:/data/life2/data
+    links:
+    - mongo
+
+services:
+
+  mongo:
+    image: mongo
+    ports:
+    - "27018:27017"
+    - "27017:27017"
+
+  person.index:
+    << : *person_index
+  person.index.2:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah
+
+  billshwah.index:
+    << : *email_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah
+
+  billshwah:
+    << : *email
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah
+    ports:
+    - "11002:11002"
+
+  life2:
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-artifact/Dockerfile
+    ports:
+    - "11000:11000"
+    links:
+    - mongo
+    - billshwah
+    environment:
+    - life2_email_billshwah_host=billshwah

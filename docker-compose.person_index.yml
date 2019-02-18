@@ -1,0 +1,58 @@
+version: '3.4'
+
+x-extra:
+  person.index:
+    &person_index
+    build:
+      context: .
+      dockerfile: life2-app/life2-app-person-index/Dockerfile
+    volumes:
+    - /Users/rich/life2/data:/data/life2/data
+    links:
+    - mongo
+
+services:
+  billshwah.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah
+  bbjones.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=bbjones
+  billshwah_inbox.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah_inbox
+  billshwah_inbox2000.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=billshwah_inbox2000
+  cahds47.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=cahds47
+  killerbeesultimate.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=killerbeesultimate
+  noholeleftbehind.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=noholeleftbehind
+  oclfootball.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=oclfootball
+  redsox47.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=redsox47
+  rowecom.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=rowecom
+  trudge.index:
+    << : *person_index
+    environment:
+    - SPRING_PROFILES_ACTIVE=trudge
