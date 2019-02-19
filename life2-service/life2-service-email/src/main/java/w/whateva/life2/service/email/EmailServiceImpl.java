@@ -95,13 +95,13 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public List<ApiEmail> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+    public List<ApiEmail> search(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
 
         log.info("Searching emails..." + after + " / " + before + " / " + who + " / " + from + " / " + to);
 
-        Set<String> whoEmails = getEmailAddresses(who);
-        Set<String> fromEmails = getEmailAddresses(from);
-        Set<String> toEmails = getEmailAddresses(to);
+        Set<String> whoEmails = who; getEmailAddresses(who);
+        Set<String> fromEmails = from; getEmailAddresses(from);
+        Set<String> toEmails = to; getEmailAddresses(to);
 
         try {
 

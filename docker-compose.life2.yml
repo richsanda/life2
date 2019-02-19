@@ -16,46 +16,46 @@ services:
     << : *email
     environment:
     - SPRING_PROFILES_ACTIVE=billshwah
-  bbjones:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=bbjones
-  billshwah_inbox:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=billshwah_inbox
-  billshwah_inbox2000:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=billshwah_inbox2000
-  cahds47:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=cahds47
-  killerbeesultimate:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=killerbeesultimate
-  noholeleftbehind:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=noholeleftbehind
-  oclfootball:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=oclfootball
-  redsox47:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=redsox47
-  rowecom:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=rowecom
-  trudge:
-    << : *email
-    environment:
-    - SPRING_PROFILES_ACTIVE=trudge
+#  bbjones:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=bbjones
+#  billshwah_inbox:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=billshwah_inbox
+#  billshwah_inbox2000:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=billshwah_inbox2000
+#  cahds47:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=cahds47
+#  killerbeesultimate:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=killerbeesultimate
+#  noholeleftbehind:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=noholeleftbehind
+#  oclfootball:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=oclfootball
+#  redsox47:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=redsox47
+#  rowecom:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=rowecom
+#  trudge:
+#    << : *email
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=trudge
   life2:
     build:
       context: .
@@ -65,23 +65,23 @@ services:
     links:
     - mongo
     - billshwah
-    - billshwah_inbox
-    - billshwah_inbox2000
-    - cahds47
-    - killerbeesultimate
-    - noholeleftbehind
-    - oclfootball
-    - redsox47
-    - rowecom
-    - trudge
+#    - billshwah_inbox
+#    - billshwah_inbox2000
+#    - cahds47
+#    - killerbeesultimate
+#    - noholeleftbehind
+#    - oclfootball
+#    - redsox47
+#    - rowecom
+#    - trudge
     environment:
     - life2_email_billshwah_host=billshwah
-    - life2_email_billshwah_inbox_host=billshwah_inbox
-    - life2_email_billshwah_inbox2000_host=billshwah_inbox2000
-    - life2_email_cahds47_host=cahds47
-    - life2_email_killerbeesultimate_host=killerbeesultimate
-    - life2_email_noholeleftbehind_host=noholeleftbehind
-    - life2_email_oclfootball_host=oclfootball
-    - life2_email_redsox47_host=redsox47
-    - life2_email_rowecom_host=rowecom
-    - life2_email_trudge_host=trudge
+#    - life2_email_billshwah_inbox_host=billshwah_inbox
+#    - life2_email_billshwah_inbox2000_host=billshwah_inbox2000
+#    - life2_email_cahds47_host=cahds47
+#    - life2_email_killerbeesultimate_host=killerbeesultimate
+#    - life2_email_noholeleftbehind_host=noholeleftbehind
+#    - life2_email_oclfootball_host=oclfootball
+#    - life2_email_redsox47_host=redsox47
+#    - life2_email_rowecom_host=rowecom
+#    - life2_email_trudge_host=trudge

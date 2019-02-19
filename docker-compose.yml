@@ -53,7 +53,5 @@ services:
     - /Users/rich/life2/data:/data/life2/data
     environment:
     - SPRING_PROFILES_ACTIVE=billshwah
-    ports:
-    - "11002:11002"
     links:
     - mongo

@@ -53,8 +53,6 @@ services:
     << : *email
     environment:
     - SPRING_PROFILES_ACTIVE=billshwah
-    ports:
-    - "11002:11002"
 
   life2:
     build:
