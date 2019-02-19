@@ -16,43 +16,43 @@ services:
     << : *email_index
     environment:
     - SPRING_PROFILES_ACTIVE=billshwah
-  bbjones.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=bbjones
-  billshwah_inbox.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=billshwah_inbox
-  billshwah_inbox2000.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=billshwah_inbox2000
-  cahds47.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=cahds47
-  killerbeesultimate.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=killerbeesultimate
-  noholeleftbehind.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=noholeleftbehind
-  oclfootball.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=oclfootball
-  redsox47.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=redsox47
-  rowecom.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=rowecom
-  trudge.index:
-    << : *email_index
-    environment:
-    - SPRING_PROFILES_ACTIVE=trudge
+#  bbjones.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=bbjones
+#  billshwah_inbox.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=billshwah_inbox
+#  billshwah_inbox2000.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=billshwah_inbox2000
+#  cahds47.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=cahds47
+#  killerbeesultimate.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=killerbeesultimate
+#  noholeleftbehind.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=noholeleftbehind
+#  oclfootball.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=oclfootball
+#  redsox47.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=redsox47
+#  rowecom.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=rowecom
+#  trudge.index:
+#    << : *email_index
+#    environment:
+#    - SPRING_PROFILES_ACTIVE=trudge

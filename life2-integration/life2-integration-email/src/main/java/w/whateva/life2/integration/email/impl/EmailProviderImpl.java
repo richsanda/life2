@@ -10,6 +10,8 @@ import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
 import w.whateva.life2.api.email.EmailOperations;
 import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.data.person.domain.Person;
+import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
@@ -22,10 +24,12 @@ public class EmailProviderImpl implements ArtifactProvider {
     private Logger log = LoggerFactory.getLogger(EmailProviderImpl.class);
 
     private final EmailOperations emailClient;
+    private final PersonRepository personRepository;
     private final Multimap<String, String> troves = HashMultimap.create();
 
-    public EmailProviderImpl(EmailOperations client, Map<String, List<String>> troves) {
+    public EmailProviderImpl(EmailOperations client, Map<String, List<String>> troves, PersonRepository personRepository) {
         this.emailClient = client;
+        this.personRepository = personRepository;
         troves.forEach(this.troves::putAll);
     }
 
@@ -47,7 +51,11 @@ public class EmailProviderImpl implements ArtifactProvider {
     @Override
     public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
 
-        return emailClient.search(after, before, who, from, to)
+        Set<String> whoEmails = getEmailAddresses(who);
+        Set<String> fromEmails = getEmailAddresses(from);
+        Set<String> toEmails = getEmailAddresses(to);
+
+        return emailClient.search(after, before, whoEmails, fromEmails, toEmails)
                 .stream()
                 .map(EmailUtil::toDto)
                 .map(this::embellish)
@@ -86,5 +94,16 @@ public class EmailProviderImpl implements ArtifactProvider {
 
     private boolean hasTrove(String owner, String trove) {
         return troves.containsKey(owner) && troves.get(owner).contains(trove);
+    }
+
+    private Set<String> getEmailAddresses(Set<String> names) {
+
+        if (CollectionUtils.isEmpty(names)) return null; // null means unspecified
+
+        return personRepository.findByNameIn(names)
+                .stream()
+                .map(Person::getEmails)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 }
