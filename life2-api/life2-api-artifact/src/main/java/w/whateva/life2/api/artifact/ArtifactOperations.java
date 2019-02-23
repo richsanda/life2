@@ -8,6 +8,7 @@ import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RequestMapping
 public interface ArtifactOperations {
@@ -19,9 +20,9 @@ public interface ArtifactOperations {
     List<ApiArtifact> search(
             @RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,
             @RequestParam(value = "before", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate before,
-            @RequestParam(value = "who", required = false) HashSet<String> who,
-            @RequestParam(value = "from", required = false) HashSet<String> from,
-            @RequestParam(value = "to", required = false) HashSet<String> to);
+            @RequestParam(value = "who", required = false) Set<String> who,
+            @RequestParam(value = "from", required = false) Set<String> from,
+            @RequestParam(value = "to", required = false) Set<String> to);
 
     @RequestMapping(value = "/artifacts", method = RequestMethod.POST, produces = "application/json")
     List<ApiArtifact> search(@RequestBody ApiArtifactSearchSpec searchSpec);

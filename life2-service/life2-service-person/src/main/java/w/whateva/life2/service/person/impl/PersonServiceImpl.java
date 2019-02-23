@@ -9,6 +9,7 @@ import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,8 +45,26 @@ public class PersonServiceImpl implements PersonService {
             person.getEmails().addAll(apiPerson.getEmails());
         }
 
-        person.setOwner(apiPerson.getOwner());
-        person.setUsername(apiPerson.getUsername());
+        if (!CollectionUtils.isEmpty(apiPerson.getGroups())) {
+            person.getGroups().addAll(apiPerson.getGroups());
+        }
+
+        if (apiPerson.isGroup() && !CollectionUtils.isEmpty(apiPerson.getMembers())) {
+            // person.getMembers().addAll(apiPerson.getMembers());
+            apiPerson.getMembers().forEach(m -> {
+                ApiPerson p = new ApiPerson();
+                p.setName(m);
+                p.setGroups(Collections.singleton(apiPerson.getName()));
+                updatePerson(p);
+            });
+        }
+
+        if (null != apiPerson.getOwner()) {
+            person.setOwner(apiPerson.getOwner());
+        }
+        if (null != apiPerson.getUsername()) {
+            person.setUsername(apiPerson.getUsername());
+        }
 
         personRepository.save(person);
     }

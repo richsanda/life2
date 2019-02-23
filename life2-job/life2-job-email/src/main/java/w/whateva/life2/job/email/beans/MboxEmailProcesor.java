@@ -50,6 +50,7 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
         result.setSubject(headers.get("Subject"));
         result.setSent(null == sentDate ? null : sentDate.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
         result.setBody(!StringUtils.isEmpty(parser.getHtmlContent()) ? parser.getHtmlContent() : parser.getPlainContent());
+        result.setBodyHtml(!StringUtils.isEmpty(parser.getHtmlContent()));
         result.setMessage(toString(message));
 
         log.debug("Processed mime message resulting in key: " + result.getKey());

@@ -28,4 +28,7 @@ public class Person {
 
     @Indexed
     private Set<String> emails = new HashSet<>();
+
+    @Indexed
+    private Set<String> groups = new HashSet<>();
 }

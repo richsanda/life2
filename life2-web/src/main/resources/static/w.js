@@ -71,6 +71,11 @@ app.controller('controller', function($scope, $http) {
         if (!text) return null;
         return "<div><br/>" + text.replace(/(?:\r\n|\r|\n)/g, "<br/>") + "</div>";
     }
+
+    $scope.preify = function(text) {
+        if (!text) return "<div>&nbsp;</div>";
+        return "<div>&nbsp;</div><div>" + text + "</div>";
+    }
 });
 
 function showFeature() {

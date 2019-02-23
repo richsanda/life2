@@ -22,9 +22,8 @@
         <div class="artifact-link" data-ng-repeat="artifact in artifacts">
             <div data-ng-click="read(artifact.trove, artifact.key)">
                 <div class="artifact-link-col">{{ $index + 1 }}. {{ prettyDateify(artifact.sent) }}</div>
-                <div class="artifact-link-col">{{ artifact.from }}</div>
-                <div class="artifact-link-col">{{ artifact.to }}</div>
-                <div class="artifact-link-col">{{ artifact.subject }}</div>
+                <div class="artifact-link-col">{{ artifact.from_email + ' -> ' + artifact.to_emails.join(', ') }}</div>
+                <div class="artifact-link-col">{{ '[' + artifact.subject + ']' }}</div>
             </div>
         </div>
     </div>
@@ -35,7 +34,7 @@
             <div>From: {{ feature.from }}</div>
             <div>To: {{ feature.to }}</div>
             <div>Subject: {{ feature.subject }}</div>
-            <div ng-bind-html="bodyify(feature.body)"></div>
+            <div ng-bind-html="feature.body_html ? preify(feature.body) : bodyify(feature.body)"></div>
         </div>
     </div>
 

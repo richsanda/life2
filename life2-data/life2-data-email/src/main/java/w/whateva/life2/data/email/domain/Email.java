@@ -35,5 +35,6 @@ public class Email {
     private Set<String> toIndex;
     private String subject;
     private String body;
+    private boolean bodyHtml;
     private boolean group;
 }

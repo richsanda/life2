@@ -66,7 +66,7 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
 
         return providers()
                 .parallelStream()
@@ -109,7 +109,7 @@ public class ArtifactServiceImpl implements ArtifactOperations {
                 .collect(Collectors.toList());
     }
 
-    private List<ApiArtifact> search(ArtifactProvider provider, LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+    private List<ApiArtifact> search(ArtifactProvider provider, LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
         try {
             return provider.search(after, before, who, from, to);
         } catch (Exception e) {
@@ -125,7 +125,7 @@ public class ArtifactServiceImpl implements ArtifactOperations {
         }
     }
 
-    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer numBuckets) {
+    public List<List<ApiArtifact>> search(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to, Integer numBuckets) {
 
         List<List<ApiArtifact>> buckets = artifactUtility.putInBuckets(
                 search(after, before, who, from, to),

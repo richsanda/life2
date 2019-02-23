@@ -9,10 +9,13 @@ public class EmailUtil {
         ApiArtifact artifact = new ApiArtifact();
         artifact.setKey(email.getKey());
         artifact.setFrom(email.getFrom());
+        artifact.setFromEmail(email.getFromEmail());
         artifact.setSent(email.getSent());
         artifact.setTo(email.getTo());
+        artifact.setToEmails(email.getToEmails());
         artifact.setSubject(email.getSubject());
         artifact.setBody(email.getBody());
+        artifact.setBodyHtml(email.isBodyHtml());
         return artifact;
     }
 }

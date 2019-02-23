@@ -66,6 +66,7 @@ public class EmailServiceImpl implements EmailService {
         if (null != groupAddress) {
             email.setTo(groupAddress);
             email.setGroup(true);
+            email.setBodyHtml(true);
         }
 
         switch (addressStyle) {
@@ -99,16 +100,12 @@ public class EmailServiceImpl implements EmailService {
 
         log.info("Searching emails..." + after + " / " + before + " / " + who + " / " + from + " / " + to);
 
-        Set<String> whoEmails = who; getEmailAddresses(who);
-        Set<String> fromEmails = from; getEmailAddresses(from);
-        Set<String> toEmails = to; getEmailAddresses(to);
-
         try {
 
             List<ApiEmail> result = emailDao.getEmails(
-                    whoEmails,
-                    fromEmails,
-                    toEmails,
+                    who,
+                    from,
+                    to,
                     null == after ? null : after.atStartOfDay(),
                     null == before ? null : before.atStartOfDay().plusDays(1))
                     .stream()
@@ -123,17 +120,6 @@ public class EmailServiceImpl implements EmailService {
             log.error(e.getMessage());
             return new ArrayList<>();
         }
-    }
-
-    private Set<String> getEmailAddresses(Set<String> names) {
-
-        if (CollectionUtils.isEmpty(names)) return null; // null means unspecified
-
-        return personRepository.findByNameIn(names)
-                .stream()
-                .map(Person::getEmails)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
     }
 
     @Override
@@ -151,16 +137,20 @@ public class EmailServiceImpl implements EmailService {
 
     public static ApiEmail toApi(Email email) {
         if (null == email) return null;
-        ApiEmail ApiEmail = new ApiEmail();
-        BeanUtils.copyProperties(email, ApiEmail);
-        return ApiEmail;
+        ApiEmail result = new ApiEmail();
+        BeanUtils.copyProperties(email, result);
+        result.setToEmails(email.getToIndex());
+        result.setFromEmail(email.getFromIndex());
+        return result;
     }
 
     public static ApiEmail toSummaryApi(Email email) {
         if (null == email) return null;
-        ApiEmail ApiEmail = new ApiEmail();
-        BeanUtils.copyProperties(email, ApiEmail, "body");
-        return ApiEmail;
+        ApiEmail result = new ApiEmail();
+        BeanUtils.copyProperties(email, result, "body");
+        result.setToEmails(email.getToIndex());
+        result.setFromEmail(email.getFromIndex());
+        return result;
     }
 
     private static Set<String> toSimpleAddresses(String addressList) {

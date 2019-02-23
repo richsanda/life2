@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,8 +20,11 @@ public class ApiArtifact {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime sent;
     private String from;
+    private String fromEmail;
     private String to;
+    private Set<String> toEmails;
     private String subject;
     private String body;
+    private boolean bodyHtml;
     private String message;
 }

@@ -17,8 +17,11 @@ public class ApiEmail {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime sent;
     private String from;
+    private String fromEmail;
     private String to;
+    private Set<String> toEmails;
     private String subject;
     private String body;
     private String message;
+    private boolean bodyHtml;
 }

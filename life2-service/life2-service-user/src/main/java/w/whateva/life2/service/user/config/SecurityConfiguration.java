@@ -64,6 +64,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .withRoles(TroveAccessRole.FROM, TroveAccessRole.TO);
         addTestUser("rsd", "rsd47", Collections.singletonList(access));
 
+        //laura
+        access = new TroveAccess("rich", "laura")
+                .withTroves("billshwah", "billshwah_inbox")
+                .withRoles(TroveAccessRole.FROM, TroveAccessRole.TO);
+        addTestUser("laura", "laurabsanda", Collections.singletonList(access));
+
         //trav
 
         access = new TroveAccess("rich", "trav")

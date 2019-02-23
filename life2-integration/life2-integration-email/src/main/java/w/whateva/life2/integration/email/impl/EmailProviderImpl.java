@@ -1,8 +1,6 @@
 package w.whateva.life2.integration.email.impl;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +16,8 @@ import w.whateva.life2.integration.email.util.EmailUtil;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class EmailProviderImpl implements ArtifactProvider {
 
@@ -26,6 +26,8 @@ public class EmailProviderImpl implements ArtifactProvider {
     private final EmailOperations emailClient;
     private final PersonRepository personRepository;
     private final Multimap<String, String> troves = HashMultimap.create();
+
+    private final Map<String, String> emailsToPersons = Maps.newHashMap();
 
     public EmailProviderImpl(EmailOperations client, Map<String, List<String>> troves, PersonRepository personRepository) {
         this.emailClient = client;
@@ -49,11 +51,18 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+
+        who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
 
         Set<String> whoEmails = getEmailAddresses(who);
         Set<String> fromEmails = getEmailAddresses(from);
         Set<String> toEmails = getEmailAddresses(to);
+
+        if ((null != fromEmails && 0 == fromEmails.size()) || (null != toEmails && 0 == toEmails.size())) {
+            log.warn("from or to not found... no results.");
+            return Collections.emptyList();
+        }
 
         return emailClient.search(after, before, whoEmails, fromEmails, toEmails)
                 .stream()
@@ -88,8 +97,38 @@ public class EmailProviderImpl implements ArtifactProvider {
 
         artifact.setOwner(trove.getKey());
         artifact.setTrove(trove.getValue());
+        artifact.setFromEmail(emailToPersonName(artifact.getFromEmail()));
+        artifact.setToEmails(emailToPersonNames(artifact.getToEmails()));
 
         return artifact;
+    }
+
+    private Set<String> emailToPersonNames(Set<String> emails) {
+        Set<String> result = Sets.newHashSet();
+        Set<String> lookup = Sets.newHashSet();
+        emails.forEach(e -> {
+            if (emailsToPersons.containsKey(e)) {
+                result.add(emailsToPersons.get(e));
+            } else {
+                lookup.add(e);
+            }
+        });
+        if (!CollectionUtils.isEmpty(lookup)) {
+            Set<Person> persons = personRepository.findByEmailsIn(emails);
+            if (!CollectionUtils.isEmpty(persons)) {
+                persons.forEach(p -> {
+                    p.getEmails().forEach(e -> {
+                        emailsToPersons.put(e, p.getName());
+                        result.add(p.getName());
+                    });
+                });
+            }
+        }
+        return result;
+    }
+
+    private String emailToPersonName(String email) {
+        return emailToPersonNames(Sets.newHashSet(email)).stream().findFirst().orElse(null);
     }
 
     private boolean hasTrove(String owner, String trove) {
@@ -105,5 +144,16 @@ public class EmailProviderImpl implements ArtifactProvider {
                 .map(Person::getEmails)
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet());
+    }
+
+    private Set<String> getGroups(Set<String> names) {
+
+        if (CollectionUtils.isEmpty(names)) return null; // null means unspecified
+
+        return personRepository.findByNameIn(names)
+                        .stream()
+                        .map(Person::getGroups)
+                        .flatMap(Set::stream)
+                        .collect(Collectors.toSet());
     }
 }
