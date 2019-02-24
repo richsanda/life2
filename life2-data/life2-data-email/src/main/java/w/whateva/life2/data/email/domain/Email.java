@@ -7,7 +7,7 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 /**
@@ -26,7 +26,7 @@ public class Email {
     private String key;
 
     @Indexed
-    private LocalDateTime sent;
+    private ZonedDateTime sent;
     private String from;
     @Indexed
     private String fromIndex;
@@ -37,4 +37,8 @@ public class Email {
     private String body;
     private boolean bodyHtml;
     private boolean group;
+    @Indexed
+    private String owner;
+    @Indexed
+    private String trove;
 }

@@ -2,12 +2,11 @@ package w.whateva.life2.service.artifact.util;
 
 import org.springframework.stereotype.Service;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
-import w.whateva.life2.service.artifact.util.bucket.Operator;
 import w.whateva.life2.service.artifact.util.bucket.BucketDistributor;
+import w.whateva.life2.service.artifact.util.bucket.Operator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -21,6 +21,7 @@ import w.whateva.life2.service.user.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -132,7 +133,7 @@ public class ArtifactServiceImpl implements ArtifactOperations {
                 new AbstractLocalDateTimeOperator<ApiArtifact>() {
                     @Override
                     public LocalDateTime apply(ApiArtifact artifact) {
-                        return artifact.getSent();
+                        return artifact.getSent().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime();
                     }
                 },
                 numBuckets,

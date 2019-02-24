@@ -14,6 +14,7 @@ import w.whateva.life2.data.email.repository.util.AggregationUtility;
 import w.whateva.life2.data.person.domain.Person;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
@@ -231,7 +232,7 @@ db.email.aggregate([
     }
 
     //@Override
-    public List<Email> getEmailsUsingPipeline(Set<String> names, LocalDateTime after, LocalDateTime before) {
+    public List<Email> getEmailsUsingPipeline(Set<String> names, ZonedDateTime after, ZonedDateTime before) {
 
         Map<String, String> let = new HashMap<>();
         let.put("address", "$emails");

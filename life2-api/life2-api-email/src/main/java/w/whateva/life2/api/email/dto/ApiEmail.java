@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Getter
@@ -14,8 +14,10 @@ public class ApiEmail {
     private String key;
 
     private String messageId;
+    private String owner;
+    private String trove;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime sent;
+    private ZonedDateTime sent;
     private String from;
     private String fromEmail;
     private String to;

@@ -3,11 +3,12 @@ package w.whateva.life2.xml.email.csv;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
 @Setter
-public class CsvEmail {
+public class RowecomInboxEmail {
 
 /*
 "Importance"	"Icon"	"Priority"	"Subject"	"From"	"Message To Me"	"Message CC to Me"	"Sender Name"	"CC"	"To"	"Received"	"Message Size"	"Contents"	"Created"	"Modified"	"Subject Prefix"	"Has Attachments"	"Normalized Subject"	"Object Type"	"Content Unread"

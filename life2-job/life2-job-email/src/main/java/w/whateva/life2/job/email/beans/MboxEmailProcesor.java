@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -48,7 +49,7 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
         result.setFrom(headers.get("From"));
         result.setTo(headers.get("To"));
         result.setSubject(headers.get("Subject"));
-        result.setSent(null == sentDate ? null : sentDate.toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
+        result.setSent(null == sentDate ? null : sentDate.toInstant().atOffset(ZoneOffset.UTC).toZonedDateTime());
         result.setBody(!StringUtils.isEmpty(parser.getHtmlContent()) ? parser.getHtmlContent() : parser.getPlainContent());
         result.setBodyHtml(!StringUtils.isEmpty(parser.getHtmlContent()));
         result.setMessage(toString(message));

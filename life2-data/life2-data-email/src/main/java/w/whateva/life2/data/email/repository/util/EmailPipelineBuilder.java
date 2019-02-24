@@ -2,13 +2,10 @@ package w.whateva.life2.data.email.repository.util;
 
 import org.bson.Document;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class EmailPipelineBuilder {
@@ -21,10 +18,10 @@ public class EmailPipelineBuilder {
     private static final String LTE = "$lte";
 
     private final String as;
-    private final LocalDateTime after;
-    private final LocalDateTime before;
+    private final ZonedDateTime after;
+    private final ZonedDateTime before;
 
-    EmailPipelineBuilder(String as, LocalDateTime after, LocalDateTime before) {
+    EmailPipelineBuilder(String as, ZonedDateTime after, ZonedDateTime before) {
         this.as = as;
         this.after = after;
         this.before = before;
@@ -47,13 +44,13 @@ public class EmailPipelineBuilder {
 
         if (null != after) {
             Document doc = new Document();
-            doc.append(GT, Arrays.asList("$sent", Date.from(after.toInstant(ZoneOffset.UTC))));
+            doc.append(GT, Arrays.asList("$sent", after));
             criteria.add(doc);
         }
 
         if (null != before) {
             Document doc = new Document();
-            doc.append(LTE, Arrays.asList("$sent", Date.from(before.toInstant(ZoneOffset.UTC))));
+            doc.append(LTE, Arrays.asList("$sent", before));
             criteria.add(doc);
         }
 

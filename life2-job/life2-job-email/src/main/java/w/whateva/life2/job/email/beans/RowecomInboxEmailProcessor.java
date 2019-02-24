@@ -4,22 +4,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.xml.email.csv.CsvEmail;
+import w.whateva.life2.xml.email.csv.RowecomInboxEmail;
 
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Date;
 
-public class CsvEmailProcessor implements ItemProcessor<CsvEmail, ApiEmail> {
+public class RowecomInboxEmailProcessor implements ItemProcessor<RowecomInboxEmail, ApiEmail> {
 
-    private transient Logger log = LoggerFactory.getLogger(CsvEmailProcessor.class);
+    private transient Logger log = LoggerFactory.getLogger(RowecomInboxEmailProcessor.class);
 
     private static final String KEY_SEPARATOR = ".";
 
     @Override
-    public ApiEmail process(CsvEmail csvEmail) throws Exception {
+    public ApiEmail process(RowecomInboxEmail csvEmail) throws Exception {
 
         ApiEmail result = new ApiEmail();
-        result.setSent(csvEmail.getReceived().toInstant().atZone(ZoneId.of("UTC")).toLocalDateTime());
+        result.setSent(csvEmail.getReceived().toInstant().atOffset(ZoneOffset.UTC).toZonedDateTime());
         result.setSubject(csvEmail.getSubject());
         result.setBody(csvEmail.getContents());
         result.setKey(createKey(csvEmail));
@@ -31,7 +31,7 @@ public class CsvEmailProcessor implements ItemProcessor<CsvEmail, ApiEmail> {
         return result;
     }
 
-    private String createKey(CsvEmail csvEmail) {
+    private String createKey(RowecomInboxEmail csvEmail) {
 
         try {
 
