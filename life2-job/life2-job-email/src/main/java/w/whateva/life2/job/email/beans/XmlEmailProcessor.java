@@ -10,6 +10,11 @@ import w.whateva.life2.api.email.dto.ApiGroupMessage;
 import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlGroupMessage;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
 
     private transient Logger log = LoggerFactory.getLogger(XmlEmailProcessor.class);
@@ -31,6 +36,7 @@ public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
 
         ApiGroupMessage result = new ApiGroupMessage();
         BeanUtils.copyProperties(groupMessage, result);
+        result.setSent(getSent(groupMessage));
         result.setKey(createKey(groupMessage));
 
         if (StringUtils.isEmpty(result.getSubject())) {
@@ -64,5 +70,10 @@ public class XmlEmailProcessor implements ItemProcessor<XmlEmail, ApiEmail> {
         //return email.getFrom() +
         //        KEY_SEPARATOR +
         //        email.getId();
+    }
+
+    private static ZonedDateTime getSent(XmlEmail email) {
+        if (null == email.getSent()) return null;
+        return email.getSent().toInstant(ZoneOffset.UTC).atZone(ZoneId.of("UTC"));
     }
 }
