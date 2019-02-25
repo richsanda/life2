@@ -46,14 +46,12 @@ div.artifact-link-col {
 }
 
 #feature {
-    max-height:100%;
+    max-height: 80%;
+    height: 100%;
     overflow-y: auto;
     font-size: 1.1em;
     color: white;
-    margin: 100px;
-    margin-right: 20px;
-    margin-bottom: 20px;
+    margin: 50px;
     padding: 10px;
-    height: 100%;
     background-color: black;
 }

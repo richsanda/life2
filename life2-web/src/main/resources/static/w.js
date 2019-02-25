@@ -4,7 +4,6 @@ app.controller('controller', function($scope, $http) {
 
     $scope.month = 7;
     $scope.year = 1998;
-    $scope.from = 'rich.s';
 
     $scope.artifactLinkClass = 'artifact-link';
 
