@@ -19,6 +19,12 @@ div.artifact-link {
     display: table-row;
 }
 
+div.artifact-link-selected {
+    border: 1px solid red;
+    background-color: rgba(100,100,100,0.25);
+    display: table-row;
+}
+
 div.artifact-link-col {
     padding: 2px;
     display: table-cell;

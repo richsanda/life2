@@ -6,6 +6,8 @@ app.controller('controller', function($scope, $http) {
     $scope.year = 1998;
     $scope.from = 'rich.s';
 
+    $scope.artifactLinkClass = 'artifact-link';
+
     $scope.search = function() {
 
     $scope.emails = [];
@@ -42,7 +44,12 @@ app.controller('controller', function($scope, $http) {
             */
     }
 
-    $scope.read = function(trove, key) {
+    $scope.read = function(index, trove, key) {
+
+        var previous = angular.element( document.querySelector('div.artifact-link-selected') );
+        previous.toggleClass('artifact-link-selected')
+        var current = angular.element( document.querySelector('#artifact' + index) );
+        current.toggleClass('artifact-link-selected');
 
         showFeature();
 
