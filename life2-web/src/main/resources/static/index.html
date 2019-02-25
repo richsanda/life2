@@ -10,13 +10,18 @@
 
 <div data-ng-app="app" data-ng-controller="controller" data-ng-init="names=['word','werd','w']">
 
-    <p> after: <input type="text" data-ng-model="after">
-        before: <input type="text" data-ng-model="before">
+    <p> month:
+        <select ng-model="month" ng-options="key as value for (key, value) in monthChoices">
+            <option value="7">aug</option>
+        </select>
+        year:
+        <select ng-model="year" ng-options="x for x in yearChoices">
+        </select>
         from: <input type="text" data-ng-model="from">
         to: <input type="text" data-ng-model="to">
-        either: <input type="text" data-ng-model="who"></p>
 
-    <button ng-click="search()">search</button>
+    <button ng-click="search()">go !</button>
+    </p>
 
     <div id="results">
         <div class="artifact-link" data-ng-repeat="artifact in artifacts">

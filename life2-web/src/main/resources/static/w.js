@@ -2,8 +2,8 @@ var app = angular.module('app', ['ngSanitize']);
 
 app.controller('controller', function($scope, $http) {
 
-    $scope.after = '2006-06-01';
-    $scope.before = '2006-09-30';
+    $scope.month = 7;
+    $scope.year = 1998;
     $scope.from = 'rich.s';
 
     $scope.search = function() {
@@ -14,8 +14,8 @@ app.controller('controller', function($scope, $http) {
 
         var params = new Object();
         params.owner = "rich";
-        if ($scope.after) params['after'] = $scope.after;
-        if ($scope.before) params['before'] = $scope.before;
+        if ($scope.year && $scope.month) params['after'] = formatDate(new Date($scope.year, $scope.month, 1));
+        if ($scope.year && $scope.month) params['before'] = formatDate(new Date($scope.year, parseInt($scope.month, 10) + 1, 0));
         if ($scope.from) params['from'] = [ $scope.from ];
         if ($scope.to) params['to'] = [ $scope.to ];
         if ($scope.who) params['who'] = [ $scope.who ];
@@ -76,6 +76,9 @@ app.controller('controller', function($scope, $http) {
         if (!text) return "<div>&nbsp;</div>";
         return "<div>&nbsp;</div><div>" + text + "</div>";
     }
+
+    $scope.monthChoices = {0 : 'jan', 1 : 'feb', 2 : 'mar', 3 : 'apr', 4 : 'may', 5 : 'jun', 6 : 'jul', 7 : 'aug', 8 : 'sep', 9 : 'oct', 10 : 'nov', 11 : 'dec'}
+    $scope.yearChoices = rangeOfYears();
 });
 
 function showFeature() {
@@ -84,4 +87,24 @@ function showFeature() {
 
 function hideFeature() {
   document.getElementById("feature-background").style.display = "none";
+}
+
+function rangeOfYears() {
+    var list = [];
+    for (var i = 1998; i <= 2019; i++) {
+        list.push(i);
+    }
+    return list;
+}
+
+function formatDate(d) {
+
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
 }
