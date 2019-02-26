@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import w.whateva.life2.data.email.domain.Email;
+import w.whateva.life2.data.email.domain.EmailMonthYearCount;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.util.AggregationUtility;
 import w.whateva.life2.data.person.domain.Person;
@@ -67,42 +68,12 @@ public class EmailDaoImpl implements EmailDao {
     @Override
     public List<Email> getEmails(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before) {
 
-        ArrayList<Criteria> criteria = new ArrayList<>();
-
-        if (null != who) {
-            criteria.add(new Criteria().orOperator(Criteria.where("toIndex").in(who), Criteria.where("fromIndex").in(who)));
-        }
-
-        if (null != from) {
-            criteria.add(Criteria.where("fromIndex").in(from));
-        }
-
-        if (null != to) {
-            criteria.add(Criteria.where("toIndex").in(to));
-        }
-
-        if (null != after || null != before) {
-            ArrayList<Criteria> sentCriteriaList = new ArrayList<>();
-            if (null != after) {
-                sentCriteriaList.add(Criteria.where("sent").gte(after));
-            }
-            if (null != before) {
-                sentCriteriaList.add(Criteria.where("sent").lt(before));
-            }
-            Criteria[] sentCriteriaArray = new Criteria[sentCriteriaList.size()];
-            sentCriteriaArray = sentCriteriaList.toArray(sentCriteriaArray);
-            criteria.add(new Criteria().andOperator(sentCriteriaArray));
-        }
-
-        Criteria[] criteriaArray = new Criteria[criteria.size()];
-        criteriaArray = criteria.toArray(criteriaArray);
-
-        Criteria queryCriteria = new Criteria().andOperator(criteriaArray);
+        Criteria criteria = queryCriteria(who, from, to, after, before);
 
         // *and* with the whoCriteria if it was provided
         // if (null != whoCriteria) queryCriteria = queryCriteria.andOperator(whoCriteria);
 
-        Query query = new Query(queryCriteria).with(new Sort(Sort.Direction.ASC, "sent"));
+        Query query = new Query(criteria).with(new Sort(Sort.Direction.ASC, "sent"));
 
         return mongoTemplate.find(query, Email.class);
 
@@ -162,6 +133,40 @@ public class EmailDaoImpl implements EmailDao {
         return groupResults.getMappedResults();
 
                 */
+    }
+
+    private Criteria queryCriteria(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before) {
+        ArrayList<Criteria> criteria = new ArrayList<>();
+
+        if (null != who) {
+            criteria.add(new Criteria().orOperator(Criteria.where("toIndex").in(who), Criteria.where("fromIndex").in(who)));
+        }
+
+        if (null != from) {
+            criteria.add(Criteria.where("fromIndex").in(from));
+        }
+
+        if (null != to) {
+            criteria.add(Criteria.where("toIndex").in(to));
+        }
+
+        if (null != after || null != before) {
+            ArrayList<Criteria> sentCriteriaList = new ArrayList<>();
+            if (null != after) {
+                sentCriteriaList.add(Criteria.where("sent").gte(after));
+            }
+            if (null != before) {
+                sentCriteriaList.add(Criteria.where("sent").lt(before));
+            }
+            Criteria[] sentCriteriaArray = new Criteria[sentCriteriaList.size()];
+            sentCriteriaArray = sentCriteriaList.toArray(sentCriteriaArray);
+            criteria.add(new Criteria().andOperator(sentCriteriaArray));
+        }
+
+        Criteria[] criteriaArray = new Criteria[criteria.size()];
+        criteriaArray = criteria.toArray(criteriaArray);
+
+        return new Criteria().andOperator(criteriaArray);
     }
 
     /*
@@ -293,6 +298,43 @@ db.email.aggregate([
 
 
      */
+
+    /*
+    db.email.aggregate(
+       {$project : {
+              month : {$month : "$sent"},
+              year : {$year :  "$sent"},
+              count : {$sum : 1}
+          }},
+        {$group : {
+                _id : {year: "$year", month: "$month"},
+              count : {$sum : "$count"},
+              year : {$first : "$year"},
+              month : {$first : "$month"}
+        }},
+        {$sort: {year: 1, month: 1}},
+       {$project : {
+              _id: "$_id",
+              count : "$count"
+          }}
+)
+     */
+
+
+    public List<EmailMonthYearCount> getMonthYearCounts(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before) {
+
+        Aggregation agg = newAggregation(
+                match(queryCriteria(who, from, to, after, before)),
+                project().andExpression("month(sent)").as("month").andExpression("year(sent)").as("year"),
+                group("month", "year").count().as("count"),
+                sort(Sort.Direction.ASC, "year", "month")
+        );
+
+        //Convert the aggregation result into a List
+        AggregationResults<EmailMonthYearCount> groupResults  = mongoTemplate.aggregate(agg, Email.class, EmailMonthYearCount.class);
+
+        return groupResults.getMappedResults();
+    }
 
     enum EmailRole {
         FROM, TO, EITHER

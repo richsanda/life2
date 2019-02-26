@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
+import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
 import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.person.dto.ApiPerson;
@@ -80,16 +81,56 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     @Override
     public List<ApiArtifact> search(ApiArtifactSearchSpec searchSpec) {
 
+        ApiArtifactSearchSpec restrictedSearchSpec = restrictSearchSpec(searchSpec);
+
+        if (null == restrictedSearchSpec) return new ArrayList<>();
+
+        return providers()
+                .parallelStream()
+                .map(p -> search(p, restrictedSearchSpec))
+                .flatMap(List::stream)
+                .sorted(Comparator.comparing(ApiArtifact::getSent))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+
+        return providers()
+                .parallelStream()
+                .map(p -> count(p, after, before, who, from, to))
+                .flatMap(List::stream)
+                .sorted(Comparator.comparing(ApiArtifactCount::getYear).thenComparing(ApiArtifactCount::getMonth))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ApiArtifactCount> count(ApiArtifactSearchSpec searchSpec) {
+
+        ApiArtifactSearchSpec restrictedSearchSpec = restrictSearchSpec(searchSpec);
+
+        if (null == restrictedSearchSpec) return new ArrayList<>();
+
+        return providers()
+                .parallelStream()
+                .map(p -> count(p, restrictedSearchSpec))
+                .flatMap(List::stream)
+                .sorted(Comparator.comparing(ApiArtifactCount::getYear).thenComparing(ApiArtifactCount::getMonth))
+                .collect(Collectors.toList());
+    }
+
+    private ApiArtifactSearchSpec restrictSearchSpec(ApiArtifactSearchSpec searchSpec) {
+
         User currentUser = userService.getCurrentUser();
         if (null == currentUser) {
-            return new ArrayList<>();
+            return null;
         }
 
         ApiPerson person = personService.findMeAmongTheirs(currentUser.getUsername(), searchSpec.getOwner());
 
         if (null == person) {
             log.info("hm, couldn't find me...: " + currentUser.getUsername());
-            return new ArrayList<>();
+            return null;
         } else {
             log.info("found myself: " + currentUser.getUsername());
         }
@@ -100,14 +141,7 @@ public class ArtifactServiceImpl implements ArtifactOperations {
         access.setFrom(param);
         access.setWho(param);
 
-        ApiArtifactSearchSpec restrictedSearchSpec = ArtifactUtility.restrict(searchSpec, access);
-
-        return providers()
-                .parallelStream()
-                .map(p -> search(p, restrictedSearchSpec))
-                .flatMap(List::stream)
-                .sorted(Comparator.comparing(ApiArtifact::getSent))
-                .collect(Collectors.toList());
+        return ArtifactUtility.restrict(searchSpec, access);
     }
 
     private List<ApiArtifact> search(ArtifactProvider provider, LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
@@ -118,9 +152,25 @@ public class ArtifactServiceImpl implements ArtifactOperations {
         }
     }
 
+    private List<ApiArtifactCount> count(ArtifactProvider provider, LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+        try {
+            return provider.count(after, before, who, from, to);
+        } catch (Exception e) {
+            return Lists.newArrayList();
+        }
+    }
+
     private List<ApiArtifact> search(ArtifactProvider provider, ApiArtifactSearchSpec searchSpec) {
         try {
             return provider.search(searchSpec);
+        } catch (Exception e) {
+            return Lists.newArrayList();
+        }
+    }
+
+    private List<ApiArtifactCount> count(ArtifactProvider provider, ApiArtifactSearchSpec searchSpec) {
+        try {
+            return provider.count(searchSpec);
         } catch (Exception e) {
             return Lists.newArrayList();
         }

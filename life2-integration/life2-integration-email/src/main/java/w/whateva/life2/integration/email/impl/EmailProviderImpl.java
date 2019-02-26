@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
+import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
 import w.whateva.life2.api.email.EmailOperations;
 import w.whateva.life2.api.email.dto.ApiEmail;
@@ -77,6 +78,39 @@ public class EmailProviderImpl implements ArtifactProvider {
         log.info("Searching email troves: " + troves);
 
         return search(
+                searchSpec.getAfter(),
+                searchSpec.getBefore(),
+                CollectionUtils.isEmpty(searchSpec.getWho()) ? null : new HashSet<>(searchSpec.getWho()),
+                CollectionUtils.isEmpty(searchSpec.getFrom()) ? null : new HashSet<>(searchSpec.getFrom()),
+                CollectionUtils.isEmpty(searchSpec.getTo()) ? null : new HashSet<>(searchSpec.getTo()));
+    }
+
+    @Override
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+
+        who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
+
+        Set<String> whoEmails = getEmailAddresses(who);
+        Set<String> fromEmails = getEmailAddresses(from);
+        Set<String> toEmails = getEmailAddresses(to);
+
+        if ((null != fromEmails && 0 == fromEmails.size()) || (null != toEmails && 0 == toEmails.size())) {
+            log.warn("from or to not found... no results.");
+            return Collections.emptyList();
+        }
+
+        return emailClient.count(after, before, whoEmails, fromEmails, toEmails)
+                .stream()
+                .map(EmailUtil::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ApiArtifactCount> count(ApiArtifactSearchSpec searchSpec) {
+
+        log.info("Searching email troves: " + troves);
+
+        return count(
                 searchSpec.getAfter(),
                 searchSpec.getBefore(),
                 CollectionUtils.isEmpty(searchSpec.getWho()) ? null : new HashSet<>(searchSpec.getWho()),

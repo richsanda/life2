@@ -1,7 +1,9 @@
 package w.whateva.life2.integration.email.util;
 
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
+import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.api.email.dto.ApiEmailCount;
 
 public class EmailUtil {
 
@@ -17,5 +19,14 @@ public class EmailUtil {
         artifact.setBody(email.getBody());
         artifact.setBodyHtml(email.isBodyHtml());
         return artifact;
+    }
+
+
+    public static ApiArtifactCount toDto(ApiEmailCount count) {
+        ApiArtifactCount result = new ApiArtifactCount();
+        result.setYear(count.getYear());
+        result.setMonth(count.getMonth());
+        result.setCount(count.getCount());
+        return result;
     }
 }

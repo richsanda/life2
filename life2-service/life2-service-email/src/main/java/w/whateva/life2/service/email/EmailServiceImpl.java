@@ -10,7 +10,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.api.email.dto.ApiEmailCount;
 import w.whateva.life2.data.email.domain.Email;
+import w.whateva.life2.data.email.domain.EmailMonthYearCount;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.person.domain.Person;
@@ -96,6 +98,18 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public List<ApiEmailCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+
+        return emailDao.getMonthYearCounts(who,
+                from,
+                to,
+                null == after ? null : after.atStartOfDay(),
+                null == before ? null : before.atStartOfDay().plusDays(1)).stream()
+                .map(EmailServiceImpl::toApi)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<ApiEmail> search(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
 
         log.info("Searching emails..." + after + " / " + before + " / " + who + " / " + from + " / " + to);
@@ -133,6 +147,12 @@ public class EmailServiceImpl implements EmailService {
             person.getEmails().add(groupAddress);
             personRepository.save(person);
         });
+    }
+
+    public static ApiEmailCount toApi(EmailMonthYearCount count) {
+        ApiEmailCount result = new ApiEmailCount();
+        BeanUtils.copyProperties(count, result);
+        return result;
     }
 
     public static ApiEmail toApi(Email email) {
