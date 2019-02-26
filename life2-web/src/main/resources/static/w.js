@@ -2,9 +2,6 @@ var app = angular.module('app', ['ngSanitize']);
 
 app.controller('controller', function($scope, $http) {
 
-    $scope.month = 7;
-    $scope.year = 1998;
-
     $scope.artifactLinkClass = 'artifact-link';
 
     $scope.search = function() {
@@ -85,6 +82,9 @@ app.controller('controller', function($scope, $http) {
 
     $scope.monthChoices = {0 : 'jan', 1 : 'feb', 2 : 'mar', 3 : 'apr', 4 : 'may', 5 : 'jun', 6 : 'jul', 7 : 'aug', 8 : 'sep', 9 : 'oct', 10 : 'nov', 11 : 'dec'}
     $scope.yearChoices = rangeOfYears();
+
+    $scope.year = $scope.yearChoices[0];
+    $scope.month = 7;
 });
 
 function showFeature() {

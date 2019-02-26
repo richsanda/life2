@@ -9,6 +9,19 @@ div.artifact-link:hover {
     cursor: pointer;
 }
 
+div.clickable {
+    border: 1px solid gray;
+    background-color: rgba(100,100,100,0.5);
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+div.clickable:hover {
+    border: 1px solid gray;
+    background-color: rgba(100,100,100,0.5);
+    cursor: pointer;
+}
+
 #results {
     display: table;
     table-layout: fixed;
@@ -42,7 +55,6 @@ div.artifact-link-col {
   bottom: 0;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
   z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
 }
 
 #feature {
