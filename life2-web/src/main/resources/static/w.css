@@ -3,6 +3,10 @@ html {
     overflow: auto;
 }
 
+p.input {
+    margin: 10px;
+}
+
 div.artifact-link:hover {
     border: 1px solid gray;
     background-color: rgba(100,100,100,0.5);
@@ -25,6 +29,7 @@ div.clickable:hover {
 #results {
     display: table;
     table-layout: fixed;
+    margin: 10px;
 }
 
 div.artifact-link {
@@ -42,6 +47,31 @@ div.artifact-link-col {
     padding: 2px;
     display: table-cell;
     padding-right: 25px;
+}
+
+.grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(13, 25px);
+    grid-auto-columns: 25px;
+    align: center;
+    margin: 10px;
+}
+
+div.month-box:hover {
+    cursor: pointer;
+}
+
+div.month-box {
+    border: 1px solid gray;
+    font-size: 0.8em;
+    font-style: italic;
+    text-align: center;
+}
+
+div.month-name {
+    font-size: 0.8em;
+    font-style: italic;
 }
 
 #feature-background {

@@ -5,15 +5,19 @@ app.controller('controller', function($scope, $http) {
     $scope.artifactLinkClass = 'artifact-link';
 
     $scope.search = function() {
+        $scope.search($scope.year, $scope.month);
+    }
 
-    $scope.emails = [];
+    $scope.search = function(year, month) {
+
+        $scope.emails = [];
 
         var url = '/artifacts';
 
         var params = new Object();
         params.owner = "rich";
-        if ($scope.year && $scope.month) params['after'] = formatDate(new Date($scope.year, $scope.month, 1));
-        if ($scope.year && $scope.month) params['before'] = formatDate(new Date($scope.year, parseInt($scope.month, 10) + 1, 0));
+        params['after'] = formatDate(new Date(year, month, 1));
+        params['before'] = formatDate(new Date(year, parseInt(month, 10) + 1, 0));
         if ($scope.from) params['from'] = [ $scope.from ];
         if ($scope.to) params['to'] = [ $scope.to ];
         if ($scope.who) params['who'] = [ $scope.who ];
@@ -22,22 +26,26 @@ app.controller('controller', function($scope, $http) {
             .then(function(response) {
                 $scope.artifacts = response.data;
             });
+    }
 
-/*
-        var firstParam = true;
-        Object.keys(params).forEach( function(key) {
-            url += firstParam ? '?' : '&';
-            url += key + '=' + params[key];
-            firstParam = false;
-        })
-        *
+    $scope.counts = function() {
 
-        $http.get(url)
+        var url = '/artifact/counts';
+
+        var params = new Object();
+        params.owner = "rich";
+        if ($scope.year && $scope.month) params['after'] = formatDate(new Date(1998, 7, 1));
+        if ($scope.year && $scope.month) params['before'] = formatDate(new Date());
+        if ($scope.from) params['from'] = [ $scope.from ];
+        if ($scope.to) params['to'] = [ $scope.to ];
+        if ($scope.who) params['who'] = [ $scope.who ];
+
+        $http.post(url, JSON.stringify(params))
             .then(function(response) {
-                $scope.artifacts = response.data;
-                $scope.body = "<div><b>hello</b></div>";
+                var answer = rangeOfYearMonthsWithCounts(1998, 2019, response.data);
+                $scope.monthBoxes = answer[0];
+                $scope.maxBoxCount = answer[1];
             });
-            */
     }
 
     $scope.read = function(index, trove, key) {
@@ -59,15 +67,21 @@ app.controller('controller', function($scope, $http) {
         hideFeature();
     }
 
+    $scope.rangeOfMonths = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
     $scope.prettyDateify = function(text) {
 
         if (!text) return null;
         var d = new Date(text);
-        var months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
         var year = d.getFullYear();
         var month = d.getMonth();
         var date = d.getDate();
-        return months[month] + " " + date + ", " + year;
+        return $scope.rangeOfMonths[month] + " " + date + ", " + year;
+    }
+
+    $scope.prettyMonthify = function(year, month) {
+
+        return $scope.rangeOfMonths[month] + " " + year;
     }
 
     $scope.bodyify = function(text) {
@@ -101,6 +115,36 @@ function rangeOfYears() {
         list.push(i);
     }
     return list;
+}
+
+function rangeOfYearMonthsWithCounts(start, end, results) {
+
+    var countsByKey = new Object();
+    var max = 1;
+
+    for (var i = 0; i < results.length; i++) {
+        r = results[i];
+        countsByKey[[r.year, r.month - 1]] = r.count
+        max = Math.max(max, r.count)
+    }
+
+    result = [];
+    for (var y = start; y <= end; y++) {
+        var year = new Object();
+        year.year = y;
+        year.header = true;
+        result.push(year);
+        for (m = 0; m < 12; m++) {
+            var month = new Object();
+            month.year = y
+            month.month = m
+            month.count = countsByKey[[y, m]];
+            if (!month.count) month.count = 0
+            result.push(month);
+        }
+    }
+
+    return [result, max];
 }
 
 function formatDate(d) {

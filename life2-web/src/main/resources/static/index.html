@@ -10,17 +10,33 @@
 
 <div data-ng-app="app" data-ng-controller="controller" data-ng-init="names=['word','werd','w']">
 
-    <p> month:
+    <p class="input"> <!--month:
         <select ng-model="month" ng-options="key as value for (key, value) in monthChoices">
         </select>
         year:
         <select ng-model="year" ng-options="x for x in yearChoices">
-        </select>
-        from: <input type="text" data-ng-model="from">
+        </select-->
+        <button ng-click="counts()"><i>go !</i></button>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;from: <input type="text" data-ng-model="from">
         to: <input type="text" data-ng-model="to">
 
-    <button ng-click="search()">go !</button>
+    <!--button ng-click="search()">go !</button-->
+
     </p>
+
+    <div class="grid" id="counts">
+        <div>&nbsp;</div><!-- empty top left corner -->
+        <div class="month-name" data-ng-repeat="m in rangeOfMonths">{{ m }}</div>
+        <div
+                class="month-box"
+                data-ng-repeat="monthBox in monthBoxes"
+                data-ng-click="search(monthBox.year, monthBox.month)"
+                ng-style="{'background-color' : 'rgba(155,155,155,' + monthBox.count / maxBoxCount * 1.25 + ')'}"
+                title="{{prettyMonthify(monthBox.year, monthBox.month) + ' (' + monthBox.count + ')' }}">
+            {{ monthBox.header && monthBox.year.toString().substr(2,3) || '' }}
+        </div>
+    </div>
 
     <div id="results">
         <div class="artifact-link" data-ng-repeat="artifact in artifacts">
