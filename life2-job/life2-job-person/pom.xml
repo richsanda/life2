@@ -26,6 +26,12 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
+            <artifactId>life2-service-user</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>w.whateva</groupId>
             <artifactId>life2-xml-email</artifactId>
             <version>${project.version}</version>
         </dependency>

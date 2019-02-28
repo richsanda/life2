@@ -80,9 +80,9 @@ public class EmailProviderImpl implements ArtifactProvider {
         return search(
                 searchSpec.getAfter(),
                 searchSpec.getBefore(),
-                CollectionUtils.isEmpty(searchSpec.getWho()) ? null : new HashSet<>(searchSpec.getWho()),
-                CollectionUtils.isEmpty(searchSpec.getFrom()) ? null : new HashSet<>(searchSpec.getFrom()),
-                CollectionUtils.isEmpty(searchSpec.getTo()) ? null : new HashSet<>(searchSpec.getTo()));
+                processPersonKeys(searchSpec.getWho()),
+                processPersonKeys(searchSpec.getFrom()),
+                processPersonKeys(searchSpec.getTo()));
     }
 
     @Override
@@ -113,9 +113,14 @@ public class EmailProviderImpl implements ArtifactProvider {
         return count(
                 searchSpec.getAfter(),
                 searchSpec.getBefore(),
-                CollectionUtils.isEmpty(searchSpec.getWho()) ? null : new HashSet<>(searchSpec.getWho()),
-                CollectionUtils.isEmpty(searchSpec.getFrom()) ? null : new HashSet<>(searchSpec.getFrom()),
-                CollectionUtils.isEmpty(searchSpec.getTo()) ? null : new HashSet<>(searchSpec.getTo()));
+                processPersonKeys(searchSpec.getWho()),
+                processPersonKeys(searchSpec.getFrom()),
+                processPersonKeys(searchSpec.getTo()));
+    }
+
+    private Set<String> processPersonKeys(Set<String> keys) {
+        if (CollectionUtils.isEmpty(keys)) return null;
+        return keys.stream().map(String::toLowerCase).collect(Collectors.toSet());
     }
 
     public List<List<ApiArtifact>> search(String owner, LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer integer) {

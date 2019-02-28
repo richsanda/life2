@@ -7,5 +7,7 @@ public interface UserService extends UserDetailsService {
 
     User addUser(User user);
 
+    User addTestUser(String username, String password);
+
     User getCurrentUser();
 }

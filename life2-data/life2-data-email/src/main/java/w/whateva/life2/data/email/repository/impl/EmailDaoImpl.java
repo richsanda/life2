@@ -142,11 +142,11 @@ public class EmailDaoImpl implements EmailDao {
             criteria.add(new Criteria().orOperator(Criteria.where("toIndex").in(who), Criteria.where("fromIndex").in(who)));
         }
 
-        if (null != from) {
+        if (null != from && null != to) {
+            criteria.add(new Criteria().orOperator(Criteria.where("toIndex").in(to), Criteria.where("fromIndex").in(from)));
+        } else if (null != from) {
             criteria.add(Criteria.where("fromIndex").in(from));
-        }
-
-        if (null != to) {
+        } else if (null != to) {
             criteria.add(Criteria.where("toIndex").in(to));
         }
 

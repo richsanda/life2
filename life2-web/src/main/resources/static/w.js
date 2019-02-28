@@ -18,9 +18,8 @@ app.controller('controller', function($scope, $http) {
         params.owner = "rich";
         params['after'] = formatDate(new Date(year, month, 1));
         params['before'] = formatDate(new Date(year, parseInt(month, 10) + 1, 0));
-        if ($scope.from) params['from'] = [ $scope.from ];
-        if ($scope.to) params['to'] = [ $scope.to ];
-        if ($scope.who) params['who'] = [ $scope.who ];
+        if ($scope.from) params['from'] = $scope.from.split(/[ ,]+/);
+        if ($scope.to) params['to'] = $scope.to.split(/[ ,]+/);
 
         $http.post(url, JSON.stringify(params))
             .then(function(response) {
@@ -36,9 +35,8 @@ app.controller('controller', function($scope, $http) {
         params.owner = "rich";
         if ($scope.year && $scope.month) params['after'] = formatDate(new Date(1998, 7, 1));
         if ($scope.year && $scope.month) params['before'] = formatDate(new Date());
-        if ($scope.from) params['from'] = [ $scope.from ];
-        if ($scope.to) params['to'] = [ $scope.to ];
-        if ($scope.who) params['who'] = [ $scope.who ];
+        if ($scope.from) params['from'] = $scope.from.split(/[ ,]+/);
+        if ($scope.to) params['to'] = $scope.to.split(/[ ,]+/);
 
         $http.post(url, JSON.stringify(params))
             .then(function(response) {
@@ -46,6 +44,11 @@ app.controller('controller', function($scope, $http) {
                 $scope.monthBoxes = answer[0];
                 $scope.maxBoxCount = answer[1];
             });
+    }
+
+    $scope.enter = function(event) {
+      if (event.which === 13)
+        $scope.counts();
     }
 
     $scope.read = function(index, trove, key) {

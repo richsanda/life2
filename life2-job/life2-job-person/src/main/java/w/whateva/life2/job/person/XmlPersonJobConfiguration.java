@@ -13,7 +13,6 @@ import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +20,12 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.person.dto.ApiPerson;
-import w.whateva.life2.job.person.beans.GroupProcessor;
-import w.whateva.life2.job.person.beans.PersonProcessor;
-import w.whateva.life2.job.person.beans.PersonWriter;
+import w.whateva.life2.data.user.domain.User;
+import w.whateva.life2.job.person.beans.*;
+import w.whateva.life2.service.user.UserService;
 import w.whateva.life2.xml.email.def.XmlGroup;
 import w.whateva.life2.xml.email.def.XmlPerson;
+import w.whateva.life2.xml.email.def.XmlUser;
 
 @Configuration
 @ConfigurationProperties(prefix = "person")
@@ -41,6 +41,7 @@ public class XmlPersonJobConfiguration extends DefaultBatchConfigurer {
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
     private final PersonService personService;
+    private final UserService userService;
 
     @Value("${person.xml.file}")
     private String personXmlFile;
@@ -48,11 +49,15 @@ public class XmlPersonJobConfiguration extends DefaultBatchConfigurer {
     @Value("${group.xml.file}")
     private String groupXmlFile;
 
+    @Value("${user.xml.file}")
+    private String userXmlFile;
+
     @Autowired
-    public XmlPersonJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, PersonService personService) {
+    public XmlPersonJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, PersonService personService, UserService userService) {
         this.jobs = jobs;
         this.steps = steps;
         this.personService = personService;
+        this.userService = userService;
     }
 
     @Bean
@@ -90,9 +95,25 @@ public class XmlPersonJobConfiguration extends DefaultBatchConfigurer {
     }
 
     @Bean
+    public Job loadUserJob() throws Exception {
+        return this.jobs.get("loadUserJob")
+                .start(loadUserStep())
+                .build();
+    }
+
+    @Bean
+    public Step loadUserStep() throws Exception {
+        return this.steps.get("loadUserStep")
+                .<XmlUser, XmlUser>chunk(10)
+                .reader(userReader())
+                .writer(userWriter())
+                .build();
+    }
+
+    @Bean
     public Jaxb2Marshaller personUnmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(XmlPerson.class, XmlGroup.class);
+        marshaller.setClassesToBeBound(XmlPerson.class, XmlGroup.class, XmlUser.class);
         marshaller.setCheckForXmlRootElement(true);
         return marshaller;
     }
@@ -138,5 +159,23 @@ public class XmlPersonJobConfiguration extends DefaultBatchConfigurer {
     @StepScope
     ItemProcessor<XmlGroup, ApiPerson> groupProcessor() {
         return new GroupProcessor(owner);
+    }
+
+    @Bean
+    @StepScope
+    public ResourceAwareItemReaderItemStream<XmlUser> userReader() {
+
+        log.info("reading user file from: " + userXmlFile);
+
+        StaxEventItemReader<XmlUser> reader = new StaxEventItemReader<>();
+        reader.setFragmentRootElementName("user");
+        reader.setResource(new FileSystemResource(userXmlFile));
+        reader.setUnmarshaller(personUnmarshaller());
+        return reader;
+    }
+
+    @Bean
+    ItemWriter<XmlUser> userWriter() {
+        return new UserWriter(userService);
     }
 }

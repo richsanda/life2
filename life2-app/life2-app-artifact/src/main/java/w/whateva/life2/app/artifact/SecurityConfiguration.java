@@ -1,4 +1,4 @@
-package w.whateva.life2.service.user.config;
+package w.whateva.life2.app.artifact;
 
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,47 +47,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
         builder.userDetailsService(userService);
-    }
-
-    @PostConstruct
-    void postConstruct() {
-
-        //rich
-        TroveAccess access = new TroveAccess("rich", "rich")
-                .withTroves("billshwah", "billshwah_inbox", "rowecom", "redsox47")
-                .withRoles(TroveAccessRole.OWNER);
-        addTestUser("rich", "sydney", Collections.singletonList(access));
-
-        //rsd
-        access = new TroveAccess("rich", "rsd")
-                .withTroves("billshwah", "billshwah_inbox")
-                .withRoles(TroveAccessRole.FROM, TroveAccessRole.TO);
-        addTestUser("rsd", "rsd47", Collections.singletonList(access));
-
-        //laura
-        access = new TroveAccess("rich", "laura")
-                .withTroves("billshwah", "billshwah_inbox")
-                .withRoles(TroveAccessRole.FROM, TroveAccessRole.TO);
-        addTestUser("laura", "laurabsanda", Collections.singletonList(access));
-
-        //trav
-
-        access = new TroveAccess("rich", "trav")
-                .withTroves("billshwah", "billshwah_inbox")
-                .withRoles(TroveAccessRole.FROM, TroveAccessRole.TO);
-        TroveAccess access2 = new TroveAccess("rich", "trav")
-                .withTroves("redsox47")
-                .withRoles(TroveAccessRole.MEMBER);
-        addTestUser("trav", "trav47", Lists.newArrayList(access, access2));
-    }
-
-    private void addTestUser(String username, String password, List<TroveAccess> troveAccesses) {
-
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder().encode(password));
-        user.setAccess(troveAccesses);
-
-        userService.addUser(user);
     }
 }

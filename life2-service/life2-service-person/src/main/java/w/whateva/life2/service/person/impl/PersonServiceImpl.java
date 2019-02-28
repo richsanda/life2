@@ -71,14 +71,14 @@ public class PersonServiceImpl implements PersonService {
 
     private static Person createPerson(String name) {
         Person result = new Person();
-        result.setId(name);
+        result.setId(name.toLowerCase());
         result.setName(name);
         return result;
     }
 
     @Override
     public ApiPerson readPerson(String key) {
-        Person person = personRepository.findById(key).orElse(null);
+        Person person = personRepository.findById(key.toLowerCase()).orElse(null);
         if (null == person) return null;
         ApiPerson ApiPerson = new ApiPerson();
         BeanUtils.copyProperties(person, ApiPerson);
