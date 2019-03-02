@@ -12,10 +12,10 @@ x-extra:
     - mongo
 
 services:
-  billshwah:
+  life2-email:
     << : *email
     environment:
-    - SPRING_PROFILES_ACTIVE=billshwah
+    - SPRING_PROFILES_ACTIVE=life2
 #  bbjones:
 #    << : *email
 #    environment:
@@ -64,7 +64,7 @@ services:
     - "11000:11000"
     links:
     - mongo
-    - billshwah
+    - life2-email
 #    - billshwah_inbox
 #    - billshwah_inbox2000
 #    - cahds47

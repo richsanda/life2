@@ -67,6 +67,7 @@ app.controller('controller', function($scope, $http) {
     }
 
     $scope.hideFeature = function() {
+        $scope.feature = ''
         hideFeature();
     }
 
