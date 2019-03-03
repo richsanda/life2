@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.collect.Lists;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
@@ -15,21 +14,22 @@ import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 import org.springframework.batch.item.support.AbstractItemStreamItemReader;
 import org.springframework.core.io.Resource;
 import w.whateva.life2.xml.email.facebook.FacebookMessage;
-import w.whateva.life2.xml.email.facebook.FacebookMessageContext;
 import w.whateva.life2.xml.email.facebook.FacebookMessageFile;
-import w.whateva.life2.xml.email.facebook.FacebookMessageParticipant;
+import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FacebookMessageFileReader
-        extends AbstractItemStreamItemReader<FacebookMessageContext>
-        implements ItemReader<FacebookMessageContext>, ResourceAwareItemReaderItemStream<FacebookMessageContext> {
+        extends AbstractItemStreamItemReader<FacebookMessageThread>
+        implements ItemReader<FacebookMessageThread>, ResourceAwareItemReaderItemStream<FacebookMessageThread> {
 
     private FacebookMessageFile file;
-    private Iterator<FacebookMessage> messageIterator;
+    private Iterator<Map.Entry<LocalDate, List<FacebookMessage>>> messageIterator;
     private boolean initialized = false;
     private Resource resource;
 
@@ -48,30 +48,33 @@ public class FacebookMessageFileReader
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-/*        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        // from: http://stackoverflow.com/questions/28802544/java-8-localdate-jackson-format
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
-        objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);*/
-
         try {
             file = objectMapper.readValue(resource.getInputStream(), new TypeReference<FacebookMessageFile>() {});
-            messageIterator = file.getMessages().iterator();
+            Map<LocalDate, List<FacebookMessage>> messagesByDate = file.getMessages()
+                    .stream()
+                    .collect(Collectors.groupingBy(o ->
+                            LocalDateTime.ofInstant(o.getTimestamp_ms().toInstant(), ZoneId.of("UTC")).toLocalDate()));
+
+            messageIterator = messagesByDate.entrySet().iterator();
             return;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        messageIterator = Lists.<FacebookMessage>newArrayList().iterator();
+
+        messageIterator = Collections.emptyIterator();
     }
 
     @Override
-    public FacebookMessageContext read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public FacebookMessageThread read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+
         init();
+
         if (!messageIterator.hasNext()) return null;
-        FacebookMessageContext result = new FacebookMessageContext();
-        result.setMessage(messageIterator.next());
+
+        Map.Entry<LocalDate, List<FacebookMessage>> entry = messageIterator.next();
+        FacebookMessageThread result = new FacebookMessageThread();
+        result.setMessages(entry.getValue().stream().sorted(Comparator.comparing(FacebookMessage::getTimestamp_ms)).collect(Collectors.toList()));
         result.setFile(file);
         return result;
     }

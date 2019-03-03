@@ -8,7 +8,9 @@ app.controller('controller', function($scope, $http) {
         $scope.search($scope.year, $scope.month);
     }
 
-    $scope.search = function(year, month) {
+    $scope.search = function(index, year, month) {
+
+        $scope.monthSelected = index;
 
         $scope.emails = [];
 
@@ -28,6 +30,8 @@ app.controller('controller', function($scope, $http) {
     }
 
     $scope.counts = function() {
+
+        $scope.monthSelected = null
 
         var url = '/artifact/counts';
 

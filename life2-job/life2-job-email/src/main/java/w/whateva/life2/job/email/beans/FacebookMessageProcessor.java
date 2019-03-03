@@ -3,34 +3,41 @@ package w.whateva.life2.job.email.beans;
 import org.springframework.batch.item.ItemProcessor;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.xml.email.facebook.FacebookMessage;
-import w.whateva.life2.xml.email.facebook.FacebookMessageContext;
+import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
 import w.whateva.life2.xml.email.facebook.FacebookMessageFile;
 import w.whateva.life2.xml.email.facebook.FacebookMessageParticipant;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class FacebookMessageProcessor implements ItemProcessor<FacebookMessageContext, ApiEmail> {
+public class FacebookMessageProcessor implements ItemProcessor<FacebookMessageThread, ApiEmail> {
 
     private static final String FACEBOOK = "FACEBOOK";
     private static final String KEY_SEPARATOR = ":";
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
     @Override
-    public ApiEmail process(FacebookMessageContext context) throws Exception {
+    public ApiEmail process(FacebookMessageThread thread) throws Exception {
 
-        FacebookMessage message = context.getMessage();
-        FacebookMessageFile file = context.getFile();
+        List<FacebookMessage> messages = thread.getMessages();
+        FacebookMessage firstMessage = messages.get(0);
+        FacebookMessageFile file = thread.getFile();
 
         ApiEmail result = new ApiEmail();
 
-        result.setFrom(message.getSender_name());
+        result.setFrom(messages.get(0).getSender_name());
         result.setTo(file.getParticipants()
                 .stream()
                 .map(FacebookMessageParticipant::getName)
                 .collect(Collectors.joining(", ")));
-        result.setBody(message.getContent());
-        result.setSent(message.getTimestamp_ms().toInstant().atZone(ZoneId.of("UTC")));
-        result.setKey(composeKey(file, message));
+        result.setBody(composeBody(thread.getMessages()));
+        result.setSent(firstMessage.getTimestamp_ms().toInstant().atZone(ZoneId.of("UTC")));
+        result.setKey(composeKey(file, firstMessage));
+        result.setSubject(thread.getFile().getTitle());
 
         return result;
     }
@@ -47,5 +54,25 @@ public class FacebookMessageProcessor implements ItemProcessor<FacebookMessageCo
 
     private String composeFileKey(FacebookMessageFile file) {
         return file.getThread_type() + KEY_SEPARATOR + file.getThread_path();
+    }
+
+    private String composeBody(List<FacebookMessage> messages) {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (FacebookMessage message : messages) {
+            sb.append(message.getSender_name());
+            sb.append(" [");
+            sb.append(formatTime(message.getTimestamp_ms()));
+            sb.append("]: ");
+            sb.append(message.getContent());
+            sb.append("\n\n");
+        }
+
+        return sb.toString();
+    }
+
+    private String formatTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC")).toLocalTime().format(formatter);
     }
 }

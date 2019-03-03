@@ -8,7 +8,6 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
-import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,11 +22,9 @@ import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.FacebookMessageFileReader;
 import w.whateva.life2.job.email.beans.FacebookMessageProcessor;
-import w.whateva.life2.job.email.beans.XmlEmailProcessor;
 import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlGroupMessage;
-import w.whateva.life2.xml.email.facebook.FacebookMessage;
-import w.whateva.life2.xml.email.facebook.FacebookMessageContext;
+import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
 
 import java.io.IOException;
 
@@ -60,7 +57,7 @@ public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     public Step loadEmailStep() throws Exception {
         return this.steps.get("loadEmailStep")
-                .<FacebookMessageContext, ApiEmail>chunk(200)
+                .<FacebookMessageThread, ApiEmail>chunk(200)
                 .reader(emailReader())
                 .processor(emailProcessor())
                 .writer(emailWriter())
@@ -69,8 +66,8 @@ public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
-    public ItemReader<FacebookMessageContext> emailReader() throws IOException {
-        MultiResourceItemReader<FacebookMessageContext> reader = new MultiResourceItemReader<>();
+    public ItemReader<FacebookMessageThread> emailReader() throws IOException {
+        MultiResourceItemReader<FacebookMessageThread> reader = new MultiResourceItemReader<>();
         ClassLoader classLoader = this.getClass().getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
         Resource[] resources = resolver.getResources("file:" + facebookMessageFilePattern);
@@ -81,13 +78,13 @@ public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
-    public ResourceAwareItemReaderItemStream<FacebookMessageContext> oneMessageFileReader() {
+    public ResourceAwareItemReaderItemStream<FacebookMessageThread> oneMessageFileReader() {
         return new FacebookMessageFileReader();
     }
 
     @Bean
     @StepScope
-    ItemProcessor<FacebookMessageContext, ApiEmail> emailProcessor() {
+    ItemProcessor<FacebookMessageThread, ApiEmail> emailProcessor() {
         return new FacebookMessageProcessor();
     }
 
