@@ -197,7 +197,7 @@ public class EmailServiceImpl implements EmailService {
                     .collect(Collectors.toSet());
         } catch (Exception e) {
             log.error("Problem parsing internet email address list: " + addressList);
+            return toSimpleAddresses(addressList, "\\s*[;,]\\s*");
         }
-        return new HashSet<>();
     }
 }

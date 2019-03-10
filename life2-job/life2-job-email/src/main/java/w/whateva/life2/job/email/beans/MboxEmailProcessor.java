@@ -1,5 +1,6 @@
 package w.whateva.life2.job.email.beans;
 
+import org.apache.commons.mail.Email;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,15 +14,17 @@ import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
+public class MboxEmailProcessor implements ItemProcessor<MimeMessage, ApiEmail> {
 
-    private transient Logger log = LoggerFactory.getLogger(MboxEmailProcesor.class);
+    private transient Logger log = LoggerFactory.getLogger(MboxEmailProcessor.class);
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, MMM d, yyyy 'at' hh:mm:ss a Z");
 
     private static final String KEY_SEPARATOR = ".";
 
@@ -90,7 +93,9 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
 
     private Date getSentDate(Map<String, String> headers, MimeMessageParser parser) {
         try {
-            return parser.getMimeMessage().getSentDate();
+            Date result = parser.getMimeMessage().getSentDate();
+            if (null != result) return result;
+            return makeSentFromHeaders(headers);
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -108,5 +113,15 @@ public class MboxEmailProcesor implements ItemProcessor<MimeMessage, ApiEmail> {
             return entry.getKey() + entry.getValue();
         }
         return null;
+    }
+
+    private static Date makeSentFromHeaders(Map<String, String> headers) {
+        String value = headers.get("Date");
+        if (null == value) return null;
+        try {
+            return DATE_FORMAT.parse(value);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

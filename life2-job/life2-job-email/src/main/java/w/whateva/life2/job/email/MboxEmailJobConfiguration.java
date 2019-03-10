@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import w.whateva.life2.api.email.EmailOperations;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
-import w.whateva.life2.job.email.beans.MboxEmailProcesor;
+import w.whateva.life2.job.email.beans.MboxEmailProcessor;
 import w.whateva.life2.job.email.beans.MboxReader;
 
 import javax.mail.internet.MimeMessage;
@@ -76,7 +76,7 @@ public class MboxEmailJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemProcessor<MimeMessage, ApiEmail> emailProcessor() {
-        return new MboxEmailProcesor();
+        return new MboxEmailProcessor();
     }
 
     @Bean
