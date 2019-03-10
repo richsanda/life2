@@ -35,7 +35,7 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
 
     public MboxReader(InputStream inputStream) throws IOException {
 
-        this.handler = new BodyContentHandler();
+        this.handler = new BodyContentHandler(MAIL_MAX_SIZE);
         this.extractor = EmbeddedDocumentUtil.getEmbeddedDocumentExtractor(new ParseContext());
         try {
             Reader streamReader = new InputStreamReader(inputStream, charsetName);
@@ -74,17 +74,17 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
 
             ByteArrayInputStream messageStream = new ByteArrayInputStream(message.toByteArray());
 
-            try {
-                return buildMimeMessage(messageStream);
-            } catch (Exception e) {
-                log.error("Could not build mime message from message stream");
-            }
-
             if (extractor.shouldParseEmbedded(mailMetadata)) {
                 extractor.parseEmbedded(messageStream, xhtml, mailMetadata, true);
             }
 
             xhtml.endDocument();
+
+            try {
+                return buildMimeMessage(messageStream);
+            } catch (Exception e) {
+                log.error("Could not build mime message from message stream");
+            }
 
         } else {
 
