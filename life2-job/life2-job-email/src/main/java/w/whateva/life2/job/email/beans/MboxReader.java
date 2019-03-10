@@ -24,6 +24,8 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
 
     private transient Logger log = LoggerFactory.getLogger(MboxReader.class);
 
+    private static final int MAIL_MAX_SIZE = 100000000;
+
     private static final String charsetName = "utf-8";
 
     private final BodyContentHandler handler;

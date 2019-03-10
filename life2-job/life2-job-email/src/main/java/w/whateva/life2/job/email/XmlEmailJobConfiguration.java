@@ -101,7 +101,6 @@ public class XmlEmailJobConfiguration extends DefaultBatchConfigurer {
         return new EmailWriter(emailService);
     }
 
-
     @Bean
     public Jaxb2Marshaller emailUnmarshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();

@@ -6,7 +6,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
@@ -15,7 +14,6 @@ import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.domain.EmailMonthYearCount;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.email.repository.EmailDao;
-import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
 
 import javax.mail.internet.InternetAddress;
@@ -71,10 +69,18 @@ public class EmailServiceImpl implements EmailService {
             email.setBodyHtml(true);
         }
 
+        String separator;
+
         switch (addressStyle) {
             case SIMPLE:
-                email.setToIndex(toSimpleAddresses(email.getTo()));
-                email.setFromIndex(toSimpleAddresses(email.getFrom()).stream().findFirst().orElse(null));
+                separator =  "\\s*[;,]\\s*";
+                email.setToIndex(toSimpleAddresses(email.getTo(), separator));
+                email.setFromIndex(toSimpleAddresses(email.getFrom(), separator).stream().findFirst().orElse(null));
+                break;
+            case SIMPLE_SEMICOLON:
+                separator =  "\\s*[;]\\s*";
+                email.setToIndex(toSimpleAddresses(email.getTo(), separator));
+                email.setFromIndex(toSimpleAddresses(email.getFrom(), separator).stream().findFirst().orElse(null));
                 break;
             case INTERNET:
                 email.setToIndex(toEmailAddresses(email.getTo()));
@@ -173,10 +179,10 @@ public class EmailServiceImpl implements EmailService {
         return result;
     }
 
-    private static Set<String> toSimpleAddresses(String addressList) {
+    private static Set<String> toSimpleAddresses(String addressList, String regex) {
         if (StringUtils.isEmpty(addressList)) return new HashSet<>();
         return Arrays
-                .stream(addressList.split("\\s*[,;]\\s*"))
+                .stream(addressList.split(regex))
                 .map(String::toLowerCase)
                 .collect(Collectors.toSet());
     }

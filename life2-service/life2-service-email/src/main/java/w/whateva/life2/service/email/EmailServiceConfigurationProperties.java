@@ -38,6 +38,6 @@ public class EmailServiceConfigurationProperties {
 
     enum AddressStyle {
 
-        INTERNET, SIMPLE;
+        INTERNET, SIMPLE, SIMPLE_SEMICOLON;
     }
 }

@@ -5,7 +5,7 @@ app.controller('controller', function($scope, $http) {
     $scope.artifactLinkClass = 'artifact-link';
 
     $scope.search = function() {
-        $scope.search($scope.year, $scope.month);
+        $scope.search(null, $scope.year, $scope.month);
     }
 
     $scope.search = function(index, year, month) {
@@ -37,14 +37,14 @@ app.controller('controller', function($scope, $http) {
 
         var params = new Object();
         params.owner = "rich";
-        if ($scope.year && $scope.month) params['after'] = formatDate(new Date(1998, 7, 1));
+        if ($scope.year && $scope.month) params['after'] = formatDate(new Date(1991, 12, 1));
         if ($scope.year && $scope.month) params['before'] = formatDate(new Date());
         if ($scope.from) params['from'] = $scope.from.split(/[ ,]+/);
         if ($scope.to) params['to'] = $scope.to.split(/[ ,]+/);
 
         $http.post(url, JSON.stringify(params))
             .then(function(response) {
-                var answer = rangeOfYearMonthsWithCounts(1998, 2019, response.data);
+                var answer = rangeOfYearMonthsWithCounts(1991, 2019, response.data);
                 $scope.monthBoxes = answer[0];
                 $scope.maxBoxCount = answer[1];
             });
@@ -107,6 +107,8 @@ app.controller('controller', function($scope, $http) {
 
     $scope.year = $scope.yearChoices[0];
     $scope.month = 7;
+
+    $scope.counts();
 });
 
 function showFeature() {
@@ -119,7 +121,7 @@ function hideFeature() {
 
 function rangeOfYears() {
     var list = [];
-    for (var i = 1998; i <= 2019; i++) {
+    for (var i = 1991; i <= 2019; i++) {
         list.push(i);
     }
     return list;

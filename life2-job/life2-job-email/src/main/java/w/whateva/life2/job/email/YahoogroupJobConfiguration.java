@@ -19,9 +19,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.job.email.beans.EmailWriter;
-import w.whateva.life2.job.email.beans.FacebookMessageFileReader;
-import w.whateva.life2.job.email.beans.FacebookMessageProcessor;
+import w.whateva.life2.job.email.beans.*;
 import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlGroupMessage;
 import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
@@ -29,19 +27,19 @@ import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
 import java.io.IOException;
 
 @Configuration
-@ConditionalOnProperty(name = "facebook.message.file.pattern")
+@ConditionalOnProperty(name = "yahoogroup.message.file.pattern")
 @EnableBatchProcessing
-public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
+public class YahoogroupJobConfiguration extends DefaultBatchConfigurer {
 
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
     private final EmailService emailService;
 
-    @Value("${facebook.message.file.pattern}")
-    private String facebookMessageFilePattern;
+    @Value("${yahoogroup.message.file.pattern}")
+    private String yahoogroupMessageFilePattern;
 
     @Autowired
-    public FacebookMessageJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService) {
+    public YahoogroupJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService) {
         this.jobs = jobs;
         this.steps = steps;
         this.emailService = emailService;
@@ -57,7 +55,7 @@ public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     public Step loadEmailStep() throws Exception {
         return this.steps.get("loadEmailStep")
-                .<FacebookMessageThread, ApiEmail>chunk(200)
+                .<XmlGroupMessage, ApiEmail>chunk(200)
                 .reader(emailReader())
                 .processor(emailProcessor())
                 .writer(emailWriter())
@@ -66,11 +64,11 @@ public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
-    public ItemReader<FacebookMessageThread> emailReader() throws IOException {
-        MultiResourceItemReader<FacebookMessageThread> reader = new MultiResourceItemReader<>();
+    public ItemReader<XmlGroupMessage> emailReader() throws IOException {
+        MultiResourceItemReader<XmlGroupMessage> reader = new MultiResourceItemReader<>();
         ClassLoader classLoader = this.getClass().getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(classLoader);
-        Resource[] resources = resolver.getResources("file:" + facebookMessageFilePattern);
+        Resource[] resources = resolver.getResources("file:" + yahoogroupMessageFilePattern);
         reader.setResources(resources);
         reader.setDelegate(oneMessageFileReader());
         return reader;
@@ -78,19 +76,27 @@ public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
 
     @Bean
     @StepScope
-    public ResourceAwareItemReaderItemStream<FacebookMessageThread> oneMessageFileReader() {
-        return new FacebookMessageFileReader();
+    public ResourceAwareItemReaderItemStream<XmlGroupMessage> oneMessageFileReader() {
+        return new YahoogroupMessageFileReader(emailUnmarshaller());
     }
 
     @Bean
     @StepScope
-    ItemProcessor<FacebookMessageThread, ApiEmail> emailProcessor() {
-        return new FacebookMessageProcessor();
+    ItemProcessor<XmlEmail, ApiEmail> emailProcessor() {
+        return new XmlEmailProcessor();
     }
 
     @Bean
     @StepScope
     ItemWriter<ApiEmail> emailWriter() {
         return new EmailWriter(emailService);
+    }
+
+    @Bean
+    public Jaxb2Marshaller emailUnmarshaller() {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setClassesToBeBound(XmlGroupMessage.class);
+        marshaller.setCheckForXmlRootElement(true);
+        return marshaller;
     }
 }
