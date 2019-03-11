@@ -37,14 +37,14 @@ app.controller('controller', function($scope, $http) {
 
         var params = new Object();
         params.owner = "rich";
-        if ($scope.year && $scope.month) params['after'] = formatDate(new Date(1991, 12, 1));
+        if ($scope.year && $scope.month) params['after'] = formatDate(new Date(1994, 8, 1));
         if ($scope.year && $scope.month) params['before'] = formatDate(new Date());
         if ($scope.from) params['from'] = $scope.from.split(/[ ,]+/);
         if ($scope.to) params['to'] = $scope.to.split(/[ ,]+/);
 
         $http.post(url, JSON.stringify(params))
             .then(function(response) {
-                var answer = rangeOfYearMonthsWithCounts(1991, 2019, response.data);
+                var answer = rangeOfYearMonthsWithCounts(1994, 2019, response.data);
                 $scope.monthBoxes = answer[0];
                 $scope.maxBoxCount = answer[1];
             });
@@ -121,7 +121,7 @@ function hideFeature() {
 
 function rangeOfYears() {
     var list = [];
-    for (var i = 1991; i <= 2019; i++) {
+    for (var i = 1994; i <= 2019; i++) {
         list.push(i);
     }
     return list;

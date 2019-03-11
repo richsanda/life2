@@ -28,15 +28,11 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
 
     private static final String charsetName = "utf-8";
 
-    private final BodyContentHandler handler;
-    private final EmbeddedDocumentExtractor extractor;
     private final BufferedReader reader;
     private String curLine;
 
     public MboxReader(InputStream inputStream) throws IOException {
 
-        this.handler = new BodyContentHandler(MAIL_MAX_SIZE);
-        this.extractor = EmbeddedDocumentUtil.getEmbeddedDocumentExtractor(new ParseContext());
         try {
             Reader streamReader = new InputStreamReader(inputStream, charsetName);
             this.reader = new BufferedReader(streamReader);
@@ -55,11 +51,6 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
 
         } else if (curLine.startsWith(MBOX_RECORD_DIVIDER)) {
 
-            Metadata mailMetadata = new Metadata();
-
-            XHTMLContentHandler xhtml = new XHTMLContentHandler(handler, mailMetadata);
-            xhtml.startDocument();
-
             if (curLine == null) {
                 return close();
             }
@@ -73,12 +64,6 @@ public class MboxReader extends MboxParser implements ItemReader<MimeMessage> {
             while (curLine != null && !curLine.startsWith(MBOX_RECORD_DIVIDER) && message.size() < MAIL_MAX_SIZE);
 
             ByteArrayInputStream messageStream = new ByteArrayInputStream(message.toByteArray());
-
-            if (extractor.shouldParseEmbedded(mailMetadata)) {
-                extractor.parseEmbedded(messageStream, xhtml, mailMetadata, true);
-            }
-
-            xhtml.endDocument();
 
             try {
                 return buildMimeMessage(messageStream);
