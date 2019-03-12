@@ -1,5 +1,6 @@
 package w.whateva.life2.job.email;
 
+import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
@@ -18,7 +19,10 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.job.email.beans.*;
+import w.whateva.life2.job.email.beans.EmailWriter;
+import w.whateva.life2.job.email.beans.HistoricEmailFileReader;
+import w.whateva.life2.job.email.beans.MimeMessageProcessor;
+import w.whateva.life2.job.email.beans.MimeMessageProcessorListener;
 
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
@@ -54,7 +58,8 @@ public class HistoricEmailJobConfiguration extends DefaultBatchConfigurer {
         return this.steps.get("loadEmailStep")
                 .<MimeMessage, ApiEmail>chunk(200)
                 .reader(emailReader())
-                .processor(emailProcessor())
+                .processor(emailProcessor()).faultTolerant().skipLimit(100).skip(Exception.class)
+                .listener(emailProcessorListener())
                 .writer(emailWriter())
                 .build();
     }
@@ -81,6 +86,12 @@ public class HistoricEmailJobConfiguration extends DefaultBatchConfigurer {
     @StepScope
     ItemProcessor<MimeMessage, ApiEmail> emailProcessor() {
         return new MimeMessageProcessor();
+    }
+
+    @Bean
+    @StepScope
+    ItemProcessListener<MimeMessage, ApiEmail> emailProcessorListener() {
+        return new MimeMessageProcessorListener();
     }
 
     @Bean

@@ -2,6 +2,7 @@ package w.whateva.life2.job.email;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import w.whateva.life2.api.email.EmailOperations;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
+import w.whateva.life2.job.email.beans.MimeMessageProcessorListener;
 import w.whateva.life2.job.email.beans.MimeMessageProcessor;
 import w.whateva.life2.job.email.beans.MboxReader;
 
@@ -57,8 +59,9 @@ public class MboxEmailJobConfiguration extends DefaultBatchConfigurer {
         return this.steps.get("loadEmailStep")
                 .<MimeMessage, ApiEmail>chunk(20)
                 .reader(emailReader())
-                .processor(emailProcessor())
+                .processor(emailProcessor()).faultTolerant().skipLimit(100).skip(Exception.class)
                 .writer(emailWriter())
+                .listener(emailProcessorListener())
                 .build();
     }
 
@@ -77,6 +80,12 @@ public class MboxEmailJobConfiguration extends DefaultBatchConfigurer {
     @StepScope
     ItemProcessor<MimeMessage, ApiEmail> emailProcessor() {
         return new MimeMessageProcessor();
+    }
+
+    @Bean
+    @StepScope
+    ItemProcessListener<MimeMessage, ApiEmail> emailProcessorListener() {
+        return new MimeMessageProcessorListener();
     }
 
     @Bean

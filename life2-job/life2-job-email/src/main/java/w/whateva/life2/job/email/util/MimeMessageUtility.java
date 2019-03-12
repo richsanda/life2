@@ -6,7 +6,6 @@ import org.apache.tika.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import w.whateva.life2.job.email.beans.MimeMessageProcessor;
 
 import javax.mail.Address;
 import javax.mail.Header;
@@ -17,15 +16,13 @@ import javax.mail.internet.MailDateFormat;
 import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class MimeMessageUtility {
 
-    private static Logger log = LoggerFactory.getLogger(MimeMessageProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(MimeMessageUtility.class);
 
     private static final String KEY_SEPARATOR = ".";
 
@@ -147,7 +144,12 @@ public class MimeMessageUtility {
     public static String getTo(Map<String, String> headers, MimeMessageParser parser) {
         try {
             List<Address> result = parser.getTo();
-            if (null != result) return result.stream().map(Address::toString).collect(Collectors.joining(", "));
+            if (null != result) {
+                return result
+                        .stream()
+                        .map(Address::toString)
+                        .collect(Collectors.joining(", "));
+            }
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -155,6 +157,26 @@ public class MimeMessageUtility {
         }
         if (headers.containsKey("To")) {
             return headers.get("To");
+        }
+        return null;
+    }
+
+    public static String getCc(Map<String, String> headers, MimeMessageParser parser) {
+        try {
+            List<Address> result = parser.getCc();
+            if (null != result) {
+                return result
+                        .stream()
+                        .map(Address::toString)
+                        .collect(Collectors.joining(", "));
+            }
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (headers.containsKey("Cc")) {
+            return headers.get("Cc");
         }
         return null;
     }

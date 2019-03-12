@@ -20,19 +20,16 @@ public class MimeMessageProcessor implements ItemProcessor<MimeMessage, ApiEmail
     @Override
     public ApiEmail process(MimeMessage message) throws Exception {
 
-        MimeMessageParser parser;
-        try {
-            parser = new MimeMessageParser(message).parse();
-        } catch (Exception e) {
-            return null;
-        }
+        MimeMessageParser parser = new MimeMessageParser(message).parse();
 
         Map<String, String> headers = MimeMessageUtility.getHeaders(message);
+        String key = MimeMessageUtility.createKey(headers, parser);
+        if (StringUtils.isEmpty(key)) throw new IllegalArgumentException("Could not create key");
 
         Date sentDate = MimeMessageUtility.getSentDate(headers, parser);
 
         ApiEmail result = new ApiEmail();
-        result.setKey(MimeMessageUtility.createKey(headers, parser));
+        result.setKey(key);
         result.setMessageId(headers.get("Message-ID"));
         result.setFrom(MimeMessageUtility.getFrom(headers, parser));
         result.setTo(MimeMessageUtility.getTo(headers, parser));
@@ -43,6 +40,11 @@ public class MimeMessageProcessor implements ItemProcessor<MimeMessage, ApiEmail
         result.setMessage(MimeMessageUtility.toString(message));
 
         log.debug("Processed mime message resulting in key: " + result.getKey());
+
+        String cc = MimeMessageUtility.getCc(headers, parser);
+        if (!StringUtils.isEmpty(cc) && !StringUtils.isEmpty(result.getTo())) {
+            result.setTo(result.getTo() + ", " + cc);
+        }
 
         return result;
     }
