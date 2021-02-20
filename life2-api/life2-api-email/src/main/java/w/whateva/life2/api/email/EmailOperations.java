@@ -1,10 +1,7 @@
 package w.whateva.life2.api.email;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.api.email.dto.ApiEmailCount;
 
@@ -19,9 +16,11 @@ public interface EmailOperations {
     void add(ApiEmail email);
 
     @RequestMapping(value = "/email/{key}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
     ApiEmail read(@PathVariable("key") String key);
 
     @RequestMapping(value = "/emails", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
     List<ApiEmail> search(@RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,
                           @RequestParam(value = "before", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate before,
                           @RequestParam(value = "who", required = false) Set<String> who,
@@ -29,6 +28,7 @@ public interface EmailOperations {
                           @RequestParam(value = "to", required = false) Set<String> to);
 
     @RequestMapping(value = "/email/counts", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
     List<ApiEmailCount> count(@RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,
                               @RequestParam(value = "before", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate before,
                               @RequestParam(value = "who", required = false) Set<String> who,

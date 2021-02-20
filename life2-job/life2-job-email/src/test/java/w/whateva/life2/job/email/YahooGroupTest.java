@@ -25,11 +25,11 @@ public class YahooGroupTest {
     @Test
     public void xhtmlParseTest() throws Exception {
 
-        String in = readFile("/Users/rich/life2/data/yahoogroups/raw/bbjones/11268.html", Charset.forName("ISO-8859-1"));
+        String in = readFile("/Volumes/20200915/rich-20200910/rich/life2/data/yahoogroups/raw/bbjones/11268.html", Charset.forName("ISO-8859-1"));
 
         String out = htmlToXhtml(in);
 
-        // FileInputStream is = new FileInputStream(new File("/Users/rich/life2/data/yahoogroups/raw/bbjones/10533.html"));
+        // FileInputStream is = new FileInputStream(new File("/Volumes/20200915/rich-20200910/rich/life2/data/yahoogroups/raw/bbjones/10533.html"));
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         String xhtmlFileName = "/tmp/tmp.xhtml";

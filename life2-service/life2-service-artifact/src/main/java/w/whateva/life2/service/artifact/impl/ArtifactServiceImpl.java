@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
 /**
  *
  */
-@Primary
-@Service
+@RestController
 public class ArtifactServiceImpl implements ArtifactOperations {
 
     private Logger log = LoggerFactory.getLogger(ArtifactServiceImpl.class);

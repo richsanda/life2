@@ -23,6 +23,8 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 @Component
 public class EmailDaoImpl implements EmailDao {
 
+    private static final String SORT_BY = "sent";
+
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -73,7 +75,7 @@ public class EmailDaoImpl implements EmailDao {
         // *and* with the whoCriteria if it was provided
         // if (null != whoCriteria) queryCriteria = queryCriteria.andOperator(whoCriteria);
 
-        Query query = new Query(criteria).with(new Sort(Sort.Direction.ASC, "sent"));
+        Query query = new Query(criteria).with(Sort.by(Sort.Direction.ASC, SORT_BY));
 
         return mongoTemplate.find(query, Email.class);
 
