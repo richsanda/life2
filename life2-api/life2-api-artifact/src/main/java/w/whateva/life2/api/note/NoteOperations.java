@@ -1,7 +1,6 @@
 package w.whateva.life2.api.note;
 
 import org.springframework.web.bind.annotation.*;
-import w.whateva.life2.api.neat.dto.ApiNeatFile;
 import w.whateva.life2.api.note.dto.ApiNote;
 
 import java.util.List;
@@ -28,4 +27,8 @@ public interface NoteOperations {
     @RequestMapping(value = "/notes", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     List<String> listTroves();
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    String test();
 }

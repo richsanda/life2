@@ -5,8 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.ZonedDateTime;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -18,13 +19,17 @@ public class ApiArtifact {
     private String key;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime sent;
-    private String from;
-    private String fromEmail;
-    private String to;
-    private Set<String> toEmails;
-    private String subject;
-    private String body;
-    private boolean bodyHtml;
-    private String message;
+    private LocalDateTime when;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime when2;
+
+    private String title;
+    private String description;
+    private String image;
+
+    private List<String> relativeKeys;
+    private int relativeKeyIndex;
+
+    private Map<String, Object> data;
 }

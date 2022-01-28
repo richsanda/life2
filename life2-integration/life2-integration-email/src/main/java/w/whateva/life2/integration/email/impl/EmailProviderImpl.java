@@ -66,8 +66,8 @@ public class EmailProviderImpl implements ArtifactProvider {
 
         return emailClient.search(after, before, whoEmails, fromEmails, toEmails)
                 .stream()
-                .map(EmailUtil::toDto)
                 .map(this::embellish)
+                .map(EmailUtil::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -129,16 +129,16 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     // for now still assume only one trove is supported here...
-    private ApiArtifact embellish(ApiArtifact artifact) {
+    private ApiEmail embellish(ApiEmail email) {
 
         Map.Entry<String, String> trove = troves.entries().stream().findFirst().orElseThrow(RuntimeException::new);
 
-        artifact.setOwner(trove.getKey());
-        artifact.setTrove(trove.getValue());
-        artifact.setFromEmail(emailToPersonName(artifact.getFromEmail()));
-        artifact.setToEmails(emailToPersonNames(artifact.getToEmails()));
+        email.setOwner(trove.getKey());
+        email.setTrove(trove.getValue());
+        email.setFromEmail(emailToPersonName(email.getFromEmail()));
+        email.setToEmails(emailToPersonNames(email.getToEmails()));
 
-        return artifact;
+        return email;
     }
 
     private Set<String> emailToPersonNames(Set<String> emails) {

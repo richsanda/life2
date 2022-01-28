@@ -5,7 +5,6 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
@@ -22,7 +21,6 @@ import w.whateva.life2.service.user.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,7 +71,7 @@ public class ArtifactServiceImpl implements ArtifactOperations {
                 .parallelStream()
                 .map(p -> search(p, after, before, who, from, to))
                 .flatMap(List::stream)
-                .sorted(Comparator.comparing(ApiArtifact::getSent))
+                .sorted(Comparator.comparing(ApiArtifact::getWhen))
                 .collect(Collectors.toList());
     }
 
@@ -88,7 +86,7 @@ public class ArtifactServiceImpl implements ArtifactOperations {
                 .parallelStream()
                 .map(p -> search(p, restrictedSearchSpec))
                 .flatMap(List::stream)
-                .sorted(Comparator.comparing(ApiArtifact::getSent))
+                .sorted(Comparator.comparing(ApiArtifact::getWhen))
                 .collect(Collectors.toList());
     }
 
@@ -179,10 +177,10 @@ public class ArtifactServiceImpl implements ArtifactOperations {
 
         List<List<ApiArtifact>> buckets = artifactUtility.putInBuckets(
                 search(after, before, who, from, to),
-                new AbstractLocalDateTimeOperator<ApiArtifact>() {
+                new AbstractLocalDateTimeOperator<>() {
                     @Override
                     public LocalDateTime apply(ApiArtifact artifact) {
-                        return artifact.getSent().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime();
+                        return artifact.getWhen();
                     }
                 },
                 numBuckets,

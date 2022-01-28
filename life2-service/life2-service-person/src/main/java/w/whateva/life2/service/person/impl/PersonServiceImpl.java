@@ -4,6 +4,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import w.whateva.life2.api.person.PersonOperations;
 import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.data.person.domain.Person;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PersonServiceImpl implements PersonService {
+public class PersonServiceImpl implements PersonService, PersonOperations {
 
     private final PersonRepository personRepository;
 
