@@ -2,7 +2,9 @@ package w.whateva.life2.service.note.impl;
 
 import org.springframework.beans.BeanUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
+import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.data.note.domain.Note;
+import w.whateva.life2.data.note.domain.NoteMonthYearCount;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -161,6 +163,14 @@ public class NoteUtil {
         result.setData(note.getData());
         result.setRelativeKeys(relatives);
         result.setRelativeKeyIndex(index);
+        return result;
+    }
+
+    public static ApiArtifactCount toDto(NoteMonthYearCount count) {
+        ApiArtifactCount result = new ApiArtifactCount();
+        result.setCount(count.getCount());
+        result.setMonth(count.getMonth());
+        result.setYear(count.getYear());
         return result;
     }
 
