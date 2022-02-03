@@ -8,15 +8,16 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.note.NoteOperations;
 import w.whateva.life2.api.note.dto.ApiNote;
+import w.whateva.life2.data.neat.NeatDao;
 import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.repository.NoteRepository;
+import w.whateva.life2.data.pin.domain.Pin;
+import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static w.whateva.life2.service.note.impl.NoteUtil.enhanceNote;
@@ -28,17 +29,22 @@ public class NoteServiceImpl implements NoteOperations {
 
     private final NoteRepository noteRepository;
     private final NoteDao noteDao;
+    private final NeatDao neatDao;
+    private final PinDao pinDao;
+
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    public NoteServiceImpl(GenericWebApplicationContext context, NoteRepository noteRepository, NoteDao NoteDao) {
+    public NoteServiceImpl(GenericWebApplicationContext context, NoteRepository noteRepository, NoteDao NoteDao, NeatDao neatDao, PinDao pinDao) {
         this.context = context;
         this.noteRepository = noteRepository;
         this.noteDao = NoteDao;
+        this.neatDao = neatDao;
+        this.pinDao = pinDao;
         context.registerBean("whatever_dude",
                 ArtifactProvider.class,
-                () -> new NoteProvider(this, noteDao));
+                () -> new NoteProvider(this, noteDao, this.neatDao));
     }
 
     @Override
@@ -52,13 +58,12 @@ public class NoteServiceImpl implements NoteOperations {
         Note note = new Note();
         note.setId(composeKey(trove, key));
         BeanUtils.copyProperties(apiNote, note);
-        noteRepository.save(note);
-
-        return toApi(note);
+        return toApi(update(note));
     }
 
     private Note update(Note note) {
         noteRepository.save(note);
+        pinDao.update(toPin(note));
         return note;
     }
 
@@ -94,12 +99,36 @@ public class NoteServiceImpl implements NoteOperations {
 
         // noteRepository.saveAll(notes);
 
+//        List<Pin> pins = noteRepository.findAll().stream()
+//                // .map(NoteUtil::enhanceNote)
+//                .filter(n -> n.getData().containsKey("when") && n.getData().containsKey("type") && null != n.getData().get("type"))
+//                .sorted(Comparator.comparing((n) -> n.getData().get("when").toString()))
+//                .map(NoteServiceImpl::toPin)
+//                .collect(Collectors.toUnmodifiableList());
+//
+//        pins.forEach(pinDao::add);
+//
+//        return pins.stream().map(p -> p.getWhen().toString() + p.getTrove()).collect(Collectors.joining(","));
+
         return noteRepository.findAll().stream()
-                // .map(NoteUtil::enhanceNote)
-                .filter(n -> n.getData().containsKey("when") && n.getData().containsKey("type") && null != n.getData().get("type"))
-                .sorted(Comparator.comparing((n) -> n.getData().get("when").toString()))
-                .map(n -> "" + n.getData().get("when") + "." + n.getData().getOrDefault("where", "") + " (" + n.getData().get("people") + ") -- " + n.getData().get("type") + " -- " + n.getTrove())
-                .collect(Collectors.joining("\n"));
+                .map(n -> NoteUtil.updateNoteText(n.getText()))
+                .collect(Collectors.joining("\n\n"));
+    }
+
+    private static Pin toPin(Note note) {
+        Set<String> types = new HashSet<>();
+        if (note.getData().containsKey("type")) types.add(note.getData().get("type").toString());
+        ZonedDateTime when = note.getData().containsKey("when")
+                ? ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z")
+                : null;
+        return Pin.builder()
+                .trove(note.getTrove())
+                .key(note.getId().substring(note.getId().indexOf("/")))
+                .title(note.getTitle())
+                .types(types)
+                .text(note.getText())
+                .when(when)
+                .build();
     }
 
     @Override

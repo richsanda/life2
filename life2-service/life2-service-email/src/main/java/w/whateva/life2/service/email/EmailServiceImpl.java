@@ -12,14 +12,19 @@ import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.api.email.dto.ApiEmailCount;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.domain.EmailMonthYearCount;
-import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.email.repository.EmailDao;
+import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.person.repository.PersonRepository;
+import w.whateva.life2.data.pin.domain.Pin;
+import w.whateva.life2.data.pin.repository.PinDao;
+import w.whateva.life2.data.pin.repository.PinRepository;
 
 import javax.mail.internet.InternetAddress;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.singleton;
 
 /**
  *
@@ -33,12 +38,13 @@ public class EmailServiceImpl implements EmailService {
     private final EmailRepository emailRepository;
     private final PersonRepository personRepository;
     private final EmailDao emailDao;
+    private final PinDao pinDao;
 
     private final EmailServiceConfigurationProperties.AddressStyle addressStyle;
     private final String groupAddress;
 
     @Autowired
-    public EmailServiceImpl(EmailServiceConfigurationProperties configurationProperties, EmailRepository emailRepository, PersonRepository personRepository, EmailDao emailDao) {
+    public EmailServiceImpl(EmailServiceConfigurationProperties configurationProperties, EmailRepository emailRepository, PersonRepository personRepository, EmailDao emailDao, PinDao pinDao, PinRepository pinRepository) {
 
         this.emailRepository = emailRepository;
         this.personRepository = personRepository;
@@ -53,13 +59,15 @@ public class EmailServiceImpl implements EmailService {
                 null != configurationProperties.getAddress().getStyle() ?
                 configurationProperties.getAddress().getStyle() :
                 null;
+
+        this.pinDao = pinDao;
     }
 
     public void add(ApiEmail apiEmail) {
 
         Email email = new Email();
 
-        email.setId(apiEmail.getKey()); // eh, for now
+        email.setId(composeId(apiEmail));
 
         BeanUtils.copyProperties(apiEmail, email);
 
@@ -92,6 +100,7 @@ public class EmailServiceImpl implements EmailService {
 
         try {
             emailRepository.save(email);
+            pinDao.update(toPin(email));
         } catch (Exception e) {
             log.error("Failed to save email with key: " + email.getKey());
         }
@@ -99,7 +108,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public ApiEmail read(String key) {
-        Email email = emailRepository.findById(key).orElse(null);
+        Email email = emailRepository.findUniqueByKey(key);
         return toApi(email);
     }
 
@@ -199,5 +208,25 @@ public class EmailServiceImpl implements EmailService {
             log.error("Problem parsing internet email address list: " + addressList);
             return toSimpleAddresses(addressList, "\\s*[;,]\\s*");
         }
+    }
+
+    private Pin toPin(Email email) {
+
+        return Pin.builder()
+                .id(email.getId())
+                .key(email.getKey())
+                .owner(email.getOwner())
+                .trove(email.getTrove())
+                .text(email.getBody())
+                .when(email.getSent())
+                .title(email.getSubject())
+                .to(email.getToIndex())
+                .types(email.isGroup() ? Set.of("email", "email_group") : Set.of("email"))
+                .from(singleton(email.getFromIndex()))
+                .build();
+    }
+
+    private String composeId(ApiEmail email) {
+        return email.getOwner() + ":" + email.getTrove() + ":" + email.getKey();
     }
 }

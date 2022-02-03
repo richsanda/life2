@@ -122,7 +122,7 @@
         </xsl:if>
 
         <GroupMessage id="1">
-            <SourceKey type="YAHOOGROUP">
+            <SourceKey type="yahoogroup">
                 <Group>
                     <xsl:value-of select="$yahoogroup[1]"/>
                 </Group>

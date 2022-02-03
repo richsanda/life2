@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
@@ -13,6 +14,10 @@ import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
 import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.person.dto.ApiPerson;
+import w.whateva.life2.api.trove.TroveOperations;
+import w.whateva.life2.api.trove.dto.ApiTrove;
+import w.whateva.life2.data.pin.PinProvider;
+import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.user.domain.User;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.service.artifact.util.ArtifactUtility;
@@ -28,7 +33,7 @@ import java.util.stream.Collectors;
  *
  */
 @RestController
-public class ArtifactServiceImpl implements ArtifactOperations {
+public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations {
 
     private Logger log = LoggerFactory.getLogger(ArtifactServiceImpl.class);
 
@@ -36,13 +41,17 @@ public class ArtifactServiceImpl implements ArtifactOperations {
     private final ArtifactUtility artifactUtility;
     private final UserService userService;
     private final PersonService personService;
+    private final PinProvider pinProvider;
+    private final PinDao pinDao;
 
     @Autowired
-    public ArtifactServiceImpl(GenericWebApplicationContext context, ArtifactUtility artifactUtility, UserService userService, PersonService personService) {
+    public ArtifactServiceImpl(GenericWebApplicationContext context, ArtifactUtility artifactUtility, UserService userService, PersonService personService, PinDao pinDao) {
         this.context = context;
         this.artifactUtility = artifactUtility;
         this.userService = userService;
         this.personService = personService;
+        this.pinDao = pinDao;
+        this.pinProvider = new PinProvider(pinDao);
     }
 
     @Override
@@ -86,34 +95,40 @@ public class ArtifactServiceImpl implements ArtifactOperations {
                 .parallelStream()
                 .map(p -> search(p, restrictedSearchSpec))
                 .flatMap(List::stream)
-                .sorted(Comparator.comparing(ApiArtifact::getWhen))
+                .sorted(Comparator.nullsLast(Comparator.comparing(ApiArtifact::getWhen)))
                 .collect(Collectors.toList());
     }
 
     @Override
+    @CrossOrigin(origins = "*")
     public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
 
-        return providers()
-                .parallelStream()
-                .map(p -> count(p, after, before, who, from, to))
-                .flatMap(List::stream)
-                .sorted(Comparator.comparing(ApiArtifactCount::getYear).thenComparing(ApiArtifactCount::getMonth))
-                .collect(Collectors.toList());
+        return pinProvider.count(after, before, null, null, null);
+
+//        return providers()
+//                .parallelStream()
+//                .map(p -> count(p, after, before, who, from, to))
+//                .flatMap(List::stream)
+//                .sorted(Comparator.comparing(ApiArtifactCount::getYear).thenComparing(ApiArtifactCount::getMonth))
+//                .collect(Collectors.toList());
     }
 
     @Override
+    @CrossOrigin(origins = "*")
     public List<ApiArtifactCount> count(ApiArtifactSearchSpec searchSpec) {
 
         ApiArtifactSearchSpec restrictedSearchSpec = restrictSearchSpec(searchSpec);
 
         if (null == restrictedSearchSpec) return new ArrayList<>();
 
-        return providers()
-                .parallelStream()
-                .map(p -> count(p, restrictedSearchSpec))
-                .flatMap(List::stream)
-                .sorted(Comparator.comparing(ApiArtifactCount::getYear).thenComparing(ApiArtifactCount::getMonth))
-                .collect(Collectors.toList());
+        return pinProvider.count(restrictedSearchSpec);
+
+//        return providers()
+//                .parallelStream()
+//                .map(p -> count(p, restrictedSearchSpec))
+//                .flatMap(List::stream)
+//                .sorted(Comparator.comparing(ApiArtifactCount::getYear).thenComparing(ApiArtifactCount::getMonth))
+//                .collect(Collectors.toList());
     }
 
     private ApiArtifactSearchSpec restrictSearchSpec(ApiArtifactSearchSpec searchSpec) {
@@ -195,5 +210,15 @@ public class ArtifactServiceImpl implements ArtifactOperations {
 
     private Collection<ArtifactProvider> providers() {
         return context.getBeansOfType(ArtifactProvider.class).values();
+    }
+
+    @Override
+    public List<ApiTrove> allTroves() {
+        return pinDao.listTroves().stream()
+                .map(t -> {
+                    ApiTrove trove = new ApiTrove();
+                    trove.setName(t);
+                    return trove;
+                }).collect(Collectors.toUnmodifiableList());
     }
 }

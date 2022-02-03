@@ -141,12 +141,13 @@ public class NoteUtil {
     }
 
     public static ApiArtifact toDto(Note note) {
+        String[] troveAndKey = note.getId().split("/");
         ApiArtifact result = new ApiArtifact();
         result.setWhen(note.getSent().toLocalDateTime());
         result.setTitle(note.getData().get("type").toString());
         result.setTrove(note.getTrove());
         result.setImage(imageLocation(note));
-        result.setKey(note.getId());
+        result.setKey(troveAndKey[1]);
         result.setDescription(note.getText());
         result.setData(note.getData());
         return result;
@@ -154,6 +155,8 @@ public class NoteUtil {
 
     public static ApiArtifact toDto(Note note, List<String> relatives, int index) {
         ApiArtifact result = new ApiArtifact();
+        result.setTypes(new HashSet<>());
+        result.getTypes().add("note");
         result.setWhen(null != note.getSent() ? note.getSent().toLocalDateTime() : null);
         result.setTitle(note.getData().containsKey("type") ? note.getData().get("type").toString() : null);
         result.setTrove(note.getTrove());
@@ -176,5 +179,25 @@ public class NoteUtil {
 
     private static String imageLocation(Note note) {
         return "w/neat/" + note.getId();
+    }
+
+    public static String updateNoteText(String input) {
+        int lastIndex = 0;
+        StringBuilder output = new StringBuilder();
+        Matcher matcher = fieldPattern.matcher(input);
+        while (matcher.find()) {
+            output.append(input, lastIndex, matcher.start())
+                    .append(composeField(matcher.group(1), matcher.group(2)));
+
+            lastIndex = matcher.end();
+        }
+        if (lastIndex < input.length()) {
+            output.append(input, lastIndex, input.length());
+        }
+        return output.toString();
+    }
+
+    private static String composeField(String fieldName, String fieldValue) {
+        return "$[" + fieldName + ":](field:" + fieldName + ")" + fieldValue;
     }
 }

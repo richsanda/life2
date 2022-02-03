@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Configuration;
 import w.whateva.life2.api.email.EmailOperations;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
-import w.whateva.life2.job.email.beans.MimeMessageProcessorListener;
-import w.whateva.life2.job.email.beans.MimeMessageProcessor;
 import w.whateva.life2.job.email.beans.MboxReader;
+import w.whateva.life2.job.email.beans.MimeMessageProcessor;
+import w.whateva.life2.job.email.beans.MimeMessageProcessorListener;
 
 import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
@@ -36,15 +36,17 @@ public class MboxEmailJobConfiguration extends DefaultBatchConfigurer {
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
     private final EmailOperations emailService;
+    private final EmailLoadConfiguration configuration;
 
     @Value("${email.mbox.file}")
     private String emailMboxFile;
 
     @Autowired
-    public MboxEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailOperations emailService) {
+    public MboxEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailOperations emailService, EmailLoadConfiguration emailLoadConfiguration) {
         this.jobs = jobs;
         this.steps = steps;
         this.emailService = emailService;
+        this.configuration = emailLoadConfiguration;
     }
 
     @Bean
@@ -91,6 +93,9 @@ public class MboxEmailJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemWriter<ApiEmail> emailWriter() {
-        return new EmailWriter(emailService);
+        return new EmailWriter(
+                emailService,
+                configuration.getEmailTroveName(),
+                configuration.getEmailTroveOwner());
     }
 }

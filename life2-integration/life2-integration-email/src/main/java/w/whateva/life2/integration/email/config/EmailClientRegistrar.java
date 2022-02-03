@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.email.EmailOperations;
+import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.impl.EmailProviderImpl;
@@ -32,16 +33,18 @@ public class EmailClientRegistrar {
     private final GenericWebApplicationContext context;
     private final EmailFeignConfiguration configuration;
     private final PersonRepository personRepository;
+    private final EmailService emailService;
 
     @Getter
     @Setter
     private Map<String, EmailConfiguration> sources;
 
     @Autowired
-    EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration, PersonRepository personRepository) {
+    EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration, PersonRepository personRepository, EmailService emailService) {
         this.context = context;
         this.configuration = configuration;
         this.personRepository = personRepository;
+        this.emailService = emailService;
     }
 
     @PostConstruct
@@ -74,7 +77,7 @@ public class EmailClientRegistrar {
                         EmailConfiguration config = entry.getValue();
                         EmailOperations client = emailClient(config.getUrl());
                         Map<String, List<String>> troves = config.getTroves();
-                        return new EmailProviderImpl(client, troves, personRepository);
+                        return new EmailProviderImpl(emailService, troves, personRepository);
                     });
         }
     }

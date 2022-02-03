@@ -19,10 +19,11 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.job.email.beans.*;
+import w.whateva.life2.job.email.beans.EmailWriter;
+import w.whateva.life2.job.email.beans.XmlEmailProcessor;
+import w.whateva.life2.job.email.beans.YahoogroupMessageFileReader;
 import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlGroupMessage;
-import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
 
 import java.io.IOException;
 
@@ -34,15 +35,17 @@ public class YahoogroupJobConfiguration extends DefaultBatchConfigurer {
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
     private final EmailService emailService;
+    private final EmailLoadConfiguration configuration;
 
     @Value("${yahoogroup.message.file.pattern}")
     private String yahoogroupMessageFilePattern;
 
     @Autowired
-    public YahoogroupJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService) {
+    public YahoogroupJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService, EmailLoadConfiguration configuration) {
         this.jobs = jobs;
         this.steps = steps;
         this.emailService = emailService;
+        this.configuration = configuration;
     }
 
     @Bean
@@ -89,7 +92,10 @@ public class YahoogroupJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemWriter<ApiEmail> emailWriter() {
-        return new EmailWriter(emailService);
+        return new EmailWriter(
+                emailService,
+                configuration.getEmailTroveName(),
+                configuration.getEmailTroveOwner());
     }
 
     @Bean

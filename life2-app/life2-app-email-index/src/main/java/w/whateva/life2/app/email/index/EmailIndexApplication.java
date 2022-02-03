@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -21,11 +20,14 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         "w.whateva.life2.service.person",
         "w.whateva.life2.data.email",
         "w.whateva.life2.data.person",
+        "w.whateva.life2.data.pin",
         "w.whateva.life2.job.email",
+        "w.whateva.life2.app.email.index"
 })
 @EnableMongoRepositories(basePackages = {
         "w.whateva.life2.data.email.repository",
         "w.whateva.life2.data.person.repository",
+        "w.whateva.life2.data.pin.repository"
 })
 @EntityScan(basePackages = {
         "w.whateva.life2.data.email.domain"

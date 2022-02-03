@@ -23,26 +23,33 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
         "w.whateva.life2.service.artifact",
         "w.whateva.life2.service.user",
         "w.whateva.life2.service.person",
+        "w.whateva.life2.service.email",
         "w.whateva.life2.service.neat",
         "w.whateva.life2.service.note",
         "w.whateva.life2.data.user",
         "w.whateva.life2.data.person",
+        "w.whateva.life2.data.email",
         "w.whateva.life2.data.neat",
         "w.whateva.life2.data.note",
+        "w.whateva.life2.data.pin",
         "w.whateva.life2.integration",
         "w.whateva.life2.web"
 })
 @EnableMongoRepositories(basePackages = {
         "w.whateva.life2.data.user.repository",
         "w.whateva.life2.data.person.repository",
+        "w.whateva.life2.data.email.repository",
         "w.whateva.life2.data.neat.repository",
-        "w.whateva.life2.data.note.repository"
+        "w.whateva.life2.data.note.repository",
+        "w.whateva.life2.data.pin.repository"
 })
 @EntityScan(basePackages = {
         "w.whateva.life2.data.user.domain",
         "w.whateva.life2.data.person.domain",
+        "w.whateva.life2.data.email.domain",
         "w.whateva.life2.data.neat.domain",
-        "w.whateva.life2.data.note.domain"
+        "w.whateva.life2.data.note.domain",
+        "w.whateva.life2.data.pin.domain"
 })
 @EnableAsync
 public class Life2Application {

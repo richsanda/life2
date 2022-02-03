@@ -19,6 +19,7 @@
         <module>life2-data-note</module>
         <module>life2-data-user</module>
         <module>life2-data-person</module>
+        <module>life2-data-pin</module>
     </modules>
 
 </project>

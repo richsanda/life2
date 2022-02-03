@@ -3,6 +3,8 @@ package w.whateva.life2.service.note.impl;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
+import w.whateva.life2.data.neat.NeatDao;
+import w.whateva.life2.data.neat.domain.NeatFile;
 import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.integration.api.ArtifactProvider;
@@ -19,19 +21,20 @@ public class NoteProvider implements ArtifactProvider {
 
     private final NoteServiceImpl noteService;
     private final NoteDao noteDao;
+    private final NeatDao neatDao;
 
-    NoteProvider(NoteServiceImpl noteService, NoteDao noteDao) {
+    NoteProvider(NoteServiceImpl noteService, NoteDao noteDao, NeatDao neatDao) {
         this.noteService = noteService;
         this.noteDao = noteDao;
+        this.neatDao = neatDao;
     }
 
     @Override
     public ApiArtifact read(String owner, String trove, String key) {
         Note note = noteDao.findByTroveAndKey(trove, key);
         if (null == note) return null;
-        List<String> relatives = noteDao.findByTroveSorted(trove).stream()
-                .map(Note::getId)
-                .filter(id -> id.endsWith(".jpg"))
+        List<String> relatives = neatDao.findByFolderSorted(trove).stream()
+                .map(NeatFile::getId)
                 .collect(Collectors.toUnmodifiableList());
         int index = relatives.indexOf(note.getId());
         return toDto(note, relatives, index);

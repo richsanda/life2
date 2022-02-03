@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.ZonedDateTime;
@@ -33,7 +34,9 @@ public class Email {
     private String to;
     @Indexed
     private Set<String> toIndex;
+    @TextIndexed
     private String subject;
+    @TextIndexed
     private String body;
     private boolean bodyHtml;
     private boolean group;

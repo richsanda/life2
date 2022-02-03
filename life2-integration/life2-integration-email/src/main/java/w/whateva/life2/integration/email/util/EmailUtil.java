@@ -6,14 +6,20 @@ import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.api.email.dto.ApiEmailCount;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 public class EmailUtil {
 
     public static ApiArtifact toDto(ApiEmail email) {
         ApiArtifact artifact = new ApiArtifact();
+        artifact.setTypes(new LinkedHashSet<>());
+        artifact.getTypes().add("email");
         artifact.setKey(email.getKey());
         artifact.setData(new LinkedHashMap<>());
         artifact.getData().put("email", email);
+        artifact.setTitle(email.getSubject());
+        artifact.setWhen(email.getSent().toLocalDateTime());
+        artifact.setTrove(email.getTrove());
         return artifact;
     }
 

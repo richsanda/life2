@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.job.email.beans.RowecomInboxEmailProcessor;
 import w.whateva.life2.job.email.beans.EmailWriter;
+import w.whateva.life2.job.email.beans.RowecomInboxEmailProcessor;
 import w.whateva.life2.job.email.beans.RowecomSentEmailProcessor;
 import w.whateva.life2.xml.email.csv.RowecomInboxEmail;
 import w.whateva.life2.xml.email.csv.RowecomSentEmail;
@@ -36,6 +36,7 @@ public class RowecomEmailJobConfiguration extends DefaultBatchConfigurer {
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
     private final EmailService emailService;
+    private final EmailLoadConfiguration configuration;
 
     @Value("${email.csv.file}")
     private String emailCsvFile;
@@ -47,10 +48,11 @@ public class RowecomEmailJobConfiguration extends DefaultBatchConfigurer {
     private String rowecomEmailSender;
 
     @Autowired
-    public RowecomEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService) {
+    public RowecomEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService, EmailLoadConfiguration configuration) {
         this.jobs = jobs;
         this.steps = steps;
         this.emailService = emailService;
+        this.configuration = configuration;
     }
 
     @Bean
@@ -207,6 +209,9 @@ public class RowecomEmailJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemWriter<ApiEmail> emailWriter() {
-        return new EmailWriter(emailService);
+        return new EmailWriter(
+                emailService,
+                configuration.getEmailTroveName(),
+                configuration.getEmailTroveOwner());
     }
 }

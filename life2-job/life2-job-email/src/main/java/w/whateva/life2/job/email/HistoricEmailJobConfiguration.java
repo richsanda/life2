@@ -35,15 +35,17 @@ public class HistoricEmailJobConfiguration extends DefaultBatchConfigurer {
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
     private final EmailService emailService;
+    private final EmailLoadConfiguration configuration;
 
     @Value("${email.historic.file.pattern}")
     private String emailHistoricFilePattern;
 
     @Autowired
-    public HistoricEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService) {
+    public HistoricEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService, EmailLoadConfiguration configuration) {
         this.jobs = jobs;
         this.steps = steps;
         this.emailService = emailService;
+        this.configuration = configuration;
     }
 
     @Bean
@@ -97,6 +99,9 @@ public class HistoricEmailJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemWriter<ApiEmail> emailWriter() {
-        return new EmailWriter(emailService);
+        return new EmailWriter(
+                emailService,
+                configuration.getEmailTroveName(),
+                configuration.getEmailTroveOwner());
     }
 }

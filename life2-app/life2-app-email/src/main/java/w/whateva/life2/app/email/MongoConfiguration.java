@@ -1,4 +1,4 @@
-package w.whateva.life2.service.note.impl;
+package w.whateva.life2.app.email;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-// TODO: maybe merge with the other mongo configuration
 @Component
 @Configuration
 public class MongoConfiguration {
@@ -37,7 +36,7 @@ public class MongoConfiguration {
     }
 
     @ReadingConverter
-    public static class ZonedDateTimeReadConverter implements Converter<Date, ZonedDateTime> {
+    public class ZonedDateTimeReadConverter implements Converter<Date, ZonedDateTime> {
 
         @Override
         public ZonedDateTime convert(Date date) {

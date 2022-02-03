@@ -34,6 +34,12 @@
         </dependency>
 
         <dependency>
+            <groupId>w.whateva</groupId>
+            <artifactId>life2-data-pin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-email</artifactId>
         </dependency>

@@ -15,14 +15,24 @@ public class EmailWriter implements ItemWriter<ApiEmail> {
 
     private final EmailOperations emailOperations;
 
+    private final String troveName;
+    private final String troveOwner;
+
     @Autowired
-    public EmailWriter(EmailOperations emailOperations) {
+    public EmailWriter(EmailOperations emailOperations, String troveName, String troveOwner) {
         this.emailOperations = emailOperations;
+        this.troveName = troveName;
+        this.troveOwner = troveOwner;
     }
 
     public void write(List<? extends ApiEmail> apiEmails) {
 
-        apiEmails.forEach(emailOperations::add);
+        apiEmails.forEach(e -> {
+            e.setTrove(troveName);
+            e.setOwner(troveOwner);
+            log.info("writing email with key: " + e.getKey());
+            emailOperations.add(e);
+        });
 
         log.info(String.format("wrote %d emails...", apiEmails.size()));
     }

@@ -1,4 +1,4 @@
-package w.whateva.life2.service.email;
+package w.whateva.life2.app.person.index;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

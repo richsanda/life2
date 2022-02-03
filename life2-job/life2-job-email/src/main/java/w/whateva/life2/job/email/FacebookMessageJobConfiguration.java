@@ -16,14 +16,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.FacebookMessageFileReader;
 import w.whateva.life2.job.email.beans.FacebookMessageProcessor;
-import w.whateva.life2.xml.email.def.XmlEmail;
-import w.whateva.life2.xml.email.def.XmlGroupMessage;
 import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
 
 import java.io.IOException;
@@ -36,15 +33,17 @@ public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
     private final EmailService emailService;
+    private final EmailLoadConfiguration configuration;
 
     @Value("${facebook.message.file.pattern}")
     private String facebookMessageFilePattern;
 
     @Autowired
-    public FacebookMessageJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService) {
+    public FacebookMessageJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService, EmailLoadConfiguration configuration) {
         this.jobs = jobs;
         this.steps = steps;
         this.emailService = emailService;
+        this.configuration = configuration;
     }
 
     @Bean
@@ -91,6 +90,9 @@ public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
     @Bean
     @StepScope
     ItemWriter<ApiEmail> emailWriter() {
-        return new EmailWriter(emailService);
+        return new EmailWriter(
+                emailService,
+                configuration.getEmailTroveName(),
+                configuration.getEmailTroveOwner());
     }
 }

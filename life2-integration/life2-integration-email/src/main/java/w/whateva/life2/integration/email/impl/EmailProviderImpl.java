@@ -7,7 +7,7 @@ import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
-import w.whateva.life2.api.email.EmailOperations;
+import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
@@ -23,14 +23,14 @@ public class EmailProviderImpl implements ArtifactProvider {
 
     private Logger log = LoggerFactory.getLogger(EmailProviderImpl.class);
 
-    private final EmailOperations emailClient;
+    private final EmailService emailService;
     private final PersonRepository personRepository;
     private final Multimap<String, String> troves = HashMultimap.create();
 
     private final Map<String, String> emailsToPersons = Maps.newHashMap();
 
-    public EmailProviderImpl(EmailOperations client, Map<String, List<String>> troves, PersonRepository personRepository) {
-        this.emailClient = client;
+    public EmailProviderImpl(EmailService emailService, Map<String, List<String>> troves, PersonRepository personRepository) {
+        this.emailService = emailService;
         this.personRepository = personRepository;
         troves.forEach(this.troves::putAll);
     }
@@ -38,9 +38,7 @@ public class EmailProviderImpl implements ArtifactProvider {
     @Override
     public ApiArtifact read(String owner, String trove, String key) {
 
-        if (!hasTrove(owner, trove)) return null;
-
-        ApiEmail email = emailClient.read(key);
+        ApiEmail email = emailService.read(key);
 
         if (null == email) return null;
 
@@ -64,7 +62,7 @@ public class EmailProviderImpl implements ArtifactProvider {
             return Collections.emptyList();
         }
 
-        return emailClient.search(after, before, whoEmails, fromEmails, toEmails)
+        return emailService.search(after, before, whoEmails, fromEmails, toEmails)
                 .stream()
                 .map(this::embellish)
                 .map(EmailUtil::toDto)
@@ -98,7 +96,7 @@ public class EmailProviderImpl implements ArtifactProvider {
             return Collections.emptyList();
         }
 
-        return emailClient.count(after, before, whoEmails, fromEmails, toEmails)
+        return emailService.count(after, before, whoEmails, fromEmails, toEmails)
                 .stream()
                 .map(EmailUtil::toDto)
                 .collect(Collectors.toList());
@@ -128,13 +126,8 @@ public class EmailProviderImpl implements ArtifactProvider {
         return result;
     }
 
-    // for now still assume only one trove is supported here...
     private ApiEmail embellish(ApiEmail email) {
 
-        Map.Entry<String, String> trove = troves.entries().stream().findFirst().orElseThrow(RuntimeException::new);
-
-        email.setOwner(trove.getKey());
-        email.setTrove(trove.getValue());
         email.setFromEmail(emailToPersonName(email.getFromEmail()));
         email.setToEmails(emailToPersonNames(email.getToEmails()));
 
