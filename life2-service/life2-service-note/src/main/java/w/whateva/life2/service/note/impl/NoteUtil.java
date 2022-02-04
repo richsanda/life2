@@ -25,7 +25,7 @@ public class NoteUtil {
     private static final Pattern datePattern2 = Pattern.compile("([0-9]{1,2})\\.?([a-z]{3})\\.?([0-9]{2,4})");
 
     private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.: ]*]\\(user:([a-z.]*)\\)");
-    private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-]*]\\(trove:([a-zA-Z0-9-]*)\\)");
+    private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-_]*]\\(trove:([a-zA-Z0-9-_]*)\\)");
 
     public static List<String> artifacts(String input) {
         List<String> result = new ArrayList<>();
