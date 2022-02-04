@@ -43,15 +43,15 @@ public class PinProvider implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
-        return pinDao.getPinMonthYearCounts(who, from, to, after.atStartOfDay(), before.atStartOfDay()).stream()
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves) {
+        return pinDao.getPinMonthYearCounts(after.atStartOfDay(), before.atStartOfDay(), who, troves).stream()
                 .map(PinProvider::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<ApiArtifactCount> count(ApiArtifactSearchSpec searchSpec) {
-        return count(searchSpec.getAfter(), searchSpec.getBefore(), null, null, null);
+        return count(searchSpec.getAfter(), searchSpec.getBefore(), searchSpec.getWho(), searchSpec.getTroves());
     }
 
     private static ApiArtifact toDto(Pin pin) {

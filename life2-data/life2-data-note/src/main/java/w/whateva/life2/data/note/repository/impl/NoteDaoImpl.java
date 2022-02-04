@@ -57,7 +57,7 @@ public class NoteDaoImpl implements NoteDao {
     }
 
     @Override
-    public List<NoteMonthYearCount> getNoteMonthYearCounts(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before) {
+    public List<NoteMonthYearCount> getNoteMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves) {
 
         Aggregation agg = newAggregation(
                 match(queryCriteria(after, before)),

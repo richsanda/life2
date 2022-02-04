@@ -110,14 +110,25 @@ public class NoteServiceImpl implements NoteOperations {
 //
 //        return pins.stream().map(p -> p.getWhen().toString() + p.getTrove()).collect(Collectors.joining(","));
 
-        return noteRepository.findAll().stream()
-                .map(n -> NoteUtil.updateNoteText(n.getText()))
-                .collect(Collectors.joining("\n\n"));
+       noteRepository.findAll()
+                .forEach(n -> {
+                    n.setText(NoteUtil.updateNoteText(n.getText()));
+                    update(n);
+                });
+
+       return "did it";
     }
 
     private static Pin toPin(Note note) {
         Set<String> types = new HashSet<>();
-        if (note.getData().containsKey("type")) types.add(note.getData().get("type").toString());
+        if (note.getData().containsKey("type")) {
+            try {
+                types.add(note.getData().get("type").toString());
+            } catch (Exception e) {
+                System.out.println("hm");
+            }
+        }
+
         ZonedDateTime when = note.getData().containsKey("when")
                 ? ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z")
                 : null;

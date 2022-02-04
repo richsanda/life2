@@ -22,6 +22,7 @@ import w.whateva.life2.data.user.domain.User;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.service.artifact.util.ArtifactUtility;
 import w.whateva.life2.service.artifact.util.bucket.AbstractLocalDateTimeOperator;
+import w.whateva.life2.service.note.impl.NoteUtil;
 import w.whateva.life2.service.user.UserService;
 
 import java.time.LocalDate;
@@ -91,6 +92,9 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
 
         if (null == restrictedSearchSpec) return new ArrayList<>();
 
+        restrictedSearchSpec.setWho(NoteUtil.parseWho(searchSpec.getText()));
+        restrictedSearchSpec.setTroves(NoteUtil.parseTroves(searchSpec.getText()));
+
         return providers()
                 .parallelStream()
                 .map(p -> search(p, restrictedSearchSpec))
@@ -101,9 +105,9 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
 
     @Override
     @CrossOrigin(origins = "*")
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves) {
 
-        return pinProvider.count(after, before, null, null, null);
+        return pinProvider.count(after, before, null, null);
 
 //        return providers()
 //                .parallelStream()
@@ -120,6 +124,9 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
         ApiArtifactSearchSpec restrictedSearchSpec = restrictSearchSpec(searchSpec);
 
         if (null == restrictedSearchSpec) return new ArrayList<>();
+
+        restrictedSearchSpec.setWho(NoteUtil.parseWho(searchSpec.getText()));
+        restrictedSearchSpec.setTroves(NoteUtil.parseTroves(searchSpec.getText()));
 
         return pinProvider.count(restrictedSearchSpec);
 
@@ -164,9 +171,9 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
         }
     }
 
-    private List<ApiArtifactCount> count(ArtifactProvider provider, LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+    private List<ApiArtifactCount> count(ArtifactProvider provider, LocalDate after, LocalDate before, Set<String> who, Set<String> troves) {
         try {
-            return provider.count(after, before, who, from, to);
+            return provider.count(after, before, who, troves);
         } catch (Exception e) {
             return Lists.newArrayList();
         }

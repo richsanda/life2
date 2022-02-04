@@ -19,12 +19,13 @@ import java.util.stream.IntStream;
 
 public class NoteUtil {
 
-    private static final Pattern artifactPattern = Pattern.compile("@\\[[a-zA-Z0-9]*]\\(artifact:([a-z]*)\\)");
-    private static final Pattern fieldPattern = Pattern.compile("@\\[[a-zA-Z0-9: ]*]\\(field:([a-z]*)\\)([^\n]*)");
+    private static final Pattern artifactPattern = Pattern.compile("\\$\\[[a-zA-Z0-9]*]\\(artifact:([a-z]*)\\)");
+    private static final Pattern fieldPattern = Pattern.compile("\\$\\[[a-zA-Z0-9: ]*]\\(field:([a-z]*)\\)([^\n]*)");
     private static final Pattern datePattern = Pattern.compile("([0-9]{1,2})\\.([0-9]{1,2})\\.([0-9]{2,4})");
     private static final Pattern datePattern2 = Pattern.compile("([0-9]{1,2})\\.?([a-z]{3})\\.?([0-9]{2,4})");
 
     private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.: ]*]\\(user:([a-z.]*)\\)");
+    private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-]*]\\(trove:([a-zA-Z0-9-]*)\\)");
 
     public static List<String> artifacts(String input) {
         List<String> result = new ArrayList<>();
@@ -184,10 +185,10 @@ public class NoteUtil {
     public static String updateNoteText(String input) {
         int lastIndex = 0;
         StringBuilder output = new StringBuilder();
-        Matcher matcher = fieldPattern.matcher(input);
+        Matcher matcher = artifactPattern.matcher(input);
         while (matcher.find()) {
             output.append(input, lastIndex, matcher.start())
-                    .append(composeField(matcher.group(1), matcher.group(2)));
+                    .append(composeField(matcher.group(1)));
 
             lastIndex = matcher.end();
         }
@@ -199,5 +200,27 @@ public class NoteUtil {
 
     private static String composeField(String fieldName, String fieldValue) {
         return "$[" + fieldName + ":](field:" + fieldName + ")" + fieldValue;
+    }
+
+    private static String composeField(String type) {
+        return "$[" + type + "](artifact:" + type + ")";
+    }
+
+    public static Set<String> parseWho(String searchText) {
+        Set<String> result = new LinkedHashSet<>();
+        Matcher matcher = personPattern.matcher(searchText);
+        while (matcher.find()) {
+           result.add(matcher.group(1));
+        }
+        return Collections.unmodifiableSet(result);
+    }
+
+    public static Set<String> parseTroves(String searchText) {
+        Set<String> result = new LinkedHashSet<>();
+        Matcher matcher = trovePattern.matcher(searchText);
+        while (matcher.find()) {
+            result.add(matcher.group(1));
+        }
+        return Collections.unmodifiableSet(result);
     }
 }

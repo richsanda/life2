@@ -14,7 +14,7 @@ public interface PinDao {
 
     Pin update(Pin pin);
 
-    List<PinMonthYearCount> getPinMonthYearCounts(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before);
+    List<PinMonthYearCount> getPinMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves);
 
     List<Pin> search(String user, Set<String> troves, ZonedDateTime after, ZonedDateTime before);
 }

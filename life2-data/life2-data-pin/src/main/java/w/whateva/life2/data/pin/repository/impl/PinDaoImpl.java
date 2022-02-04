@@ -51,17 +51,17 @@ public class PinDaoImpl implements PinDao {
     @Override
     public List<Pin> search(String owner, Set<String> troves, ZonedDateTime after, ZonedDateTime before) {
 
-        Criteria criteria = queryCriteria(owner, troves, after, before);
+        Criteria criteria = queryCriteria(after, before, Collections.singleton(owner), troves);
 
         Query query = new Query(criteria).with(Sort.by(Sort.Direction.ASC, "when"));
 
         return mongoTemplate.find(query, Pin.class);
     }
 
-    public List<PinMonthYearCount> getPinMonthYearCounts(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before) {
+    public List<PinMonthYearCount> getPinMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves) {
 
         Aggregation agg = newAggregation(
-                match(queryCriteria(null, Collections.emptySet(), after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")))),
+                match(queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves)),
                 project().andExpression("month(when)").as("month").andExpression("year(when)").as("year"),
                 group("month", "year").count().as("count"),
                 sort(Sort.Direction.ASC, "year", "month")
@@ -73,16 +73,16 @@ public class PinDaoImpl implements PinDao {
         return groupResults.getMappedResults();
     }
 
-    private Criteria queryCriteria(String owner, Set<String> troves, ZonedDateTime after, ZonedDateTime before) {
+    private Criteria queryCriteria(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves) {
 
         ArrayList<Criteria> criteria = new ArrayList<>();
 
-        if (null != owner) {
-            criteria.add(Criteria.where("owner").is(owner));
+        if (!CollectionUtils.isEmpty(who)) {
+            criteria.add(Criteria.where("data.who").in(who));
         }
 
         if (!CollectionUtils.isEmpty(troves)) {
-            criteria.add(Criteria.where("troves").in(troves));
+            criteria.add(Criteria.where("trove").in(troves));
         }
 
         if (null != after || null != before) {

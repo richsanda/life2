@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptySet;
+
 public class EmailProviderImpl implements ArtifactProvider {
 
     private Logger log = LoggerFactory.getLogger(EmailProviderImpl.class);
@@ -83,13 +85,13 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves) {
 
         who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
 
         Set<String> whoEmails = getEmailAddresses(who);
-        Set<String> fromEmails = getEmailAddresses(from);
-        Set<String> toEmails = getEmailAddresses(to);
+        Set<String> fromEmails = getEmailAddresses(emptySet()); // TODO: bring this back
+        Set<String> toEmails = getEmailAddresses(emptySet()); // TODO: bring this back
 
         if ((null != fromEmails && 0 == fromEmails.size()) || (null != toEmails && 0 == toEmails.size())) {
             log.warn("from or to not found... no results.");
@@ -111,8 +113,7 @@ public class EmailProviderImpl implements ArtifactProvider {
                 searchSpec.getAfter(),
                 searchSpec.getBefore(),
                 processPersonKeys(searchSpec.getWho()),
-                processPersonKeys(searchSpec.getFrom()),
-                processPersonKeys(searchSpec.getTo()));
+                processPersonKeys(searchSpec.getTroves()));
     }
 
     private Set<String> processPersonKeys(Set<String> keys) {

@@ -19,4 +19,5 @@ public class ApiArtifactSearchSpec {
     private Set<String> who;
     private Set<String> from;
     private Set<String> to;
+    private String text;
 }

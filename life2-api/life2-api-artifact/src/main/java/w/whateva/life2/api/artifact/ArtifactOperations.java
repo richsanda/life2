@@ -33,8 +33,7 @@ public interface ArtifactOperations {
             @RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,
             @RequestParam(value = "before", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate before,
             @RequestParam(value = "who", required = false) Set<String> who,
-            @RequestParam(value = "from", required = false) Set<String> from,
-            @RequestParam(value = "to", required = false) Set<String> to);
+            @RequestParam(value = "troves", required = false) Set<String> troves);
 
     @RequestMapping(value = "/artifact/counts", method = RequestMethod.POST, produces = "application/json")
     List<ApiArtifactCount> count(@RequestBody ApiArtifactSearchSpec searchSpec);
