@@ -1,6 +1,7 @@
 package w.whateva.life2.service.note.impl;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.data.note.domain.Note;
@@ -26,7 +27,7 @@ public class NoteUtil {
 
     private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.: ]*]\\(user:([a-z.]*)\\)");
     private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-_]*]\\(trove:([a-zA-Z0-9-_]*)\\)");
-    private static final Pattern nonTextPattern = Pattern.compile("[!@]\\[[a-zA-Z0-9-_:]*]\\([a-z]*:([a-zA-Z0-9-_]*)\\)");
+    private static final Pattern nonTextPattern = Pattern.compile("[!@]\\[[a-zA-Z0-9-_:. ]*]\\([a-z]*:([a-zA-Z0-9-_:. ]*)\\)");
 
     public static List<String> artifacts(String input) {
         List<String> result = new ArrayList<>();
@@ -231,11 +232,13 @@ public class NoteUtil {
         Matcher matcher = nonTextPattern.matcher(searchText);
         while (matcher.find()) {
             output.append(searchText, lastIndex, matcher.start()).append(' ');
+            // output.append(matcher.group(1));
             lastIndex = matcher.end();
         }
         if (lastIndex < searchText.length()) {
             output.append(searchText, lastIndex, searchText.length());
         }
-        return output.toString();
+        String result = output.toString();
+        return StringUtils.isEmpty(result) ? null : result.trim();
     }
 }
