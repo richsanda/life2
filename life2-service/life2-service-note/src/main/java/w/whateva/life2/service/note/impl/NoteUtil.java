@@ -26,6 +26,7 @@ public class NoteUtil {
 
     private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.: ]*]\\(user:([a-z.]*)\\)");
     private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-_]*]\\(trove:([a-zA-Z0-9-_]*)\\)");
+    private static final Pattern nonTextPattern = Pattern.compile("[!@]\\[[a-zA-Z0-9-_:]*]\\([a-z]*:([a-zA-Z0-9-_]*)\\)");
 
     public static List<String> artifacts(String input) {
         List<String> result = new ArrayList<>();
@@ -210,7 +211,7 @@ public class NoteUtil {
         Set<String> result = new LinkedHashSet<>();
         Matcher matcher = personPattern.matcher(searchText);
         while (matcher.find()) {
-           result.add(matcher.group(1));
+            result.add(matcher.group(1));
         }
         return Collections.unmodifiableSet(result);
     }
@@ -222,5 +223,19 @@ public class NoteUtil {
             result.add(matcher.group(1));
         }
         return Collections.unmodifiableSet(result);
+    }
+
+    public static String parseSearchText(String searchText) {
+        int lastIndex = 0;
+        StringBuilder output = new StringBuilder();
+        Matcher matcher = nonTextPattern.matcher(searchText);
+        while (matcher.find()) {
+            output.append(searchText, lastIndex, matcher.start()).append(' ');
+            lastIndex = matcher.end();
+        }
+        if (lastIndex < searchText.length()) {
+            output.append(searchText, lastIndex, searchText.length());
+        }
+        return output.toString();
     }
 }

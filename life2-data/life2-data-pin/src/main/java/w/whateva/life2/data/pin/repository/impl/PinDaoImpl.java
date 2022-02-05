@@ -1,25 +1,27 @@
 package w.whateva.life2.data.pin.repository.impl;
 
+import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.domain.PinMonthYearCount;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.pin.repository.PinRepository;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -51,19 +53,27 @@ public class PinDaoImpl implements PinDao {
     }
 
     @Override
-    public List<Pin> search(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves) {
+    public List<Pin> search(
+            ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves, String text) {
 
-        Criteria criteria = queryCriteria(after, before, who, troves);
+        Criteria criteria = queryCriteria(after, before, who, troves, text);
 
         Query query = new Query(criteria).with(Sort.by(Sort.Direction.ASC, "when"));
 
         return mongoTemplate.find(query, Pin.class);
     }
 
-    public List<PinMonthYearCount> getPinMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves) {
+    public List<PinMonthYearCount> getPinMonthYearCounts(
+            LocalDateTime after,
+            LocalDateTime before,
+            Set<String> who,
+            Set<String> troves,
+            String text) {
+
+        Criteria criteria = queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves, text);
 
         Aggregation agg = newAggregation(
-                match(queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves)),
+                match(criteria),
                 project().andExpression("month(when)").as("month").andExpression("year(when)").as("year"),
                 group("month", "year").count().as("count"),
                 sort(Sort.Direction.ASC, "year", "month")
@@ -75,7 +85,7 @@ public class PinDaoImpl implements PinDao {
         return groupResults.getMappedResults();
     }
 
-    private Criteria queryCriteria(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves) {
+    private Criteria queryCriteria(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves, String searchText) {
 
         ArrayList<Criteria> criteria = new ArrayList<>();
 
@@ -106,9 +116,42 @@ public class PinDaoImpl implements PinDao {
             criteria.add(new Criteria().andOperator(whenCriteriaArray));
         }
 
+        if (!StringUtils.isEmpty(searchText)) {
+            criteria.add(from(new TextCriteria().matching(searchText).getCriteriaObject()));
+        }
+
         Criteria[] criteriaArray = new Criteria[criteria.size()];
         criteriaArray = criteria.toArray(criteriaArray);
 
         return new Criteria().andOperator(criteriaArray);
+    }
+
+    private static Criteria from(Document document) {
+        Criteria c = new Criteria();
+
+        try {
+
+            Field _criteria = c.getClass().getDeclaredField("criteria");
+            _criteria.setAccessible(true);
+
+            @SuppressWarnings("unchecked")
+            LinkedHashMap<String, Object> criteria = (LinkedHashMap<String, Object>) _criteria.get(c);
+
+            for (Map.Entry<String, Object> set : document.entrySet()) {
+                criteria.put(set.getKey(), set.getValue());
+            }
+
+            Field _criteriaChain = c.getClass().getDeclaredField("criteriaChain");
+            _criteriaChain.setAccessible(true);
+
+            @SuppressWarnings("unchecked")
+            List<Criteria> criteriaChain = (List<Criteria>) _criteriaChain.get(c);
+            criteriaChain.add(c);
+
+        } catch (Exception e) {
+            // Ignore
+        }
+
+        return c;
     }
 }

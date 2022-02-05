@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
@@ -36,16 +35,14 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
     private Logger log = LoggerFactory.getLogger(ArtifactServiceImpl.class);
 
     private final GenericWebApplicationContext context;
-    private final ArtifactUtility artifactUtility;
     private final UserService userService;
     private final PersonService personService;
     private final PinProvider pinProvider;
     private final PinDao pinDao;
 
     @Autowired
-    public ArtifactServiceImpl(GenericWebApplicationContext context, ArtifactUtility artifactUtility, UserService userService, PersonService personService, PinDao pinDao) {
+    public ArtifactServiceImpl(GenericWebApplicationContext context, UserService userService, PersonService personService, PinDao pinDao) {
         this.context = context;
-        this.artifactUtility = artifactUtility;
         this.userService = userService;
         this.personService = personService;
         this.pinDao = pinDao;
@@ -72,16 +69,9 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text) {
 
-        return pinProvider.search(after, before, who, troves, Collections.emptySet(), Collections.emptySet());
-
-//        return providers()
-//                .parallelStream()
-//                .map(p -> search(p, after, before, who, from, to))
-//                .flatMap(List::stream)
-//                .sorted(Comparator.comparing(ApiArtifact::getWhen))
-//                .collect(Collectors.toList());
+        return pinProvider.search(after, before, who, troves, Collections.emptySet(), Collections.emptySet(), text);
     }
 
     @Override
@@ -93,6 +83,7 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
 
         restrictedSearchSpec.setWho(NoteUtil.parseWho(searchSpec.getText()));
         restrictedSearchSpec.setTroves(NoteUtil.parseTroves(searchSpec.getText()));
+        restrictedSearchSpec.setText(NoteUtil.parseSearchText(searchSpec.getText()));
 
         return pinProvider.search(
                 restrictedSearchSpec.getAfter(),
@@ -100,32 +91,17 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
                 restrictedSearchSpec.getWho(),
                 restrictedSearchSpec.getTroves(),
                 Collections.emptySet(),
-                Collections.emptySet());
-
-//        return providers()
-//                .parallelStream()
-//                .map(p -> search(p, restrictedSearchSpec))
-//                .flatMap(List::stream)
-//                .sorted(Comparator.nullsLast(Comparator.comparing(ApiArtifact::getWhen)))
-//                .collect(Collectors.toList());
+                Collections.emptySet(),
+                restrictedSearchSpec.getText());
     }
 
     @Override
-    @CrossOrigin(origins = "*")
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text) {
 
-        return pinProvider.count(after, before, null, null);
-
-//        return providers()
-//                .parallelStream()
-//                .map(p -> count(p, after, before, who, from, to))
-//                .flatMap(List::stream)
-//                .sorted(Comparator.comparing(ApiArtifactCount::getYear).thenComparing(ApiArtifactCount::getMonth))
-//                .collect(Collectors.toList());
+        return pinProvider.count(after, before, null, null, text);
     }
 
     @Override
-    @CrossOrigin(origins = "*")
     public List<ApiArtifactCount> count(ApiArtifactSearchSpec searchSpec) {
 
         ApiArtifactSearchSpec restrictedSearchSpec = restrictSearchSpec(searchSpec);
@@ -134,15 +110,9 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
 
         restrictedSearchSpec.setWho(NoteUtil.parseWho(searchSpec.getText()));
         restrictedSearchSpec.setTroves(NoteUtil.parseTroves(searchSpec.getText()));
+        restrictedSearchSpec.setText(NoteUtil.parseSearchText(searchSpec.getText()));
 
         return pinProvider.count(restrictedSearchSpec);
-
-//        return providers()
-//                .parallelStream()
-//                .map(p -> count(p, restrictedSearchSpec))
-//                .flatMap(List::stream)
-//                .sorted(Comparator.comparing(ApiArtifactCount::getYear).thenComparing(ApiArtifactCount::getMonth))
-//                .collect(Collectors.toList());
     }
 
     private ApiArtifactSearchSpec restrictSearchSpec(ApiArtifactSearchSpec searchSpec) {

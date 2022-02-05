@@ -57,7 +57,7 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text) {
 
         who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
 
@@ -88,11 +88,12 @@ public class EmailProviderImpl implements ArtifactProvider {
                 processPersonKeys(searchSpec.getWho()),
                 searchSpec.getTroves(),
                 processPersonKeys(searchSpec.getFrom()),
-                processPersonKeys(searchSpec.getTo()));
+                processPersonKeys(searchSpec.getTo()),
+                searchSpec.getText());
     }
 
     @Override
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text) {
 
         who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
 
@@ -120,7 +121,8 @@ public class EmailProviderImpl implements ArtifactProvider {
                 searchSpec.getAfter(),
                 searchSpec.getBefore(),
                 processPersonKeys(searchSpec.getWho()),
-                processPersonKeys(searchSpec.getTroves()));
+                processPersonKeys(searchSpec.getTroves()),
+                searchSpec.getText());
     }
 
     private Set<String> processPersonKeys(Set<String> keys) {

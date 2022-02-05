@@ -35,9 +35,9 @@ public class PinProvider implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text) {
 
-        return pinDao.search(after.atStartOfDay(ZoneId.of("UTC")), before.plusDays(1).atStartOfDay(ZoneId.of("UTC")), who, troves)
+        return pinDao.search(after.atStartOfDay(ZoneId.of("UTC")), before.plusDays(1).atStartOfDay(ZoneId.of("UTC")), who, troves, text)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toUnmodifiableList());
@@ -52,23 +52,30 @@ public class PinProvider implements ArtifactProvider {
                 searchSpec.getWho(),
                 searchSpec.getTroves(),
                 Collections.emptySet(),
-                Collections.emptySet());
+                Collections.emptySet(),
+                null);
     }
 
     @Override
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text) {
         return pinDao.getPinMonthYearCounts(
                         after.atStartOfDay(),
                         before.atStartOfDay(),
                         who,
-                        troves).stream()
+                        troves,
+                        text).stream()
                 .map(PinProvider::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<ApiArtifactCount> count(ApiArtifactSearchSpec searchSpec) {
-        return count(searchSpec.getAfter(), searchSpec.getBefore(), searchSpec.getWho(), searchSpec.getTroves());
+        return count(
+                searchSpec.getAfter(),
+                searchSpec.getBefore(),
+                searchSpec.getWho(),
+                searchSpec.getTroves(),
+                searchSpec.getText());
     }
 
     private ApiArtifact toDto(Pin pin) {

@@ -41,7 +41,7 @@ public class NoteProvider implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text) {
         return null;
     }
 
@@ -55,7 +55,7 @@ public class NoteProvider implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text) {
         return noteDao.getNoteMonthYearCounts(after.atStartOfDay(), before.atStartOfDay(), who, troves).stream()
                 .map(NoteUtil::toDto)
                 .collect(Collectors.toUnmodifiableList());
@@ -63,6 +63,11 @@ public class NoteProvider implements ArtifactProvider {
 
     @Override
     public List<ApiArtifactCount> count(ApiArtifactSearchSpec searchSpec) {
-        return count(searchSpec.getAfter(), searchSpec.getBefore(), null, null);
+        return count(
+                searchSpec.getAfter(),
+                searchSpec.getBefore(),
+                searchSpec.getWho(),
+                searchSpec.getTroves(),
+                searchSpec.getText());
     }
 }
