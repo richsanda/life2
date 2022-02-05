@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.domain.PinMonthYearCount;
 import w.whateva.life2.data.pin.repository.PinDao;
@@ -17,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,10 +30,12 @@ public class PinDaoImpl implements PinDao {
 
     private final PinRepository repository;
     private final MongoTemplate mongoTemplate;
+    private final PersonService personService;
 
-    public PinDaoImpl(PinRepository repository, MongoTemplate mongoTemplate) {
+    public PinDaoImpl(PinRepository repository, MongoTemplate mongoTemplate, PersonService personService) {
         this.repository = repository;
         this.mongoTemplate = mongoTemplate;
+        this.personService = personService;
     }
 
     @Override
@@ -49,9 +51,9 @@ public class PinDaoImpl implements PinDao {
     }
 
     @Override
-    public List<Pin> search(String owner, Set<String> troves, ZonedDateTime after, ZonedDateTime before) {
+    public List<Pin> search(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves) {
 
-        Criteria criteria = queryCriteria(after, before, Collections.singleton(owner), troves);
+        Criteria criteria = queryCriteria(after, before, who, troves);
 
         Query query = new Query(criteria).with(Sort.by(Sort.Direction.ASC, "when"));
 
@@ -78,8 +80,14 @@ public class PinDaoImpl implements PinDao {
         ArrayList<Criteria> criteria = new ArrayList<>();
 
         if (!CollectionUtils.isEmpty(who)) {
-            criteria.add(Criteria.where("data.who").in(who));
-        }
+            Set<String> emailAddresses = personService.findEmailAddresses(who);
+            ArrayList<Criteria> whoCriteriaList = new ArrayList<>();
+            whoCriteriaList.add(Criteria.where("data.who").in(who));
+            whoCriteriaList.add(Criteria.where("from").in(emailAddresses));
+            whoCriteriaList.add(Criteria.where("to").in(emailAddresses));
+            Criteria[] whoCriteriaArray = new Criteria[whoCriteriaList.size()];
+            whoCriteriaArray = whoCriteriaList.toArray(whoCriteriaArray);
+            criteria.add(new Criteria().orOperator(whoCriteriaArray));        }
 
         if (!CollectionUtils.isEmpty(troves)) {
             criteria.add(Criteria.where("trove").in(troves));

@@ -41,7 +41,7 @@ public class NoteProvider implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to) {
         return null;
     }
 

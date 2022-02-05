@@ -10,14 +10,14 @@ import w.whateva.life2.api.person.dto.ApiPerson;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class PersonServiceImpl implements PersonService, PersonOperations {
 
     private final PersonRepository personRepository;
+    private final Map<String, String> emailsToPersons = new HashMap<>();
 
     @Autowired
     public PersonServiceImpl(PersonRepository personRepository) {
@@ -119,5 +119,47 @@ public class PersonServiceImpl implements PersonService, PersonOperations {
         ApiPerson ApiPerson = new ApiPerson();
         BeanUtils.copyProperties(person, ApiPerson);
         return ApiPerson;
+    }
+
+
+    private Set<String> emailToPersonNames(Set<String> emails) {
+        Set<String> result = new LinkedHashSet<>();
+        Set<String> lookup = new LinkedHashSet<>();
+        emails.forEach(e -> {
+            if (emailsToPersons.containsKey(e)) {
+                result.add(emailsToPersons.get(e));
+            } else {
+                lookup.add(e);
+            }
+        });
+        if (!CollectionUtils.isEmpty(lookup)) {
+            Set<Person> persons = personRepository.findByEmailsIn(emails);
+            if (!CollectionUtils.isEmpty(persons)) {
+                persons.forEach(p -> {
+                    p.getEmails().forEach(e -> {
+                        emailsToPersons.put(e, p.getName());
+                        result.add(p.getName());
+                    });
+                });
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String emailToPersonName(String email) {
+        return emailToPersonNames(Collections.singleton(email)).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public Set<String> findEmailAddresses(Set<String> persons) {
+
+        if (CollectionUtils.isEmpty(persons)) return null; // null means unspecified
+
+        return personRepository.findByNameIn(persons)
+                .stream()
+                .map(Person::getEmails)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 }

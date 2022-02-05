@@ -63,8 +63,16 @@ public class NoteServiceImpl implements NoteOperations {
 
     private Note update(Note note) {
         noteRepository.save(note);
-        pinDao.update(toPin(note));
+        index(note);
         return note;
+    }
+
+    private void reindexAllNotes() {
+        noteRepository.findAll().forEach(this::index);
+    }
+
+    private void index(Note note) {
+        pinDao.update(toPin(note));
     }
 
     @Override
@@ -110,32 +118,27 @@ public class NoteServiceImpl implements NoteOperations {
 //
 //        return pins.stream().map(p -> p.getWhen().toString() + p.getTrove()).collect(Collectors.joining(","));
 
-       noteRepository.findAll()
-                .forEach(n -> {
-                    n.setText(NoteUtil.updateNoteText(n.getText()));
-                    update(n);
-                });
+        reindexAllNotes();
 
-       return "did it";
+        return "did it";
     }
 
     private static Pin toPin(Note note) {
         Set<String> types = new HashSet<>();
-        if (note.getData().containsKey("type")) {
-            try {
-                types.add(note.getData().get("type").toString());
-            } catch (Exception e) {
-                System.out.println("hm");
-            }
-        }
 
         ZonedDateTime when = note.getData().containsKey("when")
                 ? ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z")
                 : null;
+
+        String title = (note.getData().containsKey("type") && null != note.getData().get("type")) ?
+                note.getData().get("type").toString() :
+                "unspecified";
+
         return Pin.builder()
+                .id(note.getId())
                 .trove(note.getTrove())
-                .key(note.getId().substring(note.getId().indexOf("/")))
-                .title(note.getTitle())
+                .key(note.getId().substring(note.getId().indexOf("/") + 1))
+                .title(title)
                 .types(types)
                 .text(note.getText())
                 .when(when)

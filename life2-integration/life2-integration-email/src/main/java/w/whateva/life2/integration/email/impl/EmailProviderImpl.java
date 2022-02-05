@@ -1,6 +1,9 @@
 package w.whateva.life2.integration.email.impl;
 
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -15,7 +18,10 @@ import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,7 +57,7 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to) {
 
         who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
 
@@ -80,6 +86,7 @@ public class EmailProviderImpl implements ArtifactProvider {
                 searchSpec.getAfter(),
                 searchSpec.getBefore(),
                 processPersonKeys(searchSpec.getWho()),
+                searchSpec.getTroves(),
                 processPersonKeys(searchSpec.getFrom()),
                 processPersonKeys(searchSpec.getTo()));
     }
@@ -119,12 +126,6 @@ public class EmailProviderImpl implements ArtifactProvider {
     private Set<String> processPersonKeys(Set<String> keys) {
         if (CollectionUtils.isEmpty(keys)) return null;
         return keys.stream().map(String::toLowerCase).collect(Collectors.toSet());
-    }
-
-    public List<List<ApiArtifact>> search(String owner, LocalDate after, LocalDate before, HashSet<String> who, HashSet<String> from, HashSet<String> to, Integer integer) {
-        List<List<ApiArtifact>> result = Lists.newArrayList();
-        result.add(search(after, before, who, from, to));
-        return result;
     }
 
     private ApiEmail embellish(ApiEmail email) {
