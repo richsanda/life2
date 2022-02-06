@@ -13,5 +13,7 @@ public interface NeatFileRepository extends MongoRepository<NeatFile, String> {
 
     List<NeatFile> findAllByOrderByIndexAsc();
 
-    List<String> findDistinctByFilename();
+    NeatFile findByFolderAndFilenameAndExtension(String folder, String filename, String extension);
+
+    List<NeatFile> findAllById(String id);
 }

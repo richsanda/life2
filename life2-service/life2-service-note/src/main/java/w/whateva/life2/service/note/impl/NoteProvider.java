@@ -26,7 +26,7 @@ public class NoteProvider implements ArtifactProvider {
     private final NeatDao neatDao;
     private final PinDao pinDao;
 
-    NoteProvider(NoteRepository noteRepository, NoteDao noteDao, NeatDao neatDao, PinDao pinDao) {
+    public NoteProvider(NoteRepository noteRepository, NoteDao noteDao, NeatDao neatDao, PinDao pinDao) {
         this.noteRepository = noteRepository;
         this.noteDao = noteDao;
         this.neatDao = neatDao;

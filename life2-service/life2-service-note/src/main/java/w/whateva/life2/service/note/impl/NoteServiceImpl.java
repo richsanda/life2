@@ -12,7 +12,6 @@ import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.repository.NoteRepository;
 import w.whateva.life2.data.pin.repository.PinDao;
-import w.whateva.life2.integration.api.ArtifactProvider;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,9 +34,9 @@ public class NoteServiceImpl implements NoteOperations {
         this.noteDao = NoteDao;
         this.neatDao = neatDao;
         this.pinDao = pinDao;
-        context.registerBean("NoteProvider",
-                ArtifactProvider.class,
-                () -> new NoteProvider(noteRepository, noteDao, this.neatDao, pinDao));
+//        context.registerBean("NoteProvider",
+//                ArtifactProvider.class,
+//                () -> new NoteProvider(noteRepository, noteDao, this.neatDao, pinDao));
     }
 
     @Override
