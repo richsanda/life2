@@ -3,8 +3,7 @@ package w.whateva.life2.job.email.beans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
-import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.xml.email.csv.RowecomInboxEmail;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.xml.email.csv.RowecomSentEmail;
 
 import java.time.ZoneOffset;

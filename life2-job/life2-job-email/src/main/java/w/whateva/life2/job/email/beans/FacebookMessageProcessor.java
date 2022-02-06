@@ -1,7 +1,7 @@
 package w.whateva.life2.job.email.beans;
 
 import org.springframework.batch.item.ItemProcessor;
-import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.xml.email.facebook.FacebookMessage;
 import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
 import w.whateva.life2.xml.email.facebook.FacebookMessageFile;

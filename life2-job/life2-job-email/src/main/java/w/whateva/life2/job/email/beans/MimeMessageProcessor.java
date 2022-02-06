@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.util.StringUtils;
-import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.job.email.util.MimeMessageUtility;
 
 import javax.mail.internet.MimeMessage;

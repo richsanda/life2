@@ -1,6 +1,6 @@
 package w.whateva.life2.service.email;
 
-import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.service.email.dto.ApiEmail;
 
 public interface EmailService {
 

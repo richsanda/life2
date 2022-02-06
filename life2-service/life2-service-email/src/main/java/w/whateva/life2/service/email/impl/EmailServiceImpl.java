@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;

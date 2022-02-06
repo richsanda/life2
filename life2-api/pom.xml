@@ -21,7 +21,6 @@
     </properties>
 
     <modules>
-        <module>life2-api-email</module>
         <module>life2-api-artifact</module>
     </modules>
 

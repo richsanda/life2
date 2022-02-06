@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.FacebookMessageFileReader;
 import w.whateva.life2.job.email.beans.FacebookMessageProcessor;

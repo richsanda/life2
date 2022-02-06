@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
-import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.RowecomInboxEmailProcessor;
 import w.whateva.life2.job.email.beans.RowecomSentEmailProcessor;

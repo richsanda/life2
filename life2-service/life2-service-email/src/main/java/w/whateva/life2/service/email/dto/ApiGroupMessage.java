@@ -1,4 +1,4 @@
-package w.whateva.life2.api.email.dto;
+package w.whateva.life2.service.email.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.BeanUtils;
-import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.email.dto.ApiGroupMessage;
+import w.whateva.life2.service.email.dto.ApiEmail;
+import w.whateva.life2.service.email.dto.ApiGroupMessage;
 import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlGroupMessage;
 

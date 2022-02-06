@@ -3,10 +3,9 @@ package w.whateva.life2.job.email.beans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ItemProcessListener;
-import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.job.email.util.MimeMessageUtility;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.stream.Collectors;
 
