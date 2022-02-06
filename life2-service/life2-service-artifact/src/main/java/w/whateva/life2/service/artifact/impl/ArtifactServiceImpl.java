@@ -140,6 +140,18 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
         return ArtifactUtility.restrict(searchSpec, access);
     }
 
+    @Override
+    public Integer index(String owner, String trove) {
+        return providers()
+                .parallelStream()
+                .mapToInt(p -> index(p, owner, trove))
+                .sum();
+    }
+
+    private Integer index(ArtifactProvider provider, String owner, String trove) {
+        return provider.index(owner, trove);
+    }
+
     private Collection<ArtifactProvider> providers() {
 
         return context.getBeansOfType(ArtifactProvider.class).values();

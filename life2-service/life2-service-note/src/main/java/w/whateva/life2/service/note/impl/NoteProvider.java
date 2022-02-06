@@ -7,6 +7,8 @@ import w.whateva.life2.data.neat.NeatDao;
 import w.whateva.life2.data.neat.domain.NeatFile;
 import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
+import w.whateva.life2.data.note.repository.NoteRepository;
+import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 
 import java.time.LocalDate;
@@ -19,14 +21,16 @@ import static w.whateva.life2.service.note.impl.NoteUtil.toDto;
 
 public class NoteProvider implements ArtifactProvider {
 
-    private final NoteServiceImpl noteService;
+    private final NoteRepository noteRepository;
     private final NoteDao noteDao;
     private final NeatDao neatDao;
+    private final PinDao pinDao;
 
-    NoteProvider(NoteServiceImpl noteService, NoteDao noteDao, NeatDao neatDao) {
-        this.noteService = noteService;
+    NoteProvider(NoteRepository noteRepository, NoteDao noteDao, NeatDao neatDao, PinDao pinDao) {
+        this.noteRepository = noteRepository;
         this.noteDao = noteDao;
         this.neatDao = neatDao;
+        this.pinDao = pinDao;
     }
 
     @Override
@@ -69,5 +73,21 @@ public class NoteProvider implements ArtifactProvider {
                 searchSpec.getWho(),
                 searchSpec.getTroves(),
                 searchSpec.getText());
+    }
+
+    @Override
+    public Integer index(String owner, String trove) {
+
+        List<Note> notes = noteRepository.findAllByTrove(trove)
+                .stream()
+                .map(this::index)
+                .collect(Collectors.toUnmodifiableList());
+
+        return notes.size();
+    }
+
+    private Note index(Note note) {
+        pinDao.update(NoteUtil.index(note));
+        return note;
     }
 }

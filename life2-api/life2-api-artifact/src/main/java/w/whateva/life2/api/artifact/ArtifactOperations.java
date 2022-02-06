@@ -40,4 +40,7 @@ public interface ArtifactOperations {
 
     @RequestMapping(value = "/artifacts/counts", method = RequestMethod.POST, produces = "application/json")
     List<ApiArtifactCount> count(@RequestBody ApiArtifactSearchSpec searchSpec);
+
+    @RequestMapping(value = "/artifacts/index/{owner}/{trove}", method = RequestMethod.POST, produces = "application/json")
+    Integer index(@PathVariable("owner") String owner, @PathVariable("trove") String trove);
 }

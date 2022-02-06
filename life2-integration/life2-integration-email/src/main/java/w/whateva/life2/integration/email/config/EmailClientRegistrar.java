@@ -12,6 +12,7 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.person.repository.PersonRepository;
+import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.impl.EmailProviderImpl;
 import w.whateva.life2.integration.email.netflix.EmailFeignConfiguration;
@@ -33,18 +34,20 @@ public class EmailClientRegistrar {
     private final PersonRepository personRepository;
     private final EmailDao emailDao;
     private final EmailRepository emailRepository;
+    private final PinDao pinDao;
 
     @Getter
     @Setter
     private Map<String, EmailConfiguration> sources;
 
     @Autowired
-    EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration, PersonRepository personRepository, EmailDao emailDao, EmailRepository emailRepository) {
+    EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration, PersonRepository personRepository, EmailDao emailDao, EmailRepository emailRepository, PinDao pinDao) {
         this.context = context;
         this.configuration = configuration;
         this.personRepository = personRepository;
         this.emailDao = emailDao;
         this.emailRepository = emailRepository;
+        this.pinDao = pinDao;
     }
 
     @PostConstruct
@@ -76,7 +79,7 @@ public class EmailClientRegistrar {
                     () -> {
                         EmailConfiguration config = entry.getValue();
                         Map<String, List<String>> troves = config.getTroves();
-                        return new EmailProviderImpl(emailRepository, troves, emailDao, personRepository);
+                        return new EmailProviderImpl(emailRepository, troves, emailDao, personRepository, pinDao);
                     });
         }
     }

@@ -78,6 +78,11 @@ public class PinProvider implements ArtifactProvider {
                 searchSpec.getText());
     }
 
+    @Override
+    public Integer index(String owner, String trove) {
+        return 0;
+    }
+
     private ApiArtifact toDto(Pin pin) {
 
         ApiArtifact result = new ApiArtifact();

@@ -2,7 +2,6 @@ package w.whateva.life2.service.note.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.support.GenericWebApplicationContext;
@@ -12,12 +11,12 @@ import w.whateva.life2.data.neat.NeatDao;
 import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.repository.NoteRepository;
-import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static w.whateva.life2.service.note.impl.NoteUtil.enhanceNote;
@@ -25,26 +24,20 @@ import static w.whateva.life2.service.note.impl.NoteUtil.enhanceNote;
 @Service
 public class NoteServiceImpl implements NoteOperations {
 
-    private final GenericWebApplicationContext context;
-
     private final NoteRepository noteRepository;
     private final NoteDao noteDao;
     private final NeatDao neatDao;
     private final PinDao pinDao;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
-
-    @Autowired
     public NoteServiceImpl(GenericWebApplicationContext context, NoteRepository noteRepository, NoteDao NoteDao, NeatDao neatDao, PinDao pinDao) {
-        this.context = context;
         this.noteRepository = noteRepository;
         this.noteDao = NoteDao;
         this.neatDao = neatDao;
         this.pinDao = pinDao;
-        context.registerBean("whatever_dude",
+        context.registerBean("NoteProvider",
                 ArtifactProvider.class,
-                () -> new NoteProvider(this, noteDao, this.neatDao));
+                () -> new NoteProvider(noteRepository, noteDao, this.neatDao, pinDao));
     }
 
     @Override
@@ -72,7 +65,7 @@ public class NoteServiceImpl implements NoteOperations {
     }
 
     private void index(Note note) {
-        pinDao.update(toPin(note));
+        pinDao.update(NoteUtil.index(note));
     }
 
     @Override
@@ -121,28 +114,6 @@ public class NoteServiceImpl implements NoteOperations {
         reindexAllNotes();
 
         return "did it";
-    }
-
-    private static Pin toPin(Note note) {
-        Set<String> types = new HashSet<>();
-
-        ZonedDateTime when = note.getData().containsKey("when")
-                ? ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z")
-                : null;
-
-        String title = (note.getData().containsKey("type") && null != note.getData().get("type")) ?
-                note.getData().get("type").toString() :
-                "unspecified";
-
-        return Pin.builder()
-                .id(note.getId())
-                .trove(note.getTrove())
-                .key(note.getId().substring(note.getId().indexOf("/") + 1))
-                .title(title)
-                .types(types)
-                .text(note.getText())
-                .when(when)
-                .build();
     }
 
     @Override

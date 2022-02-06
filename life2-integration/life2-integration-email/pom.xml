@@ -24,12 +24,6 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-data-person</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>w.whateva</groupId>
             <artifactId>life2-integration-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -37,6 +31,18 @@
         <dependency>
             <groupId>w.whateva</groupId>
             <artifactId>life2-data-email</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>w.whateva</groupId>
+            <artifactId>life2-data-person</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>w.whateva</groupId>
+            <artifactId>life2-data-pin</artifactId>
             <version>${project.version}</version>
         </dependency>
 

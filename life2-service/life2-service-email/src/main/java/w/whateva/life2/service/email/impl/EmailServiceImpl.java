@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.person.repository.PersonRepository;
-import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.pin.repository.PinRepository;
+import w.whateva.life2.integration.email.util.EmailUtil;
 import w.whateva.life2.service.email.EmailService;
 import w.whateva.life2.service.email.EmailServiceConfigurationProperties;
+import w.whateva.life2.service.email.dto.ApiEmail;
 
 import javax.mail.internet.InternetAddress;
 import java.util.Arrays;
@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.singleton;
 
 /**
  *
@@ -101,7 +99,7 @@ public class EmailServiceImpl implements EmailService {
 
         try {
             emailRepository.save(email);
-            pinDao.update(toPin(email));
+            pinDao.update(EmailUtil.index(email));
         } catch (Exception e) {
             log.error("Failed to save email with key: " + email.getKey());
         }
@@ -118,24 +116,6 @@ public class EmailServiceImpl implements EmailService {
             person.getEmails().add(groupAddress);
             personRepository.save(person);
         });
-    }
-
-    public static ApiEmail toApi(Email email) {
-        if (null == email) return null;
-        ApiEmail result = new ApiEmail();
-        BeanUtils.copyProperties(email, result);
-        result.setToEmails(email.getToIndex());
-        result.setFromEmail(email.getFromIndex());
-        return result;
-    }
-
-    public static ApiEmail toSummaryApi(Email email) {
-        if (null == email) return null;
-        ApiEmail result = new ApiEmail();
-        BeanUtils.copyProperties(email, result, "body");
-        result.setToEmails(email.getToIndex());
-        result.setFromEmail(email.getFromIndex());
-        return result;
     }
 
     private static Set<String> toSimpleAddresses(String addressList, String regex) {
@@ -158,22 +138,6 @@ public class EmailServiceImpl implements EmailService {
             log.error("Problem parsing internet email address list: " + addressList);
             return toSimpleAddresses(addressList, "\\s*[;,]\\s*");
         }
-    }
-
-    private Pin toPin(Email email) {
-
-        return Pin.builder()
-                .id(email.getId())
-                .key(email.getKey())
-                .owner(email.getOwner())
-                .trove(email.getTrove())
-                .text(email.getBody())
-                .when(email.getSent())
-                .title(email.getSubject())
-                .to(email.getToIndex())
-                .types(email.isGroup() ? Set.of("email", "email_group") : Set.of("email"))
-                .from(singleton(email.getFromIndex()))
-                .build();
     }
 
     private String composeId(ApiEmail email) {

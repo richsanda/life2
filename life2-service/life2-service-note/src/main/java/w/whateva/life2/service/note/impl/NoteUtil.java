@@ -6,6 +6,7 @@ import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.domain.NoteMonthYearCount;
+import w.whateva.life2.data.pin.domain.Pin;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,7 +28,7 @@ public class NoteUtil {
 
     private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.: ]*]\\(user:([a-z.]*)\\)");
     private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-_]*]\\(trove:([a-zA-Z0-9-_]*)\\)");
-    private static final Pattern nonTextPattern = Pattern.compile("[!@]\\[[a-zA-Z0-9-_:. ]*]\\([a-z]*:([a-zA-Z0-9-_:. ]*)\\)");
+    private static final Pattern nonTextPattern = Pattern.compile("[$@!]\\[[a-zA-Z0-9-_:. ]*]\\([a-z]*:([a-zA-Z0-9-_:. ]*)\\)");
 
     public static List<String> artifacts(String input) {
         List<String> result = new ArrayList<>();
@@ -240,5 +241,43 @@ public class NoteUtil {
         }
         String result = output.toString();
         return StringUtils.isEmpty(result) ? null : result.trim();
+    }
+
+    public static String indexNoteText(String text) {
+        int lastIndex = 0;
+        StringBuilder output = new StringBuilder();
+        Matcher matcher = nonTextPattern.matcher(text);
+        while (matcher.find()) {
+            output.append(text, lastIndex, matcher.start()).append(' ');
+            output.append(matcher.group(1));
+            lastIndex = matcher.end();
+        }
+        if (lastIndex < text.length()) {
+            output.append(text, lastIndex, text.length());
+        }
+        String result = output.toString();
+        return StringUtils.isEmpty(result) ? null : result.trim();
+    }
+
+    public static Pin index(Note note) {
+        Set<String> types = new HashSet<>();
+
+        ZonedDateTime when = note.getData().containsKey("when")
+                ? ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z")
+                : null;
+
+        String title = (note.getData().containsKey("type") && null != note.getData().get("type")) ?
+                note.getData().get("type").toString() :
+                "unspecified";
+
+        return Pin.builder()
+                .id(note.getId())
+                .trove(note.getTrove())
+                .key(note.getId().substring(note.getId().indexOf("/") + 1))
+                .title(title)
+                .types(types)
+                .text(indexNoteText(note.getText())) // TODO: parse apart fields etc
+                .when(when)
+                .build();
     }
 }

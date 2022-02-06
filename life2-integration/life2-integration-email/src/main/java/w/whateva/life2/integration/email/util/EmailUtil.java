@@ -4,9 +4,13 @@ import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.domain.EmailMonthYearCount;
+import w.whateva.life2.data.pin.domain.Pin;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static java.util.Collections.singleton;
 
 public class EmailUtil {
 
@@ -31,5 +35,21 @@ public class EmailUtil {
         result.setMonth(count.getMonth());
         result.setCount(count.getCount());
         return result;
+    }
+
+    public static Pin index(Email email) {
+
+        return Pin.builder()
+                .id(email.getId())
+                .key(email.getKey())
+                .owner(email.getOwner())
+                .trove(email.getTrove())
+                .text(email.getBody())
+                .when(email.getSent())
+                .title(email.getSubject())
+                .to(email.getToIndex())
+                .types(email.isGroup() ? Set.of("email", "email_group") : Set.of("email"))
+                .from(singleton(email.getFromIndex()))
+                .build();
     }
 }

@@ -15,6 +15,7 @@ import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
+import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
@@ -35,14 +36,16 @@ public class EmailProviderImpl implements ArtifactProvider {
     private final EmailRepository emailRepository;
     private final EmailDao emailDao;
     private final PersonRepository personRepository;
+    private final PinDao pinDao;
     private final Multimap<String, String> troves = HashMultimap.create();
 
     private final Map<String, String> emailsToPersons = Maps.newHashMap();
 
-    public EmailProviderImpl(EmailRepository emailRepository, Map<String, List<String>> troves, EmailDao emailDao, PersonRepository personRepository) {
+    public EmailProviderImpl(EmailRepository emailRepository, Map<String, List<String>> troves, EmailDao emailDao, PersonRepository personRepository, PinDao pinDao) {
         this.emailRepository = emailRepository;
         this.emailDao = emailDao;
         this.personRepository = personRepository;
+        this.pinDao = pinDao;
         troves.forEach(this.troves::putAll);
     }
 
@@ -125,6 +128,19 @@ public class EmailProviderImpl implements ArtifactProvider {
                 processPersonKeys(searchSpec.getWho()),
                 processPersonKeys(searchSpec.getTroves()),
                 searchSpec.getText());
+    }
+
+    @Override
+    public Integer index(String owner, String trove) {
+        return (int)emailRepository.findAllByOwnerAndTrove(owner, trove)
+                .stream()
+                .map(this::index)
+                .count();
+    }
+
+    private Email index(Email email) {
+        pinDao.update(EmailUtil.index(email));
+        return email;
     }
 
     private Set<String> processPersonKeys(Set<String> keys) {

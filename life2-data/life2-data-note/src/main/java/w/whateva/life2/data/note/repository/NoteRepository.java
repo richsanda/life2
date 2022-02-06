@@ -14,4 +14,6 @@ public interface NoteRepository extends MongoRepository<Note, String> {
     //List<Note> findAllByOrderByIndexAsc();
 
     //List<String> findDistinctByTroveOrderByAsc();
+
+    List<Note> findAllByTrove(String trove);
 }
