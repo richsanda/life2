@@ -36,7 +36,7 @@
 
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-api-email</artifactId>
+            <artifactId>life2-data-email</artifactId>
             <version>${project.version}</version>
         </dependency>
 

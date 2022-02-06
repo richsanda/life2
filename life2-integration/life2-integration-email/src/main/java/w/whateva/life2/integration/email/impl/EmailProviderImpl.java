@@ -10,8 +10,9 @@ import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
-import w.whateva.life2.api.email.EmailService;
-import w.whateva.life2.api.email.dto.ApiEmail;
+import w.whateva.life2.data.email.domain.Email;
+import w.whateva.life2.data.email.repository.EmailDao;
+import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.integration.api.ArtifactProvider;
@@ -31,14 +32,16 @@ public class EmailProviderImpl implements ArtifactProvider {
 
     private Logger log = LoggerFactory.getLogger(EmailProviderImpl.class);
 
-    private final EmailService emailService;
+    private final EmailRepository emailRepository;
+    private final EmailDao emailDao;
     private final PersonRepository personRepository;
     private final Multimap<String, String> troves = HashMultimap.create();
 
     private final Map<String, String> emailsToPersons = Maps.newHashMap();
 
-    public EmailProviderImpl(EmailService emailService, Map<String, List<String>> troves, PersonRepository personRepository) {
-        this.emailService = emailService;
+    public EmailProviderImpl(EmailRepository emailRepository, Map<String, List<String>> troves, EmailDao emailDao, PersonRepository personRepository) {
+        this.emailRepository = emailRepository;
+        this.emailDao = emailDao;
         this.personRepository = personRepository;
         troves.forEach(this.troves::putAll);
     }
@@ -46,7 +49,7 @@ public class EmailProviderImpl implements ArtifactProvider {
     @Override
     public ApiArtifact read(String owner, String trove, String key) {
 
-        ApiEmail email = emailService.read(key);
+        Email email = emailRepository.findUniqueByKey(key);
 
         if (null == email) return null;
 
@@ -70,9 +73,8 @@ public class EmailProviderImpl implements ArtifactProvider {
             return Collections.emptyList();
         }
 
-        return emailService.search(after, before, whoEmails, fromEmails, toEmails)
+        return emailDao.getEmails(whoEmails, fromEmails, toEmails, after.atStartOfDay(), before.plusDays(1).atStartOfDay())
                 .stream()
-                .map(this::embellish)
                 .map(EmailUtil::toDto)
                 .collect(Collectors.toList());
     }
@@ -106,7 +108,7 @@ public class EmailProviderImpl implements ArtifactProvider {
             return Collections.emptyList();
         }
 
-        return emailService.count(after, before, whoEmails, fromEmails, toEmails)
+        return emailDao.getMonthYearCounts(whoEmails, fromEmails, toEmails, after.atStartOfDay(), before.plusDays(1).atStartOfDay())
                 .stream()
                 .map(EmailUtil::toDto)
                 .collect(Collectors.toList());
@@ -128,14 +130,6 @@ public class EmailProviderImpl implements ArtifactProvider {
     private Set<String> processPersonKeys(Set<String> keys) {
         if (CollectionUtils.isEmpty(keys)) return null;
         return keys.stream().map(String::toLowerCase).collect(Collectors.toSet());
-    }
-
-    private ApiEmail embellish(ApiEmail email) {
-
-        email.setFromEmail(emailToPersonName(email.getFromEmail()));
-        email.setToEmails(emailToPersonNames(email.getToEmails()));
-
-        return email;
     }
 
     private Set<String> emailToPersonNames(Set<String> emails) {

@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
-import w.whateva.life2.api.email.dto.ApiEmailCount;
 import w.whateva.life2.data.email.domain.Email;
-import w.whateva.life2.data.email.domain.EmailMonthYearCount;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.person.repository.PersonRepository;
@@ -20,8 +18,10 @@ import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.pin.repository.PinRepository;
 
 import javax.mail.internet.InternetAddress;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
@@ -107,51 +107,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public ApiEmail read(String key) {
-        Email email = emailRepository.findUniqueByKey(key);
-        return toApi(email);
-    }
-
-    @Override
-    public List<ApiEmailCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
-
-        return emailDao.getMonthYearCounts(who,
-                from,
-                to,
-                null == after ? null : after.atStartOfDay(),
-                null == before ? null : before.atStartOfDay().plusDays(1)).stream()
-                .map(EmailServiceImpl::toApi)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ApiEmail> search(LocalDate after, LocalDate before, Set<String> who, Set<String> from, Set<String> to) {
-
-        log.info("Searching emails..." + after + " / " + before + " / " + who + " / " + from + " / " + to);
-
-        try {
-
-            List<ApiEmail> result = emailDao.getEmails(
-                    who,
-                    from,
-                    to,
-                    null == after ? null : after.atStartOfDay(),
-                    null == before ? null : before.atStartOfDay().plusDays(1))
-                    .stream()
-                    .map(EmailServiceImpl::toSummaryApi)
-                    .collect(Collectors.toList());
-
-            log.info(String.format("Found %d emails", result.size()));
-
-            return result;
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return new ArrayList<>();
-        }
-    }
-
-    @Override
     public void addGroupAddressToSenders() {
 
         if (null == groupAddress) return;
@@ -162,12 +117,6 @@ public class EmailServiceImpl implements EmailService {
             person.getEmails().add(groupAddress);
             personRepository.save(person);
         });
-    }
-
-    public static ApiEmailCount toApi(EmailMonthYearCount count) {
-        ApiEmailCount result = new ApiEmailCount();
-        BeanUtils.copyProperties(count, result);
-        return result;
     }
 
     public static ApiEmail toApi(Email email) {

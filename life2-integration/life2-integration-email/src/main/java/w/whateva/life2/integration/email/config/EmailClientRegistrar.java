@@ -1,18 +1,16 @@
 package w.whateva.life2.integration.email.config;
 
-import feign.Feign;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.support.GenericWebApplicationContext;
-import w.whateva.life2.api.email.EmailOperations;
-import w.whateva.life2.api.email.EmailService;
+import w.whateva.life2.data.email.repository.EmailDao;
+import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.impl.EmailProviderImpl;
@@ -33,18 +31,20 @@ public class EmailClientRegistrar {
     private final GenericWebApplicationContext context;
     private final EmailFeignConfiguration configuration;
     private final PersonRepository personRepository;
-    private final EmailService emailService;
+    private final EmailDao emailDao;
+    private final EmailRepository emailRepository;
 
     @Getter
     @Setter
     private Map<String, EmailConfiguration> sources;
 
     @Autowired
-    EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration, PersonRepository personRepository, EmailService emailService) {
+    EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration, PersonRepository personRepository, EmailDao emailDao, EmailRepository emailRepository) {
         this.context = context;
         this.configuration = configuration;
         this.personRepository = personRepository;
-        this.emailService = emailService;
+        this.emailDao = emailDao;
+        this.emailRepository = emailRepository;
     }
 
     @PostConstruct
@@ -75,18 +75,9 @@ public class EmailClientRegistrar {
                     ArtifactProvider.class,
                     () -> {
                         EmailConfiguration config = entry.getValue();
-                        EmailOperations client = emailClient(config.getUrl());
                         Map<String, List<String>> troves = config.getTroves();
-                        return new EmailProviderImpl(emailService, troves, personRepository);
+                        return new EmailProviderImpl(emailRepository, troves, emailDao, personRepository);
                     });
         }
-    }
-
-    private EmailOperations emailClient(String url) {
-        return Feign.builder()
-                .contract(new SpringMvcContract())
-                .encoder(configuration.feignEncoder())
-                .decoder(configuration.feignDecoder())
-                .target(EmailOperations.class, url);
     }
 }

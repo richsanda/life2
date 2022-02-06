@@ -30,7 +30,7 @@ public interface ArtifactOperations {
     List<ApiArtifact> search(@RequestBody ApiArtifactSearchSpec searchSpec);
 
 
-    @RequestMapping(value = "/artifact/counts", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/artifacts/counts", method = RequestMethod.GET, produces = "application/json")
     List<ApiArtifactCount> count(
             @RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,
             @RequestParam(value = "before", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate before,
@@ -38,6 +38,6 @@ public interface ArtifactOperations {
             @RequestParam(value = "troves", required = false) Set<String> troves,
             @RequestParam(value = "text", required = false) String text);
 
-    @RequestMapping(value = "/artifact/counts", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/artifacts/counts", method = RequestMethod.POST, produces = "application/json")
     List<ApiArtifactCount> count(@RequestBody ApiArtifactSearchSpec searchSpec);
 }

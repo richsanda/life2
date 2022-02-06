@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import w.whateva.life2.api.email.EmailOperations;
+import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.MboxReader;
@@ -35,14 +35,14 @@ public class MboxEmailJobConfiguration extends DefaultBatchConfigurer {
 
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;
-    private final EmailOperations emailService;
+    private final EmailService emailService;
     private final EmailLoadConfiguration configuration;
 
     @Value("${email.mbox.file}")
     private String emailMboxFile;
 
     @Autowired
-    public MboxEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailOperations emailService, EmailLoadConfiguration emailLoadConfiguration) {
+    public MboxEmailJobConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, EmailService emailService, EmailLoadConfiguration emailLoadConfiguration) {
         this.jobs = jobs;
         this.steps = steps;
         this.emailService = emailService;

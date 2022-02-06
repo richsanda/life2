@@ -1,6 +1,10 @@
 package w.whateva.life2.api.email;
 
-public interface EmailService extends EmailOperations {
+import w.whateva.life2.api.email.dto.ApiEmail;
+
+public interface EmailService {
+
+    void add(ApiEmail email);
 
     void addGroupAddressToSenders();
 }
