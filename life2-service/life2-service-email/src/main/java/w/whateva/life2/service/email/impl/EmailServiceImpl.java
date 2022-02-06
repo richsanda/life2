@@ -1,4 +1,4 @@
-package w.whateva.life2.service.email;
+package w.whateva.life2.service.email.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.repository.EmailDao;
@@ -16,6 +15,8 @@ import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.pin.repository.PinRepository;
+import w.whateva.life2.service.email.EmailService;
+import w.whateva.life2.service.email.EmailServiceConfigurationProperties;
 
 import javax.mail.internet.InternetAddress;
 import java.util.Arrays;

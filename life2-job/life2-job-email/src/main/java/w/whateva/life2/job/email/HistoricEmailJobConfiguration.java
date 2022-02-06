@@ -17,12 +17,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.HistoricEmailFileReader;
 import w.whateva.life2.job.email.beans.MimeMessageProcessor;
 import w.whateva.life2.job.email.beans.MimeMessageProcessorListener;
+import w.whateva.life2.service.email.EmailService;
 
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;

@@ -14,12 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import w.whateva.life2.api.email.EmailService;
 import w.whateva.life2.api.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.MboxReader;
 import w.whateva.life2.job.email.beans.MimeMessageProcessor;
 import w.whateva.life2.job.email.beans.MimeMessageProcessorListener;
+import w.whateva.life2.service.email.EmailService;
 
 import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;

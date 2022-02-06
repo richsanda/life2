@@ -36,7 +36,7 @@ public class EmailServiceConfigurationProperties {
         private String recipient;
     }
 
-    enum AddressStyle {
+    public enum AddressStyle {
 
         INTERNET, SIMPLE, SIMPLE_SEMICOLON;
     }
