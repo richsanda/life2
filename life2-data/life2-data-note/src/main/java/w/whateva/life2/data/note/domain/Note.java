@@ -7,7 +7,6 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -21,17 +20,10 @@ public class Note {
     private String id;
 
     @Indexed
-    private String trove; // folder
+    private String trove;
 
-    @Indexed
-    private ZonedDateTime sent;
-
-    @Indexed
-    private Integer index;
-    private String title;
     private String text;
-
-    private List<String> refs;
+    private List<String> notes;
 
     private Map<String, Object> data;
 }

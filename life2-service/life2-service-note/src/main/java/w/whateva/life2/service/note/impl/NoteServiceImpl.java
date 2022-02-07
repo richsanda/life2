@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static w.whateva.life2.service.note.impl.NoteUtil.enhanceNote;
+import static w.whateva.life2.service.note.impl.NoteUtil.fields;
 
 @Service
 public class NoteServiceImpl implements NoteOperations {
@@ -127,7 +127,8 @@ public class NoteServiceImpl implements NoteOperations {
     public static ApiNote toApi(Note note) {
         if (null == note) return null;
         ApiNote result = new ApiNote();
-        BeanUtils.copyProperties(enhanceNote(note), result);
+        BeanUtils.copyProperties(note, result);
+        result.setData(fields(note.getText()));
         return result;
     }
 

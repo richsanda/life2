@@ -11,13 +11,17 @@ import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.domain.NoteMonthYearCount;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
+import w.whateva.life2.service.note.impl.NoteServiceImpl;
 import w.whateva.life2.service.note.impl.NoteUtil;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static w.whateva.life2.service.note.impl.NoteUtil.when;
 
 public class NeatProvider implements ArtifactProvider {
 
@@ -91,10 +95,13 @@ public class NeatProvider implements ArtifactProvider {
     }
 
     public static ApiArtifact toDto(NeatFile neatFile, Note note, List<String> relatives, int index) {
+
+        ZonedDateTime when = when(note);
+
         ApiArtifact result = new ApiArtifact();
         result.setTypes(new HashSet<>());
         result.getTypes().add("note");
-        result.setWhen(null != note.getSent() ? note.getSent().toLocalDateTime() : null);
+        result.setWhen(null != when ? when.toLocalDateTime() : null);
         result.setTitle(note.getData().containsKey("type") ? note.getData().get("type").toString() : null);
         result.setTrove(note.getTrove());
         result.setImage(imageLocation(neatFile));

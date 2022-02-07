@@ -1,6 +1,5 @@
 package w.whateva.life2.service.note.impl;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
@@ -14,8 +13,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 // https://www.baeldung.com/java-regex-token-replacement
 
@@ -73,32 +70,9 @@ public class NoteUtil {
                 result.put(fieldName, fieldValue);
             }
         }
+        result.put("type", artifacts(input).stream().findFirst().orElse(null));
+        result.put("people", people(input));
         return result;
-    }
-
-    public static Note enhanceNote(Note note) {
-        note.setTrove(note.getId().split("/")[0]);
-        note.setId(note.getId().split("/")[1]);
-        note.setData(fields(note.getText()));
-        if (note.getData().containsKey("when")) {
-            note.setSent(ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z"));
-        }
-        note.getData().put("type", artifacts(note.getText()).stream().findFirst().orElse(null));
-        note.getData().put("people", String.join(", ", people(note.getText())));
-        return note;
-    }
-
-    public static List<Note> splitNote(Note note) {
-        String[] sep = note.getText().split("---");
-        return IntStream.range(0, sep.length)
-                .mapToObj(i -> {
-                    Note copy = new Note();
-                    BeanUtils.copyProperties(note, copy);
-                    copy.setText(sep[i]);
-                    if (i != 0) copy.setId(copy.getId() + "." + i);
-                    return copy;
-                })
-                .collect(Collectors.toList());
     }
 
     private static Date date(String yearStr, String monthStr, String dayStr) {
@@ -145,9 +119,12 @@ public class NoteUtil {
     }
 
     public static ApiArtifact toDto(Note note) {
+
+        ZonedDateTime when = when(note);
+
         String[] troveAndKey = note.getId().split("/");
         ApiArtifact result = new ApiArtifact();
-        result.setWhen(note.getSent().toLocalDateTime());
+        result.setWhen(null != when ? when.toLocalDateTime() : null);
         result.setTitle(note.getData().get("type").toString());
         result.setTrove(note.getTrove());
         result.setImage(imageLocation(note));
@@ -158,11 +135,14 @@ public class NoteUtil {
     }
 
     public static ApiArtifact toDto(Note note, List<String> relatives, int index) {
+
+        ZonedDateTime when = when(note);
+
         ApiArtifact result = new ApiArtifact();
         result.setTypes(new HashSet<>());
         result.getTypes().add("note");
-        result.setWhen(null != note.getSent() ? note.getSent().toLocalDateTime() : null);
-        result.setTitle(note.getData().containsKey("type") ? note.getData().get("type").toString() : null);
+        result.setWhen(null != when ? when.toLocalDateTime() : null);
+        result.setTitle(title(note));
         result.setTrove(note.getTrove());
         result.setImage(imageLocation(note));
         result.setKey(note.getId());
@@ -171,6 +151,16 @@ public class NoteUtil {
         result.setRelativeKeys(relatives);
         result.setRelativeKeyIndex(index);
         return result;
+    }
+
+    public static ZonedDateTime when(Note note) {
+        return note.getData().containsKey("when")
+                ? ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z")
+                : null;
+    }
+
+    private static String title(Note note) {
+        return note.getData().containsKey("type") ? note.getData().get("type").toString() : null;
     }
 
     public static ApiArtifactCount toDto(NoteMonthYearCount count) {
@@ -262,9 +252,7 @@ public class NoteUtil {
     public static Pin index(Note note) {
         Set<String> types = new HashSet<>();
 
-        ZonedDateTime when = note.getData().containsKey("when")
-                ? ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z")
-                : null;
+        ZonedDateTime when = when(note);
 
         String title = (note.getData().containsKey("type") && null != note.getData().get("type")) ?
                 note.getData().get("type").toString() :
@@ -276,6 +264,7 @@ public class NoteUtil {
                 .key(note.getId().substring(note.getId().indexOf("/") + 1))
                 .title(title)
                 .types(types)
+                .data(fields(note.getText()))
                 .text(indexNoteText(note.getText())) // TODO: parse apart fields etc
                 .when(when)
                 .build();

@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.Set;
 
 @Document(collection = "pin")
@@ -43,4 +44,6 @@ public class Pin {
     private String title;
     @TextIndexed
     private String text;
+
+    private Map<String, Object> data;
 }
