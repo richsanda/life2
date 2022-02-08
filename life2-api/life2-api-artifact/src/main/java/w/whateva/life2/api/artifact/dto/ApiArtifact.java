@@ -29,6 +29,7 @@ public class ApiArtifact {
 
     private String title;
     private String description;
+    private List<String> notes;
     private String image;
 
     private List<String> relativeKeys;

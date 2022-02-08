@@ -11,7 +11,6 @@ import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.domain.NoteMonthYearCount;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
-import w.whateva.life2.service.note.impl.NoteServiceImpl;
 import w.whateva.life2.service.note.impl.NoteUtil;
 
 import java.time.LocalDate;
@@ -109,6 +108,7 @@ public class NeatProvider implements ArtifactProvider {
         result.setDescription(note.getText());
         result.setData(note.getData());
         result.getData().put("neat", neatFile);
+        result.setNotes(note.getNotes());
         result.setRelativeKeys(relatives);
         result.setRelativeKeyIndex(index);
         return result;
