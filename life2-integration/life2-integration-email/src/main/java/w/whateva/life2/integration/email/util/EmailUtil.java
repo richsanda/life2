@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
 public class EmailUtil {
@@ -24,6 +25,7 @@ public class EmailUtil {
         artifact.setTitle(email.getSubject());
         artifact.setWhen(email.getSent().toLocalDateTime());
         artifact.setTrove(email.getTrove());
+        artifact.setNotes(emptyList());
         //artifact.set(emailToPersonName(email.getFromEmail()));
         //email.setToEmails(emailToPersonNames(email.getToEmails()));
         return artifact;

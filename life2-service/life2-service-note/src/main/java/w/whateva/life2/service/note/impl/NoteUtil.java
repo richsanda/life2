@@ -1,5 +1,6 @@
 package w.whateva.life2.service.note.impl;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
@@ -70,8 +71,14 @@ public class NoteUtil {
                 result.put(fieldName, fieldValue);
             }
         }
-        result.put("type", artifacts(input).stream().findFirst().orElse(null));
-        result.put("people", people(input));
+        String type = artifacts(input).stream().findFirst().orElse(null);
+        if (!StringUtils.isEmpty(type)) {
+            result.put("type", type);
+        }
+        List<String> people = people(input);
+        if (!CollectionUtils.isEmpty(people)) {
+            result.put("people", people);
+        }
         return result;
     }
 
@@ -154,13 +161,22 @@ public class NoteUtil {
     }
 
     public static ZonedDateTime when(Note note) {
-        return note.getData().containsKey("when")
-                ? ZonedDateTime.parse(note.getData().get("when").toString() + "T00:00:00Z")
+        return note != null && note.getData() != null ? when(note.getData()) : null;
+    }
+
+    public static ZonedDateTime when(Map<String, Object> data) {
+        return !CollectionUtils.isEmpty(data) && data.containsKey("when")
+                ? ZonedDateTime.parse(data.get("when").toString() + "T00:00:00Z")
                 : null;
     }
 
-    private static String title(Note note) {
-        return note.getData().containsKey("type") ? note.getData().get("type").toString() : null;
+    public static String title(Note note) {
+        return note != null && note.getData() != null ? title(note.getData()) : null;
+    }
+
+    public static String title(Map<String, Object> data) {
+        return !CollectionUtils.isEmpty(data) && data.containsKey("type") && data.get("type") != null ?
+                data.get("type").toString() : null;
     }
 
     public static ApiArtifactCount toDto(NoteMonthYearCount count) {
@@ -250,21 +266,19 @@ public class NoteUtil {
     }
 
     public static Pin index(Note note) {
-        Set<String> types = new HashSet<>();
 
-        ZonedDateTime when = when(note);
+        Map<String, Object> data = fields(note.getText());
 
-        String title = (note.getData().containsKey("type") && null != note.getData().get("type")) ?
-                note.getData().get("type").toString() :
-                "unspecified";
+        ZonedDateTime when = when(data);
+        String title = title(data);
 
         return Pin.builder()
                 .id(note.getId())
                 .trove(note.getTrove())
                 .key(note.getId().substring(note.getId().indexOf("/") + 1))
                 .title(title)
-                .types(types)
-                .data(fields(note.getText()))
+                .types(Collections.emptySet())
+                .data(data)
                 .text(indexNoteText(note.getText())) // TODO: parse apart fields etc
                 .when(when)
                 .build();

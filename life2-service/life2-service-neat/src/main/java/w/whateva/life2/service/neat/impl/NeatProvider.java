@@ -17,10 +17,11 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static w.whateva.life2.service.note.impl.NoteUtil.when;
+import static w.whateva.life2.service.note.impl.NoteUtil.*;
 
 public class NeatProvider implements ArtifactProvider {
 
@@ -95,18 +96,21 @@ public class NeatProvider implements ArtifactProvider {
 
     public static ApiArtifact toDto(NeatFile neatFile, Note note, List<String> relatives, int index) {
 
-        ZonedDateTime when = when(note);
+        Map<String, Object> data = fields(note.getText());
+
+        ZonedDateTime when = when(data);
+        String title = title(data);
 
         ApiArtifact result = new ApiArtifact();
         result.setTypes(new HashSet<>());
         result.getTypes().add("note");
         result.setWhen(null != when ? when.toLocalDateTime() : null);
-        result.setTitle(note.getData().containsKey("type") ? note.getData().get("type").toString() : null);
+        result.setTitle(title);
         result.setTrove(note.getTrove());
         result.setImage(imageLocation(neatFile));
         result.setKey(neatFile.getId());
         result.setDescription(note.getText());
-        result.setData(note.getData());
+        result.setData(data);
         result.getData().put("neat", neatFile);
         result.setNotes(note.getNotes());
         result.setRelativeKeys(relatives);

@@ -13,7 +13,6 @@ import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.repository.NoteRepository;
 import w.whateva.life2.data.pin.repository.PinDao;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -111,31 +110,33 @@ public class NoteServiceImpl implements NoteOperations {
 //
 //        return pins.stream().map(p -> p.getWhen().toString() + p.getTrove()).collect(Collectors.joining(","));
 
-        // reindexAllNotes();
+        reindexAllNotes();
 
-        List<Note> result = noteRepository.findAll().stream()
-                .filter(n -> n.getId().endsWith(".jpg"))
-                .flatMap(n -> {
-                    Note root = n;
-                    String rootId = n.getId();
-                    int i = 1;
-                    List<Note> extras = new ArrayList<>();
-                    while (n != null) {
-                        n = noteRepository.findById(rootId + "." + i++).orElse(null);
-                        if (null != n) {
-                            extras.add(n);
-                        }
-                    }
+        return ":)";
 
-                    // put the extras back in as notes on the root note...
-                    root.setNotes(extras.stream().map(Note::getText).collect(Collectors.toUnmodifiableList()));
-                    noteRepository.save(root);
-
-                    return extras.stream();
-                })
-                .collect(Collectors.toUnmodifiableList());
-
-        return result.stream().map(Note::getId).collect(Collectors.joining("\n"));
+//        List<Note> result = noteRepository.findAll().stream()
+//                .filter(n -> n.getId().endsWith(".jpg"))
+//                .flatMap(n -> {
+//                    Note root = n;
+//                    String rootId = n.getId();
+//                    int i = 1;
+//                    List<Note> extras = new ArrayList<>();
+//                    while (n != null) {
+//                        n = noteRepository.findById(rootId + "." + i++).orElse(null);
+//                        if (null != n) {
+//                            extras.add(n);
+//                        }
+//                    }
+//
+//                    // put the extras back in as notes on the root note...
+//                    root.setNotes(extras.stream().map(Note::getText).collect(Collectors.toUnmodifiableList()));
+//                    noteRepository.save(root);
+//
+//                    return extras.stream();
+//                })
+//                .collect(Collectors.toUnmodifiableList());
+//
+//        return result.stream().map(Note::getId).collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -156,7 +157,6 @@ public class NoteServiceImpl implements NoteOperations {
     }
 
     private static String composeKey(String trove, String key) {
-        return String.format("%s/%s.jpg", trove, key).toLowerCase();
+        return String.format("%s/%s", trove, key).toLowerCase();
     }
-
 }
