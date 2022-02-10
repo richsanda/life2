@@ -56,7 +56,7 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public ApiArtifact read(String owner, String trove, String key) {
+    public ApiArtifact read(String owner, String trove, String key, Boolean relatives) {
 
         Email email = emailRepository.findUniqueByKey(key);
 

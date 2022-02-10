@@ -47,19 +47,19 @@ public class ArtifactServiceImpl implements ArtifactOperations, DataOperations {
     }
 
     @Override
-    public ApiArtifact read(String owner, String trove, String key) {
+    public ApiArtifact read(String owner, String trove, String key, Boolean relatives) {
 
         return providers()
                 .parallelStream()
-                .map(p -> read(p, owner, trove, key))
+                .map(p -> read(p, owner, trove, key, relatives))
                 .filter(Objects::nonNull)
                 .findAny()
                 .orElse(null);
     }
 
-    private ApiArtifact read(ArtifactProvider provider, String owner, String trove, String key) {
+    private ApiArtifact read(ArtifactProvider provider, String owner, String trove, String key, Boolean relatives) {
         try {
-            return provider.read(owner, trove, key);
+            return provider.read(owner, trove, key, relatives);
         } catch (Exception e) {
             return null;
         }

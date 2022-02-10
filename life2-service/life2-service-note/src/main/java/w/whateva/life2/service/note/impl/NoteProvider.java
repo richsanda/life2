@@ -35,14 +35,18 @@ public class NoteProvider implements ArtifactProvider {
     }
 
     @Override
-    public ApiArtifact read(String owner, String trove, String key) {
+    public ApiArtifact read(String owner, String trove, String key, Boolean relatives) {
         Note note = noteDao.findByTroveAndKey(trove, key);
         if (null == note) return null;
-        List<String> relatives = neatDao.findByFolderSorted(trove).stream()
-                .map(NeatFile::getId)
-                .collect(Collectors.toUnmodifiableList());
-        int index = relatives.indexOf(note.getId());
-        return toDto(note, relatives, index);
+        List<String> troveRefs = List.of(note.getId());
+        int index = 0;
+        if (relatives) {
+            troveRefs = neatDao.findByFolderSorted(trove).stream()
+                    .map(NeatFile::getId)
+                    .collect(Collectors.toUnmodifiableList());
+            index = troveRefs.indexOf(note.getId());
+        }
+        return toDto(note, troveRefs, index);
     }
 
     @Override

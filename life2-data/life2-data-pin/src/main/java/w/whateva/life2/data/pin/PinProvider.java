@@ -30,7 +30,7 @@ public class PinProvider implements ArtifactProvider {
     }
 
     @Override
-    public ApiArtifact read(String owner, String trove, String key) {
+    public ApiArtifact read(String owner, String trove, String key, Boolean relatives) {
         return null;
     }
 

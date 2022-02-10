@@ -14,7 +14,11 @@ import java.util.Set;
 public interface ArtifactOperations {
 
     @RequestMapping(value = "/artifact/{owner}/{trove}/{key}", method = RequestMethod.GET, produces = "application/json")
-    ApiArtifact read(@PathVariable("owner") String owner, @PathVariable("trove") String trove, @PathVariable("key") String key);
+    ApiArtifact read(
+            @PathVariable("owner") String owner,
+            @PathVariable("trove") String trove,
+            @PathVariable("key") String key,
+            @RequestParam(value = "relatives", required = false) Boolean relatives);
 
     @RequestMapping(value = "/artifacts", method = RequestMethod.GET, produces = "application/json")
     List<ApiArtifact> search(

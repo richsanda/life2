@@ -40,16 +40,20 @@ public class NeatProvider implements ArtifactProvider {
     }
 
     @Override
-    public ApiArtifact read(String owner, String trove, String key) {
+    public ApiArtifact read(String owner, String trove, String key, Boolean relatives) {
 
         NeatFile neatFile = neatFileRepository.findById(trove + "/" + key).orElse(null);
         if (null == neatFile) return null;
-        List<String> relatives = neatDao.findByFolderSorted(trove).stream()
-                .map(NeatFile::getId)
-                .collect(Collectors.toUnmodifiableList());
-        int index = relatives.indexOf(neatFile.getId());
+        List<String> troveRefs = List.of(neatFile.getId());
+        int index = 0;
+        if (relatives) {
+            troveRefs = neatDao.findByFolderSorted(trove).stream()
+                    .map(NeatFile::getId)
+                    .collect(Collectors.toUnmodifiableList());
+            index = troveRefs.indexOf(neatFile.getId());
+        }
         Note note = noteDao.findByTroveAndKey(trove, key);
-        return toDto(neatFile, note, relatives, index);
+        return toDto(neatFile, note, troveRefs, index);
     }
 
     @Override
