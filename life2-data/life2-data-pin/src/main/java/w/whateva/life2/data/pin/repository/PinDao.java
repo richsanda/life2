@@ -12,7 +12,9 @@ public interface PinDao {
 
     List<String> listTroves();
 
-    Pin update(Pin pin);
+    List<String> listTags();
+
+    void index(String type, String trove, String key, List<Pin> pins);
 
     List<PinMonthYearCount> getPinMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves, String searchText);
 

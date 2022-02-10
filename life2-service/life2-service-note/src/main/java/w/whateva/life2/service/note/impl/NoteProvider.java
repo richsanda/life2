@@ -8,6 +8,7 @@ import w.whateva.life2.data.neat.domain.NeatFile;
 import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.repository.NoteRepository;
+import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static w.whateva.life2.service.note.impl.NoteUtil.toDto;
+import static w.whateva.life2.service.note.impl.NoteUtil.*;
 
 public class NoteProvider implements ArtifactProvider {
 
@@ -78,16 +79,17 @@ public class NoteProvider implements ArtifactProvider {
     @Override
     public Integer index(String owner, String trove) {
 
-        List<Note> notes = noteRepository.findAllByTrove(trove)
-                .stream()
-                .map(this::index)
-                .collect(Collectors.toUnmodifiableList());
+        List<Note> notes = noteRepository.findAllByTrove(trove);
+        int pins = notes.stream().mapToInt(this::index).sum();
 
         return notes.size();
     }
 
-    private Note index(Note note) {
-        pinDao.update(NoteUtil.index(note));
-        return note;
+    public int index(Note note) {
+        String trove = note.getTrove();
+        String key = noteKey(note);
+        List<Pin> pins = NoteUtil.toIndexPins(note);
+        pinDao.index(NOTE_PIN_TYPE, trove, key, pins);
+        return pins.size();
     }
 }

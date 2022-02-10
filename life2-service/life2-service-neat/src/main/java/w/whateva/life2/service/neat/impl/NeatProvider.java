@@ -25,6 +25,8 @@ import static w.whateva.life2.service.note.impl.NoteUtil.*;
 
 public class NeatProvider implements ArtifactProvider {
 
+    private final static String NEAT_PIN_TYPE = "neat";
+
     private final NeatFileRepository neatFileRepository;
     private final NeatDao neatDao;
     private final NoteDao noteDao;
@@ -90,7 +92,7 @@ public class NeatProvider implements ArtifactProvider {
 
     // index by note for now...
     private Note index(NeatFile neatFile, Note note) {
-        pinDao.update(NoteUtil.index(note));
+        pinDao.index(NOTE_PIN_TYPE, note.getTrove(), noteKey(note), NoteUtil.toIndexPins(note));
         return note;
     }
 
@@ -103,7 +105,7 @@ public class NeatProvider implements ArtifactProvider {
 
         ApiArtifact result = new ApiArtifact();
         result.setTypes(new HashSet<>());
-        result.getTypes().add("note");
+        result.getTypes().add(NEAT_PIN_TYPE);
         result.setWhen(null != when ? when.toLocalDateTime() : null);
         result.setTitle(title);
         result.setTrove(note.getTrove());

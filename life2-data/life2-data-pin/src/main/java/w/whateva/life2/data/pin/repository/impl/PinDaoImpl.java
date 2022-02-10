@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -48,8 +49,18 @@ public class PinDaoImpl implements PinDao {
     }
 
     @Override
-    public Pin update(Pin pin) {
-        return repository.save(pin);
+    public List<String> listTags() {
+        return StreamSupport.stream(mongoTemplate.getCollection("pin")
+                        .distinct("data.tags", String.class).spliterator(), true)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    @Async
+    public void index(String type, String trove, String key, List<Pin> pins) {
+        List<Pin> pinsToRemove = repository.findAllByTypeAndTroveAndKey(type, trove, key);
+        repository.deleteAll(pinsToRemove);
+        repository.saveAll(pins);
     }
 
     @Override

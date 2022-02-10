@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static w.whateva.life2.service.note.impl.NoteUtil.*;
+
 @Service
 public class NoteServiceImpl implements NoteOperations {
 
@@ -53,16 +55,12 @@ public class NoteServiceImpl implements NoteOperations {
 
     private Note update(Note note) {
         noteRepository.save(note);
-        index(note);
+        pinDao.index(NOTE_PIN_TYPE, note.getTrove(), noteKey(note), toIndexPins(note));
         return note;
     }
 
     private void reindexAllNotes() {
-        noteRepository.findAll().forEach(this::index);
-    }
-
-    private void index(Note note) {
-        pinDao.update(NoteUtil.index(note));
+        noteRepository.findAll().forEach(this::update);
     }
 
     @Override
@@ -140,10 +138,6 @@ public class NoteServiceImpl implements NoteOperations {
     @Override
     public List<String> listTroves() {
         return noteDao.listTroves();
-    }
-
-    public List<String> allNoteKeys() {
-        return noteRepository.findAll().stream().map(Note::getId).collect(Collectors.toList());
     }
 
     public static ApiNote toApi(Note note) {

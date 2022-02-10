@@ -26,11 +26,11 @@ public class Pin {
     @Indexed
     private String owner;
     @Indexed
+    private String type;
+    @Indexed
     private String trove;
     @Indexed
     private String key;
-    @Indexed
-    private Set<String> types;
 
     @Indexed
     private ZonedDateTime when;

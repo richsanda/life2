@@ -1,7 +1,6 @@
 package w.whateva.life2.service.email.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -13,26 +12,24 @@ import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.pin.repository.PinRepository;
-import w.whateva.life2.integration.email.util.EmailUtil;
 import w.whateva.life2.service.email.EmailService;
 import w.whateva.life2.service.email.EmailServiceConfigurationProperties;
 import w.whateva.life2.service.email.dto.ApiEmail;
 
 import javax.mail.internet.InternetAddress;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static w.whateva.life2.integration.email.util.EmailUtil.EMAIL_PIN_TYPE;
+import static w.whateva.life2.integration.email.util.EmailUtil.toIndexPin;
 
 /**
  *
  */
 @Primary
 @Service
+@Slf4j
 public class EmailServiceImpl implements EmailService {
-
-    private transient Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     private final EmailRepository emailRepository;
     private final PersonRepository personRepository;
@@ -99,7 +96,7 @@ public class EmailServiceImpl implements EmailService {
 
         try {
             emailRepository.save(email);
-            pinDao.update(EmailUtil.index(email));
+            pinDao.index(EMAIL_PIN_TYPE, email.getTrove(), email.getKey(), List.of(toIndexPin(email)));
         } catch (Exception e) {
             log.error("Failed to save email with key: " + email.getKey());
         }

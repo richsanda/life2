@@ -8,17 +8,20 @@ import w.whateva.life2.data.pin.domain.Pin;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Map;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
 public class EmailUtil {
 
+    public final static String EMAIL_PIN_TYPE = "email";
+    public final static String EMAIL_GROUP_PIN_TYPE = "email_group";
+
     public static ApiArtifact toDto(Email email) {
         ApiArtifact artifact = new ApiArtifact();
         artifact.setTypes(new LinkedHashSet<>());
-        artifact.getTypes().add("email");
+        artifact.getTypes().add(EMAIL_PIN_TYPE); // TODO: change artifact types to singular
         artifact.setKey(email.getKey());
         artifact.setData(new LinkedHashMap<>());
         artifact.getData().put("email", email);
@@ -39,7 +42,10 @@ public class EmailUtil {
         return result;
     }
 
-    public static Pin index(Email email) {
+    public static Pin toIndexPin(Email email) {
+
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("type", email.isGroup() ? EMAIL_GROUP_PIN_TYPE : EMAIL_PIN_TYPE);
 
         return Pin.builder()
                 .id(email.getId())
@@ -50,7 +56,7 @@ public class EmailUtil {
                 .when(email.getSent())
                 .title(email.getSubject())
                 .to(email.getToIndex())
-                .types(email.isGroup() ? Set.of("email", "email_group") : Set.of("email"))
+                .data(data)
                 .from(singleton(email.getFromIndex()))
                 .build();
     }

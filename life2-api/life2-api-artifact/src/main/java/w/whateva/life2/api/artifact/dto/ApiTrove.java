@@ -1,4 +1,4 @@
-package w.whateva.life2.api.trove.dto;
+package w.whateva.life2.api.artifact.dto;
 
 import lombok.Getter;
 import lombok.Setter;

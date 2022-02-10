@@ -7,13 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
-import w.whateva.life2.api.artifact.dto.ApiArtifact;
-import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
-import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
+import w.whateva.life2.api.artifact.DataOperations;
+import w.whateva.life2.api.artifact.dto.*;
 import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.person.dto.ApiPerson;
-import w.whateva.life2.api.trove.TroveOperations;
-import w.whateva.life2.api.trove.dto.ApiTrove;
 import w.whateva.life2.data.pin.PinProvider;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.user.domain.User;
@@ -30,7 +27,7 @@ import java.util.stream.Collectors;
  *
  */
 @RestController
-public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations {
+public class ArtifactServiceImpl implements ArtifactOperations, DataOperations {
 
     private Logger log = LoggerFactory.getLogger(ArtifactServiceImpl.class);
 
@@ -148,7 +145,7 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
                 .sum();
     }
 
-    private Integer index(ArtifactProvider provider, String owner, String trove) {
+    private int index(ArtifactProvider provider, String owner, String trove) {
         return provider.index(owner, trove);
     }
 
@@ -164,6 +161,16 @@ public class ArtifactServiceImpl implements ArtifactOperations, TroveOperations 
                     ApiTrove trove = new ApiTrove();
                     trove.setName(t);
                     return trove;
+                }).collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public List<ApiTag> allTags() {
+        return pinDao.listTags().stream()
+                .map(t -> {
+                    ApiTag tag = new ApiTag();
+                    tag.setName(t);
+                    return tag;
                 }).collect(Collectors.toUnmodifiableList());
     }
 }

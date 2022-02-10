@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptySet;
+import static w.whateva.life2.integration.email.util.EmailUtil.EMAIL_PIN_TYPE;
+import static w.whateva.life2.integration.email.util.EmailUtil.toIndexPin;
 
 public class EmailProviderImpl implements ArtifactProvider {
 
@@ -150,7 +152,7 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     private Email index(Email email) {
-        pinDao.update(EmailUtil.index(email));
+        pinDao.index(EMAIL_PIN_TYPE, email.getTrove(), email.getKey(), List.of(toIndexPin(email)));
         return email;
     }
 

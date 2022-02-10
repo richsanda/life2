@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 
 public class NoteUtil {
 
+    public static final String NOTE_PIN_TYPE = "note";
+
     private static final Pattern artifactPattern = Pattern.compile("\\$\\[[a-zA-Z0-9]*]\\(artifact:([a-z]*)\\)");
     private static final Pattern fieldPattern = Pattern.compile("\\$\\[[a-zA-Z0-9: ]*]\\(field:([a-z]*)\\)([^\n]*)");
     private static final Pattern datePattern = Pattern.compile("([0-9]{1,2})\\.([0-9]{1,2})\\.([0-9]{2,4})");
@@ -27,6 +29,8 @@ public class NoteUtil {
     private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.: ]*]\\(user:([a-z.]*)\\)");
     private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-_]*]\\(trove:([a-zA-Z0-9-_]*)\\)");
     private static final Pattern nonTextPattern = Pattern.compile("[$@!]\\[[a-zA-Z0-9-_:. ]*]\\([a-z]*:([a-zA-Z0-9-_:. ]*)\\)");
+
+    private static final Pattern tagPattern = Pattern.compile("#([a-zA-Z0-9-_]*)");
 
     public static List<String> artifacts(String input) {
         List<String> result = new ArrayList<>();
@@ -44,6 +48,16 @@ public class NoteUtil {
         int i = 0;
         while (personMatcher.find()) {
             result.add(personMatcher.group(1));
+        }
+        return result;
+    }
+
+    public static List<String> tags(String input) {
+        List<String> result = new ArrayList<>();
+        Matcher tagMatcher = tagPattern.matcher(input);
+        int i = 0;
+        while (tagMatcher.find()) {
+            result.add(tagMatcher.group(1));
         }
         return result;
     }
@@ -78,6 +92,10 @@ public class NoteUtil {
         List<String> people = people(input);
         if (!CollectionUtils.isEmpty(people)) {
             result.put("people", people);
+        }
+        List<String> tags = tags(input);
+        if (!CollectionUtils.isEmpty(tags)) {
+            result.put("tags", tags);
         }
         return result;
     }
@@ -147,7 +165,7 @@ public class NoteUtil {
 
         ApiArtifact result = new ApiArtifact();
         result.setTypes(new HashSet<>());
-        result.getTypes().add("note");
+        result.getTypes().add(NOTE_PIN_TYPE);
         result.setWhen(null != when ? when.toLocalDateTime() : null);
         result.setTitle(title(note));
         result.setTrove(note.getTrove());
@@ -265,7 +283,7 @@ public class NoteUtil {
         return StringUtils.isEmpty(result) ? null : result.trim();
     }
 
-    public static Pin index(Note note) {
+    public static List<Pin> toIndexPins(Note note) {
 
         Map<String, Object> data = Collections.emptyMap();
         String text = null;
@@ -277,15 +295,22 @@ public class NoteUtil {
         ZonedDateTime when = when(data);
         String title = title(data);
 
-        return Pin.builder()
-                .id(note.getId())
+        Pin result = Pin.builder()
+                .type(NOTE_PIN_TYPE)
                 .trove(note.getTrove())
                 .key(note.getId().substring(note.getId().indexOf("/") + 1))
                 .title(title)
-                .types(Collections.emptySet())
                 .data(data)
                 .text(text)
                 .when(when)
                 .build();
+
+        return Collections.singletonList(result);
+    }
+
+    public static String noteKey(Note note) {
+        return note.getId().startsWith(note.getTrove() + "/") ?
+                note.getId().substring(note.getTrove().length() + 1) :
+                note.getId();
     }
 }
