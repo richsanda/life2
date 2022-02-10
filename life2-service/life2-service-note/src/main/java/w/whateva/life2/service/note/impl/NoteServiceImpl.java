@@ -18,8 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static w.whateva.life2.service.note.impl.NoteUtil.fields;
-
 @Service
 public class NoteServiceImpl implements NoteOperations {
 
@@ -152,7 +150,7 @@ public class NoteServiceImpl implements NoteOperations {
         if (null == note) return null;
         ApiNote result = new ApiNote();
         BeanUtils.copyProperties(note, result);
-        result.setData(fields(note.getText()));
+        result.setData(note.getData());
         return result;
     }
 

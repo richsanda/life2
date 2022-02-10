@@ -267,7 +267,12 @@ public class NoteUtil {
 
     public static Pin index(Note note) {
 
-        Map<String, Object> data = fields(note.getText());
+        Map<String, Object> data = Collections.emptyMap();
+        String text = null;
+        if (!StringUtils.isEmpty(note.getText())) {
+            data = fields(note.getText());
+            text = indexNoteText(note.getText());
+        }
 
         ZonedDateTime when = when(data);
         String title = title(data);
@@ -279,7 +284,7 @@ public class NoteUtil {
                 .title(title)
                 .types(Collections.emptySet())
                 .data(data)
-                .text(indexNoteText(note.getText())) // TODO: parse apart fields etc
+                .text(text)
                 .when(when)
                 .build();
     }

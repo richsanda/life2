@@ -13,6 +13,8 @@ import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
+import w.whateva.life2.data.note.NoteDao;
+import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.data.pin.repository.PinDao;
@@ -36,15 +38,17 @@ public class EmailProviderImpl implements ArtifactProvider {
     private final EmailRepository emailRepository;
     private final EmailDao emailDao;
     private final PersonRepository personRepository;
+    private final NoteDao noteDao;
     private final PinDao pinDao;
     private final Multimap<String, String> troves = HashMultimap.create();
 
     private final Map<String, String> emailsToPersons = Maps.newHashMap();
 
-    public EmailProviderImpl(EmailRepository emailRepository, Map<String, List<String>> troves, EmailDao emailDao, PersonRepository personRepository, PinDao pinDao) {
+    public EmailProviderImpl(EmailRepository emailRepository, Map<String, List<String>> troves, EmailDao emailDao, PersonRepository personRepository, NoteDao noteDao, PinDao pinDao) {
         this.emailRepository = emailRepository;
         this.emailDao = emailDao;
         this.personRepository = personRepository;
+        this.noteDao = noteDao;
         this.pinDao = pinDao;
         troves.forEach(this.troves::putAll);
     }
@@ -59,6 +63,13 @@ public class EmailProviderImpl implements ArtifactProvider {
         ApiArtifact result = EmailUtil.toDto(email);
         result.setOwner(owner);
         result.setTrove(trove);
+
+        Note note = noteDao.findByTroveAndKey(trove, key);
+        if (null != note) {
+            result.setDescription(note.getText());
+            result.setNotes(note.getNotes());
+        }
+
         return result;
     }
 
