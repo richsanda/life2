@@ -52,8 +52,8 @@ public class NoteDaoImpl implements NoteDao {
     }
 
     @Override
-    public Note findByTroveAndKey(String folder, String key) {
-        return mongoTemplate.findById(folder + "/" + key, Note.class);
+    public Note findByTroveAndKey(String trove, String key) {
+        return mongoTemplate.findById(composeKey(trove, key), Note.class);
     }
 
     @Override
@@ -105,5 +105,9 @@ public class NoteDaoImpl implements NoteDao {
         criteriaArray = criteria.toArray(criteriaArray);
 
         return new Criteria().andOperator(criteriaArray);
+    }
+
+    private static String composeKey(String trove, String key) {
+        return String.format("%s/%s", trove, key).toLowerCase();
     }
 }
