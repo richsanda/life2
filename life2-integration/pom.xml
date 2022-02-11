@@ -23,6 +23,7 @@
 
     <modules>
         <module>life2-integration-api</module>
+        <module>life2-integration-artifact</module>
         <module>life2-integration-email</module>
     </modules>
 

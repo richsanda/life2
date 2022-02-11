@@ -4,21 +4,19 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
-import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.note.NoteDao;
-import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
+import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.repository.PinDao;
-import w.whateva.life2.integration.api.ArtifactProvider;
+import w.whateva.life2.integration.artifact.ArtifactProviderBase;
 import w.whateva.life2.integration.email.util.EmailUtil;
 
 import java.time.LocalDate;
@@ -30,49 +28,60 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static w.whateva.life2.integration.email.util.EmailUtil.EMAIL_PIN_TYPE;
-import static w.whateva.life2.integration.email.util.EmailUtil.toIndexPin;
 
-public class EmailProviderImpl implements ArtifactProvider {
-
-    private Logger log = LoggerFactory.getLogger(EmailProviderImpl.class);
+@Slf4j
+public class EmailProviderImpl extends ArtifactProviderBase<Email> {
 
     private final EmailRepository emailRepository;
     private final EmailDao emailDao;
     private final PersonRepository personRepository;
-    private final NoteDao noteDao;
-    private final PinDao pinDao;
     private final Multimap<String, String> troves = HashMultimap.create();
 
     private final Map<String, String> emailsToPersons = Maps.newHashMap();
 
     public EmailProviderImpl(EmailRepository emailRepository, Map<String, List<String>> troves, EmailDao emailDao, PersonRepository personRepository, NoteDao noteDao, PinDao pinDao) {
+        super(noteDao, pinDao);
         this.emailRepository = emailRepository;
         this.emailDao = emailDao;
         this.personRepository = personRepository;
-        this.noteDao = noteDao;
-        this.pinDao = pinDao;
         troves.forEach(this.troves::putAll);
     }
 
     @Override
-    public ApiArtifact read(String owner, String trove, String key, Boolean relatives) {
+    public Email readItem(String owner, String trove, String key, Boolean relatives) {
+        return emailRepository.findUniqueByKey(key);
+    }
 
-        Email email = emailRepository.findUniqueByKey(key);
+    @Override
+    public ApiArtifact toDto(Email email) {
+        return EmailUtil.toDto(email);
+    }
 
-        if (null == email) return null;
+    @Override
+    protected String getPinType() {
+        return EMAIL_PIN_TYPE;
+    }
 
-        ApiArtifact result = EmailUtil.toDto(email);
-        result.setOwner(owner);
-        result.setTrove(trove);
+    @Override
+    protected List<Email> allItemsByOwnerAndTrove(String owner, String trove) {
+        return emailRepository.findAllByOwnerAndTrove(owner, trove);
+    }
 
-        Note note = noteDao.findByTroveAndKey(trove, key);
-        if (null != note) {
-            result.setDescription(note.getText());
-            result.setNotes(note.getNotes());
-        }
+    @Override
+    protected String getKey(Email email) {
+        return email.getKey();
+    }
 
-        return result;
+    @Override
+    protected String getTrove(Email email) {
+        return email.getTrove();
+    }
+
+    @Override
+    protected List<Pin> toIndexPins(Email email) {
+        return singletonList(EmailUtil.toIndexPin(email));
     }
 
     @Override
@@ -96,21 +105,6 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(ApiArtifactSearchSpec searchSpec) {
-
-        log.info("Searching email troves: " + troves);
-
-        return search(
-                searchSpec.getAfter(),
-                searchSpec.getBefore(),
-                processPersonKeys(searchSpec.getWho()),
-                searchSpec.getTroves(),
-                processPersonKeys(searchSpec.getFrom()),
-                processPersonKeys(searchSpec.getTo()),
-                searchSpec.getText());
-    }
-
-    @Override
     public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text) {
 
         who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
@@ -131,29 +125,11 @@ public class EmailProviderImpl implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifactCount> count(ApiArtifactSearchSpec searchSpec) {
-
-        log.info("Searching email troves: " + troves);
-
-        return count(
-                searchSpec.getAfter(),
-                searchSpec.getBefore(),
-                processPersonKeys(searchSpec.getWho()),
-                processPersonKeys(searchSpec.getTroves()),
-                searchSpec.getText());
-    }
-
-    @Override
     public Integer index(String owner, String trove) {
         return (int)emailRepository.findAllByOwnerAndTrove(owner, trove)
                 .stream()
                 .map(this::index)
                 .count();
-    }
-
-    private Email index(Email email) {
-        pinDao.index(EMAIL_PIN_TYPE, email.getTrove(), email.getKey(), List.of(toIndexPin(email)));
-        return email;
     }
 
     private Set<String> processPersonKeys(Set<String> keys) {
