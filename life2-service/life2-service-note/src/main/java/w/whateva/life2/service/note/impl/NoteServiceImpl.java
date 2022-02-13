@@ -4,10 +4,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.note.NoteOperations;
 import w.whateva.life2.api.note.dto.ApiNote;
-import w.whateva.life2.data.neat.NeatDao;
 import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.note.repository.NoteRepository;
@@ -25,18 +23,13 @@ public class NoteServiceImpl implements NoteOperations {
 
     private final NoteRepository noteRepository;
     private final NoteDao noteDao;
-    private final NeatDao neatDao;
     private final PinDao pinDao;
 
     @Autowired
-    public NoteServiceImpl(GenericWebApplicationContext context, NoteRepository noteRepository, NoteDao NoteDao, NeatDao neatDao, PinDao pinDao) {
+    public NoteServiceImpl(NoteRepository noteRepository, NoteDao NoteDao, PinDao pinDao) {
         this.noteRepository = noteRepository;
         this.noteDao = NoteDao;
-        this.neatDao = neatDao;
         this.pinDao = pinDao;
-//        context.registerBean("NoteProvider",
-//                ArtifactProvider.class,
-//                () -> new NoteProvider(noteRepository, noteDao, this.neatDao, pinDao));
     }
 
     @Override
@@ -49,14 +42,17 @@ public class NoteServiceImpl implements NoteOperations {
 
         Note note = new Note();
         note.setId(composeKey(trove, key));
-        BeanUtils.copyProperties(apiNote, note);
-        return toApi(update(note));
+        note.setTrove(apiNote.getTrove());
+        note.setText(apiNote.getText());
+        note.setNotes(apiNote.getNotes());
+        note.setData(apiNote.getData());
+        update(note);
+        return toApi(note);
     }
 
-    private Note update(Note note) {
+    private void update(Note note) {
         noteRepository.save(note);
         pinDao.index(NOTE_PIN_TYPE, note.getTrove(), noteKey(note), toIndexPins(note));
-        return note;
     }
 
     private void reindexAllNotes() {
@@ -84,55 +80,11 @@ public class NoteServiceImpl implements NoteOperations {
     }
 
     @Override
-    public String test() {
+    public String applyToNotes() {
 
-//        Collection<Note> notes = noteRepository.findAll().stream()
-//                .flatMap(n -> splitNote(n).stream())
-//                .map(NoteUtil::enhanceNote)
-//                .filter(n -> n.getData().containsKey("when") && n.getData().containsKey("type") && null != n.getData().get("type"))
-//                .sorted(Comparator.comparing((n) -> n.getData().get("when").toString()))
-//                .collect(Collectors.toUnmodifiableList());
+         reindexAllNotes();
 
-        // noteRepository.saveAll(notes);
-
-//        List<Pin> pins = noteRepository.findAll().stream()
-//                // .map(NoteUtil::enhanceNote)
-//                .filter(n -> n.getData().containsKey("when") && n.getData().containsKey("type") && null != n.getData().get("type"))
-//                .sorted(Comparator.comparing((n) -> n.getData().get("when").toString()))
-//                .map(NoteServiceImpl::toPin)
-//                .collect(Collectors.toUnmodifiableList());
-//
-//        pins.forEach(pinDao::add);
-//
-//        return pins.stream().map(p -> p.getWhen().toString() + p.getTrove()).collect(Collectors.joining(","));
-
-        reindexAllNotes();
-
-        return ":)";
-
-//        List<Note> result = noteRepository.findAll().stream()
-//                .filter(n -> n.getId().endsWith(".jpg"))
-//                .flatMap(n -> {
-//                    Note root = n;
-//                    String rootId = n.getId();
-//                    int i = 1;
-//                    List<Note> extras = new ArrayList<>();
-//                    while (n != null) {
-//                        n = noteRepository.findById(rootId + "." + i++).orElse(null);
-//                        if (null != n) {
-//                            extras.add(n);
-//                        }
-//                    }
-//
-//                    // put the extras back in as notes on the root note...
-//                    root.setNotes(extras.stream().map(Note::getText).collect(Collectors.toUnmodifiableList()));
-//                    noteRepository.save(root);
-//
-//                    return extras.stream();
-//                })
-//                .collect(Collectors.toUnmodifiableList());
-//
-//        return result.stream().map(Note::getId).collect(Collectors.joining("\n"));
+         return ":)";
     }
 
     @Override

@@ -28,7 +28,7 @@ public interface NoteOperations {
     @ResponseBody
     List<String> listTroves();
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/notes/apply", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    String test();
+    String applyToNotes();
 }
