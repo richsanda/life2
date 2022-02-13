@@ -1,5 +1,7 @@
 package w.whateva.life2.integration.artifact;
 
+import lombok.Builder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
@@ -11,6 +13,7 @@ import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,9 +29,9 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
         this.pinDao = pinDao;
     }
 
-    protected abstract ItemType readItem(String owner, String trove, String key, Boolean relatives);
+    protected abstract ItemType read(String owner, String trove, String key);
 
-    protected abstract ApiArtifact toDto(ItemType item);
+    protected abstract ApiArtifact toDto(ItemType item, Note note, RelativesAndIndex relativesAndIndex);
 
     protected abstract String getPinType();
 
@@ -43,15 +46,17 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
     @Override
     public final ApiArtifact read(String owner, String trove, String key, Boolean relatives) {
 
-        ItemType item = readItem(owner, trove, key, relatives);
+        ItemType item = read(owner, trove, key);
 
         if (null == item) return null;
 
-        ApiArtifact result = toDto(item);
+        Note note = noteDao.findByTroveAndKey(trove, key);
+        RelativesAndIndex relativesAndIndex = relatives ? relativesAndIndex(item) : defaultRelativesAndIndex(item);
+
+        ApiArtifact result = toDto(item, note, relativesAndIndex);
         result.setOwner(owner);
         result.setTrove(trove);
 
-        Note note = noteDao.findByTroveAndKey(trove, key);
         if (null != note) {
             result.setDescription(note.getText());
             result.setNotes(note.getNotes());
@@ -100,5 +105,35 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
     private Set<String> processPersonKeys(Set<String> keys) {
         if (CollectionUtils.isEmpty(keys)) return null;
         return keys.stream().map(String::toLowerCase).collect(Collectors.toSet());
+    }
+
+    protected RelativesAndIndex relativesAndIndex(ItemType item) {
+        return defaultRelativesAndIndex(item);
+    }
+
+    protected RelativesAndIndex defaultRelativesAndIndex(ItemType item) {
+        return RelativesAndIndex.builder()
+                .relatives(Collections.singletonList(getFullKey(item)))
+                .index(0)
+                .build();
+    }
+
+    protected String getFullKey(ItemType item) {
+        return composeFullKey(getTrove(item), getKey(item));
+    }
+
+    protected String composeFullKey(String trove, String key) {
+        return trove + "/" + key;
+    }
+
+    protected Note findNoteByTroveAndKey(String trove, String key) {
+        return noteDao.findByTroveAndKey(trove, key);
+    }
+
+    @Builder
+    @Getter
+    protected static class RelativesAndIndex {
+        private final List<String> relatives;
+        private final int index;
     }
 }

@@ -10,9 +10,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>life2-integration-artifact</artifactId>
+    <artifactId>life2-integration-neat</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>life2-integration-artifact</name>
+    <name>life2-integration-neat</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -22,17 +22,17 @@
     <dependencies>
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-integration-api</artifactId>
+            <artifactId>life2-integration-artifact</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-data-note</artifactId>
+            <artifactId>life2-data-neat</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>w.whateva</groupId>
-            <artifactId>life2-data-pin</artifactId>
+            <artifactId>life2-service-note</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

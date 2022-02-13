@@ -284,6 +284,10 @@ public class NoteUtil {
     }
 
     public static List<Pin> toIndexPins(Note note) {
+        return toIndexPins(note, NOTE_PIN_TYPE);
+    }
+
+    public static List<Pin> toIndexPins(Note note, String pinType) {
 
         Map<String, Object> data = Collections.emptyMap();
         String text = null;
@@ -296,7 +300,7 @@ public class NoteUtil {
         String title = title(data);
 
         Pin result = Pin.builder()
-                .type(NOTE_PIN_TYPE)
+                .type(pinType)
                 .trove(note.getTrove())
                 .key(note.getId().substring(note.getId().indexOf("/") + 1))
                 .title(title)

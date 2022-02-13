@@ -12,6 +12,7 @@ import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
 import w.whateva.life2.data.note.NoteDao;
+import w.whateva.life2.data.note.domain.Note;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.data.pin.domain.Pin;
@@ -50,12 +51,12 @@ public class EmailProviderImpl extends ArtifactProviderBase<Email> {
     }
 
     @Override
-    public Email readItem(String owner, String trove, String key, Boolean relatives) {
+    public Email read(String owner, String trove, String key) {
         return emailRepository.findUniqueByKey(key);
     }
 
     @Override
-    public ApiArtifact toDto(Email email) {
+    public ApiArtifact toDto(Email email, Note note, RelativesAndIndex relativesAndIndex) {
         return EmailUtil.toDto(email);
     }
 

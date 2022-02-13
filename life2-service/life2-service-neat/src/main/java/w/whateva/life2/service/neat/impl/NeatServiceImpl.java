@@ -14,6 +14,7 @@ import w.whateva.life2.data.neat.repository.NeatFileRepository;
 import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
+import w.whateva.life2.integration.neat.NeatProvider;
 
 import java.util.Collection;
 import java.util.Collections;
