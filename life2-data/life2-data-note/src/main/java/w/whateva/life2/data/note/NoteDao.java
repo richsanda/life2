@@ -16,6 +16,4 @@ public interface NoteDao {
     List<Note> getNotes(Set<String> who, Set<String> from, Set<String> to, LocalDateTime after, LocalDateTime before);
 
     List<NoteMonthYearCount> getNoteMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves);
-
-    Note findByTroveAndKey(String folder, String key);
 }

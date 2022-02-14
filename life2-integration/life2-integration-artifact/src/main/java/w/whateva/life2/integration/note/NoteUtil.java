@@ -1,4 +1,4 @@
-package w.whateva.life2.service.note.impl;
+package w.whateva.life2.integration.note;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -146,16 +146,19 @@ public class NoteUtil {
     public static ApiArtifact toDto(Note note) {
 
         ZonedDateTime when = when(note);
+        String title = indexNoteText(note.getText()).split("\n")[0];
 
         String[] troveAndKey = note.getId().split("/");
+
         ApiArtifact result = new ApiArtifact();
         result.setWhen(null != when ? when.toLocalDateTime() : null);
-        result.setTitle(note.getData().get("type").toString());
+        result.setTitle(title);
         result.setTrove(note.getTrove());
         result.setImage(imageLocation(note));
-        result.setKey(troveAndKey[1]);
+        result.setKey(troveAndKey[troveAndKey.length - 1]);
         result.setDescription(note.getText());
         result.setData(note.getData());
+        result.setNotes(Collections.emptyList());
         return result;
     }
 
@@ -284,10 +287,6 @@ public class NoteUtil {
     }
 
     public static List<Pin> toIndexPins(Note note) {
-        return toIndexPins(note, NOTE_PIN_TYPE);
-    }
-
-    public static List<Pin> toIndexPins(Note note, String pinType) {
 
         Map<String, Object> data = Collections.emptyMap();
         String text = null;
@@ -300,9 +299,9 @@ public class NoteUtil {
         String title = title(data);
 
         Pin result = Pin.builder()
-                .type(pinType)
+                .type(NOTE_PIN_TYPE)
                 .trove(note.getTrove())
-                .key(note.getId().substring(note.getId().indexOf("/") + 1))
+                .key(noteKey(note))
                 .title(title)
                 .data(data)
                 .text(text)

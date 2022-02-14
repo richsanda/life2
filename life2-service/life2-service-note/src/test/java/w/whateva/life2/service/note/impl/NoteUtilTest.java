@@ -1,8 +1,7 @@
 package w.whateva.life2.service.note.impl;
 
 import org.junit.Test;
-
-import static w.whateva.life2.service.note.impl.NoteUtil.fields;
+import w.whateva.life2.integration.note.NoteUtil;
 
 public class NoteUtilTest {
 
@@ -10,6 +9,6 @@ public class NoteUtilTest {
 
     @Test
     public void parseNoteText() {
-        fields(basicNoteText).forEach((key, value) -> System.out.println(key + "=" + value));
+        NoteUtil.fields(basicNoteText).forEach((key, value) -> System.out.println(key + "=" + value));
     }
 }

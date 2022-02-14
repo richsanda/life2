@@ -11,7 +11,7 @@ import w.whateva.life2.api.neat.dto.ApiNeatFile;
 import w.whateva.life2.data.neat.NeatDao;
 import w.whateva.life2.data.neat.domain.NeatFile;
 import w.whateva.life2.data.neat.repository.NeatFileRepository;
-import w.whateva.life2.data.note.NoteDao;
+import w.whateva.life2.data.note.repository.NoteRepository;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.neat.NeatProvider;
@@ -28,12 +28,12 @@ public class NeatServiceImpl implements NeatService, NeatOperations {
     private final NeatDao neatDao;
 
     @Autowired
-    public NeatServiceImpl(GenericWebApplicationContext context, NeatFileRepository neatFileRepository, NeatDao neatDao, NoteDao noteDao, PinDao pinDao) {
+    public NeatServiceImpl(GenericWebApplicationContext context, NeatFileRepository neatFileRepository, NeatDao neatDao, NoteRepository noteRepository, PinDao pinDao) {
         this.neatFileRepository = neatFileRepository;
         this.neatDao = neatDao;
         context.registerBean("NeatProvider",
                 ArtifactProvider.class,
-                () -> new NeatProvider(neatFileRepository, this.neatDao, noteDao, pinDao));
+                () -> new NeatProvider(neatFileRepository, this.neatDao, noteRepository, pinDao));
     }
 
     @Override

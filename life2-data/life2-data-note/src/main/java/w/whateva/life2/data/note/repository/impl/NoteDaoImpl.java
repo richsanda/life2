@@ -52,11 +52,6 @@ public class NoteDaoImpl implements NoteDao {
     }
 
     @Override
-    public Note findByTroveAndKey(String trove, String key) {
-        return mongoTemplate.findById(composeKey(trove, key), Note.class);
-    }
-
-    @Override
     public List<NoteMonthYearCount> getNoteMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves) {
 
         Aggregation agg = newAggregation(

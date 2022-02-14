@@ -7,8 +7,8 @@ import org.springframework.util.CollectionUtils;
 import w.whateva.life2.api.artifact.dto.ApiArtifact;
 import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.api.artifact.dto.ApiArtifactSearchSpec;
-import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
+import w.whateva.life2.data.note.repository.NoteRepository;
 import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider {
 
-    private final NoteDao noteDao;
+    private final NoteRepository noteRepository;
     private final PinDao pinDao;
 
-    public ArtifactProviderBase(NoteDao noteDao, PinDao pinDao) {
-        this.noteDao = noteDao;
+    public ArtifactProviderBase(NoteRepository noteRepository, PinDao pinDao) {
+        this.noteRepository = noteRepository;
         this.pinDao = pinDao;
     }
 
@@ -50,7 +50,7 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
 
         if (null == item) return null;
 
-        Note note = noteDao.findByTroveAndKey(trove, key);
+        Note note = findNote(item);
         RelativesAndIndex relativesAndIndex = relatives ? relativesAndIndex(item) : defaultRelativesAndIndex(item);
 
         ApiArtifact result = toDto(item, note, relativesAndIndex);
@@ -111,7 +111,7 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
         return defaultRelativesAndIndex(item);
     }
 
-    protected RelativesAndIndex defaultRelativesAndIndex(ItemType item) {
+    protected final RelativesAndIndex defaultRelativesAndIndex(ItemType item) {
         return RelativesAndIndex.builder()
                 .relatives(Collections.singletonList(getFullKey(item)))
                 .index(0)
@@ -126,8 +126,8 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
         return trove + "/" + key;
     }
 
-    protected Note findNoteByTroveAndKey(String trove, String key) {
-        return noteDao.findByTroveAndKey(trove, key);
+    protected Note findNote(ItemType item) {
+        return noteRepository.findByTroveAndKey(getTrove(item), getKey(item));
     }
 
     @Builder

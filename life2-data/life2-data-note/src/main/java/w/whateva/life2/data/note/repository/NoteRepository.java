@@ -9,11 +9,7 @@ import java.util.List;
 @Repository(value = "note")
 public interface NoteRepository extends MongoRepository<Note, String> {
 
-    //List<Note> findByTroveOrderByIndexAsc(String folder);
-
-    //List<Note> findAllByOrderByIndexAsc();
-
-    //List<String> findDistinctByTroveOrderByAsc();
-
     List<Note> findAllByTrove(String trove);
+
+    Note findByTroveAndKey(String trove, String key);
 }

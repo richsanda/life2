@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.artifact.ArtifactOperations;
@@ -15,13 +16,14 @@ import w.whateva.life2.data.pin.PinProvider;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.user.domain.User;
 import w.whateva.life2.integration.api.ArtifactProvider;
+import w.whateva.life2.integration.note.NoteUtil;
 import w.whateva.life2.service.artifact.util.ArtifactUtility;
-import w.whateva.life2.service.note.impl.NoteUtil;
 import w.whateva.life2.service.user.UserService;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -78,8 +80,14 @@ public class ArtifactServiceImpl implements ArtifactOperations, DataOperations {
 
         if (null == restrictedSearchSpec) return new ArrayList<>();
 
+        Set<String> troves = NoteUtil.parseTroves(searchSpec.getText());
+        if (!CollectionUtils.isEmpty(searchSpec.getTroves())) {
+            troves = Stream.concat(troves.stream(), searchSpec.getTroves().stream())
+                    .collect(Collectors.toUnmodifiableSet());
+        }
+
         restrictedSearchSpec.setWho(NoteUtil.parseWho(searchSpec.getText()));
-        restrictedSearchSpec.setTroves(NoteUtil.parseTroves(searchSpec.getText()));
+        restrictedSearchSpec.setTroves(troves);
         restrictedSearchSpec.setText(NoteUtil.parseSearchText(searchSpec.getText()));
 
         return pinProvider.search(

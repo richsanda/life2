@@ -12,6 +12,10 @@ public interface NoteOperations {
     @ResponseBody
     ApiNote read(@PathVariable("trove") String trove, @PathVariable("key") String key);
 
+    @RequestMapping(value = "/note/{trove}", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    ApiNote add(@PathVariable("trove") String trove, @RequestBody ApiNote note);
+
     @RequestMapping(value = "/note/{trove}/{key}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     ApiNote update(@PathVariable("trove") String trove, @PathVariable("key") String key, @RequestBody ApiNote note);

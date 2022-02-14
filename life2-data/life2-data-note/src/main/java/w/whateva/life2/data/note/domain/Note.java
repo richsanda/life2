@@ -22,6 +22,9 @@ public class Note {
     @Indexed
     private String trove;
 
+    @Indexed
+    private String key;
+
     private String text;
     private List<String> notes;
 

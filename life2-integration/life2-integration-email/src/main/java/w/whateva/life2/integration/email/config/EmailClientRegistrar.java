@@ -11,7 +11,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
-import w.whateva.life2.data.note.NoteDao;
+import w.whateva.life2.data.note.repository.NoteRepository;
 import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
@@ -35,7 +35,7 @@ public class EmailClientRegistrar {
     private final PersonRepository personRepository;
     private final EmailDao emailDao;
     private final EmailRepository emailRepository;
-    private final NoteDao noteDao;
+    private final NoteRepository noteRepository;
     private final PinDao pinDao;
 
     @Getter
@@ -43,13 +43,13 @@ public class EmailClientRegistrar {
     private Map<String, EmailConfiguration> sources;
 
     @Autowired
-    EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration, PersonRepository personRepository, EmailDao emailDao, EmailRepository emailRepository, NoteDao noteDao, PinDao pinDao) {
+    EmailClientRegistrar(GenericWebApplicationContext context, EmailFeignConfiguration configuration, PersonRepository personRepository, EmailDao emailDao, EmailRepository emailRepository, NoteRepository noteRepository, PinDao pinDao) {
         this.context = context;
         this.configuration = configuration;
         this.personRepository = personRepository;
         this.emailDao = emailDao;
         this.emailRepository = emailRepository;
-        this.noteDao = noteDao;
+        this.noteRepository = noteRepository;
         this.pinDao = pinDao;
     }
 
@@ -82,7 +82,7 @@ public class EmailClientRegistrar {
                     () -> {
                         EmailConfiguration config = entry.getValue();
                         Map<String, List<String>> troves = config.getTroves();
-                        return new EmailProviderImpl(emailRepository, troves, emailDao, personRepository, noteDao, pinDao);
+                        return new EmailProviderImpl(emailRepository, troves, emailDao, personRepository, noteRepository, pinDao);
                     });
         }
     }

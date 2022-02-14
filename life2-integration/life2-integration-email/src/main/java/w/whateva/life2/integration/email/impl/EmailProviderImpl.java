@@ -11,8 +11,8 @@ import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.data.email.domain.Email;
 import w.whateva.life2.data.email.repository.EmailDao;
 import w.whateva.life2.data.email.repository.EmailRepository;
-import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
+import w.whateva.life2.data.note.repository.NoteRepository;
 import w.whateva.life2.data.person.domain.Person;
 import w.whateva.life2.data.person.repository.PersonRepository;
 import w.whateva.life2.data.pin.domain.Pin;
@@ -42,8 +42,8 @@ public class EmailProviderImpl extends ArtifactProviderBase<Email> {
 
     private final Map<String, String> emailsToPersons = Maps.newHashMap();
 
-    public EmailProviderImpl(EmailRepository emailRepository, Map<String, List<String>> troves, EmailDao emailDao, PersonRepository personRepository, NoteDao noteDao, PinDao pinDao) {
-        super(noteDao, pinDao);
+    public EmailProviderImpl(EmailRepository emailRepository, Map<String, List<String>> troves, EmailDao emailDao, PersonRepository personRepository, NoteRepository noteRepository, PinDao pinDao) {
+        super(noteRepository, pinDao);
         this.emailRepository = emailRepository;
         this.emailDao = emailDao;
         this.personRepository = personRepository;

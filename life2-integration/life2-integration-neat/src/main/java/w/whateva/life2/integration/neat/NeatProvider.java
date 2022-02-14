@@ -5,9 +5,8 @@ import w.whateva.life2.api.artifact.dto.ApiArtifactCount;
 import w.whateva.life2.data.neat.NeatDao;
 import w.whateva.life2.data.neat.domain.NeatFile;
 import w.whateva.life2.data.neat.repository.NeatFileRepository;
-import w.whateva.life2.data.note.NoteDao;
 import w.whateva.life2.data.note.domain.Note;
-import w.whateva.life2.data.note.domain.NoteMonthYearCount;
+import w.whateva.life2.data.note.repository.NoteRepository;
 import w.whateva.life2.data.pin.domain.Pin;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.artifact.ArtifactProviderBase;
@@ -17,7 +16,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static w.whateva.life2.service.note.impl.NoteUtil.*;
+import static w.whateva.life2.integration.note.NoteUtil.*;
 
 public class NeatProvider extends ArtifactProviderBase<NeatFile> {
 
@@ -26,8 +25,8 @@ public class NeatProvider extends ArtifactProviderBase<NeatFile> {
     private final NeatFileRepository neatFileRepository;
     private final NeatDao neatDao;
 
-    public NeatProvider(NeatFileRepository neatFileRepository, NeatDao neatDao, NoteDao noteDao, PinDao pinDao) {
-        super(noteDao, pinDao);
+    public NeatProvider(NeatFileRepository neatFileRepository, NeatDao neatDao, NoteRepository noteRepository, PinDao pinDao) {
+        super(noteRepository, pinDao);
         this.neatFileRepository = neatFileRepository;
         this.neatDao = neatDao;
     }
@@ -87,12 +86,12 @@ public class NeatProvider extends ArtifactProviderBase<NeatFile> {
     @Override
     public Integer index(String owner, String trove) {
 
-        List<NeatFile> pins = neatFileRepository.findByFolderOrderByFolderAsc(trove)
+        List<NeatFile> neatFiles = neatFileRepository.findByFolderOrderByFolderAsc(trove)
                 .stream()
                 .map(this::index)
                 .collect(Collectors.toUnmodifiableList());
 
-        return pins.size();
+        return neatFiles.size();
     }
 
     @Override

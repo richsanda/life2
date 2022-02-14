@@ -37,7 +37,12 @@ public class PinProvider implements ArtifactProvider {
     @Override
     public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text) {
 
-        return pinDao.search(after.atStartOfDay(ZoneId.of("UTC")), before.plusDays(1).atStartOfDay(ZoneId.of("UTC")), who, troves, text)
+        return pinDao.search(
+                        null != after ? after.atStartOfDay(ZoneId.of("UTC")) : null,
+                        null != before ? before.plusDays(1).atStartOfDay(ZoneId.of("UTC")) : null,
+                        who,
+                        troves,
+                        text)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toUnmodifiableList());
