@@ -146,7 +146,7 @@ public class NoteUtil {
     public static ApiArtifact toDto(Note note) {
 
         ZonedDateTime when = when(note);
-        String title = indexNoteText(note.getText()).split("\n")[0];
+        String title = prettyNoteText(note.getText().split("\n")[0]);
 
         String[] troveAndKey = note.getId().split("/");
 
@@ -159,25 +159,6 @@ public class NoteUtil {
         result.setDescription(note.getText());
         result.setData(note.getData());
         result.setNotes(Collections.emptyList());
-        return result;
-    }
-
-    public static ApiArtifact toDto(Note note, List<String> relatives, int index) {
-
-        ZonedDateTime when = when(note);
-
-        ApiArtifact result = new ApiArtifact();
-        result.setTypes(new HashSet<>());
-        result.getTypes().add(NOTE_PIN_TYPE);
-        result.setWhen(null != when ? when.toLocalDateTime() : null);
-        result.setTitle(title(note));
-        result.setTrove(note.getTrove());
-        result.setImage(imageLocation(note));
-        result.setKey(note.getId());
-        result.setDescription(note.getText());
-        result.setData(note.getData());
-        result.setRelativeKeys(relatives);
-        result.setRelativeKeyIndex(index);
         return result;
     }
 
@@ -286,6 +267,31 @@ public class NoteUtil {
         return StringUtils.isEmpty(result) ? null : result.trim();
     }
 
+    public static String prettyNoteText(String text) {
+        int lastIndex = 0;
+        StringBuilder output = new StringBuilder();
+        Matcher matcher = nonTextPattern.matcher(text);
+        while (matcher.find()) {
+            output.append(text, lastIndex, matcher.start()).append('[');
+            output.append(matcher.group(1)).append(']');
+            lastIndex = matcher.end();
+        }
+        if (lastIndex < text.length()) {
+            output.append(text, lastIndex, text.length());
+        }
+        String result = output.toString();
+        return StringUtils.isEmpty(result) ? null : result.trim();
+    }
+
+    public static String parseNoteTitle(String text) {
+        if (StringUtils.isEmpty(text)) return null;
+        text = text.split("\n")[0];
+        if (StringUtils.isEmpty(text)) return null;
+        text = text.trim();
+        text = text.split("\\s")[0];
+        return StringUtils.isEmpty(text) ? null : text;
+    }
+
     public static List<Pin> toIndexPins(Note note) {
 
         Map<String, Object> data = Collections.emptyMap();
@@ -296,7 +302,8 @@ public class NoteUtil {
         }
 
         ZonedDateTime when = when(data);
-        String title = title(data);
+        //String title = title(data);
+        String title = prettyNoteText(note.getText().split("\n")[0]);
 
         Pin result = Pin.builder()
                 .type(NOTE_PIN_TYPE)

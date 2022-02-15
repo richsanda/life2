@@ -4,7 +4,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.note.NoteOperations;
 import w.whateva.life2.api.note.dto.ApiNote;
@@ -14,6 +13,7 @@ import w.whateva.life2.data.note.repository.NoteRepository;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.note.NoteProvider;
+import w.whateva.life2.integration.note.NoteUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,8 +41,7 @@ public class NoteServiceImpl implements NoteOperations {
 
     @Override
     public ApiNote add(String trove, ApiNote apiNote) {
-        apiNote.setTrove(trove);
-        return update(apiNote);
+        return update(trove, NoteUtil.parseNoteTitle(apiNote.getText()), apiNote);
     }
 
     @Override
@@ -56,20 +55,11 @@ public class NoteServiceImpl implements NoteOperations {
 
     private ApiNote update(ApiNote apiNote) {
 
-        Note note;
+        Note note = new Note();
 
-        if (!StringUtils.isEmpty(apiNote.getTrove()) && !StringUtils.isEmpty(apiNote.getKey())) {
-            note = noteRepository.findByTroveAndKey(apiNote.getTrove(), apiNote.getKey());
-        } else if (!StringUtils.isEmpty(apiNote.getTrove())) {
-            note = new Note();
-            note.setTrove(apiNote.getTrove());
-            noteRepository.save(note);
-            note.setKey(note.getId());
-        } else {
-            return null;
-        }
-
+        note.setKey(apiNote.getKey());
         note.setTrove(apiNote.getTrove());
+        note.setId(composeKey(note.getTrove(), note.getKey()));
         note.setText(apiNote.getText());
         note.setNotes(apiNote.getNotes());
         note.setData(apiNote.getData());

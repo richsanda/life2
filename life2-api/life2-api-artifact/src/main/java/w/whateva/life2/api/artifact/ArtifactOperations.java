@@ -20,6 +20,14 @@ public interface ArtifactOperations {
             @PathVariable("key") String key,
             @RequestParam(value = "relatives", required = false) Boolean relatives);
 
+    @RequestMapping(value = "/note/{owner}/{trove}/{key}", method = RequestMethod.GET, produces = "application/json")
+    default ApiArtifact readNote(
+            @PathVariable("owner") String owner,
+            @PathVariable("trove") String trove,
+            @PathVariable("key") String key) {
+        return null;
+    }
+
     @RequestMapping(value = "/artifacts", method = RequestMethod.GET, produces = "application/json")
     List<ApiArtifact> search(
             @RequestParam(value = "after", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate after,

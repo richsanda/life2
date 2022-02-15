@@ -16,6 +16,7 @@ import w.whateva.life2.data.pin.PinProvider;
 import w.whateva.life2.data.pin.repository.PinDao;
 import w.whateva.life2.data.user.domain.User;
 import w.whateva.life2.integration.api.ArtifactProvider;
+import w.whateva.life2.integration.note.NoteProvider;
 import w.whateva.life2.integration.note.NoteUtil;
 import w.whateva.life2.service.artifact.util.ArtifactUtility;
 import w.whateva.life2.service.user.UserService;
@@ -49,10 +50,23 @@ public class ArtifactServiceImpl implements ArtifactOperations, DataOperations {
     }
 
     @Override
+    public ApiArtifact readNote(String owner, String trove, String key) {
+
+        return providers()
+                .parallelStream()
+                .filter(provider -> provider instanceof NoteProvider)
+                .map(p -> read(p, owner, trove, key, false))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElse(null);
+    }
+
+    @Override
     public ApiArtifact read(String owner, String trove, String key, Boolean relatives) {
 
         return providers()
                 .parallelStream()
+                .filter(provider -> !(provider instanceof NoteProvider))
                 .map(p -> read(p, owner, trove, key, relatives))
                 .filter(Objects::nonNull)
                 .findAny()
