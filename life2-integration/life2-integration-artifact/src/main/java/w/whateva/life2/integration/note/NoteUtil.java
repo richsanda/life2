@@ -15,6 +15,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static w.whateva.life2.integration.note.DateParsingUtil.parseDate;
+import static w.whateva.life2.integration.note.DateParsingUtil.reduceTokens;
+
 // https://www.baeldung.com/java-regex-token-replacement
 
 public class NoteUtil {
@@ -69,17 +72,29 @@ public class NoteUtil {
             String fieldName = fieldMatcher.group(1);
             String fieldValue = fieldMatcher.group(2).trim();
             if ("when".equals(fieldName) || "sent".equals(fieldName)) {
-                Matcher dateMatcher = datePattern.matcher(fieldValue);
-                Matcher dateMatcher2 = datePattern2.matcher(fieldValue);
-                Date date = null;
-                if (dateMatcher.find()) {
-                    date = date(dateMatcher.group(3), dateMatcher.group(1), dateMatcher.group(2));
-                } else if (dateMatcher2.find()) {
-                    date = date(dateMatcher2.group(3), month(dateMatcher2.group(2)), dateMatcher2.group(1));
-                }
-                if (null != date) {
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    result.put("when", df.format(date));
+//                Matcher dateMatcher = datePattern.matcher(fieldValue);
+//                Matcher dateMatcher2 = datePattern2.matcher(fieldValue);
+//                Date date = null;
+//                if (dateMatcher.find()) {
+//                    date = date(dateMatcher.group(3), dateMatcher.group(1), dateMatcher.group(2));
+//                } else if (dateMatcher2.find()) {
+//                    date = date(dateMatcher2.group(3), month(dateMatcher2.group(2)), dateMatcher2.group(1));
+//                }
+//                if (null != date) {
+//                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//                    result.put("when", df.format(date));
+//                }
+                DateParsingUtil.Token dateToken = reduceTokens(parseDate(fieldValue)).stream()
+                        .findFirst()
+                        .orElse(null);
+
+                if (null != dateToken) {
+                    if (null != dateToken.date()) {
+                        result.put("when", dateToken.date().toString());
+                    }
+                    if (null != dateToken.endDate()) {
+                        result.put("when2", dateToken.endDate().toString());
+                    }
                 }
             } else {
                 result.put(fieldName, fieldValue);
@@ -100,48 +115,61 @@ public class NoteUtil {
         return result;
     }
 
-    private static Date date(String yearStr, String monthStr, String dayStr) {
+    //public static List<Date> dates(String dateStr) {
 
-        monthStr = (monthStr.length() == 3) ? month(monthStr) : (monthStr.length() == 2 && monthStr.startsWith("0")) ? monthStr.substring(1, 2) : monthStr;
-        dayStr = (dayStr.length() == 2 && dayStr.startsWith("0")) ? dayStr.substring(1, 2) : dayStr;
-        yearStr = (yearStr.length() == 4) ? yearStr : yearStr.startsWith("9") ? ("19" + yearStr) : ("20" + yearStr);
-        int month = Integer.parseInt(monthStr);
-        int day = Integer.parseInt(dayStr);
-        int year = Integer.parseInt(yearStr);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month - 1, day, 0, 0, 0);
-        return calendar.getTime();
-    }
+//        Matcher dateMatcher = datePattern.matcher(dateStr);
+//        Matcher dateMatcher2 = datePattern2.matcher(dateStr);
+//        Date date = null;
+//        if (dateMatcher.find()) {
+//            date = date(dateMatcher.group(3), dateMatcher.group(1), dateMatcher.group(2));
+//        } else if (dateMatcher2.find()) {
+//            date = date(dateMatcher2.group(3), month(dateMatcher2.group(2)), dateMatcher2.group(1));
+//        }
+//        return Collections.singletonList(date);
+// }
 
-    private static String month(String monthStr) {
-        switch (monthStr) {
-            case "jan":
-                return "1";
-            case "feb":
-                return "2";
-            case "mar":
-                return "3";
-            case "apr":
-                return "4";
-            case "may":
-                return "5";
-            case "jun":
-                return "6";
-            case "jul":
-                return "7";
-            case "aug":
-                return "8";
-            case "sep":
-                return "9";
-            case "oct":
-                return "10";
-            case "nov":
-                return "11";
-            case "dec":
-                return "12";
-        }
-        return "0";
-    }
+//    private static Date date(String yearStr, String monthStr, String dayStr) {
+//
+//        monthStr = (monthStr.length() == 3) ? month(monthStr) : (monthStr.length() == 2 && monthStr.startsWith("0")) ? monthStr.substring(1, 2) : monthStr;
+//        dayStr = (dayStr.length() == 2 && dayStr.startsWith("0")) ? dayStr.substring(1, 2) : dayStr;
+//        yearStr = (yearStr.length() == 4) ? yearStr : yearStr.startsWith("9") ? ("19" + yearStr) : ("20" + yearStr);
+//        int month = Integer.parseInt(monthStr);
+//        int day = Integer.parseInt(dayStr);
+//        int year = Integer.parseInt(yearStr);
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(year, month - 1, day, 0, 0, 0);
+//        return calendar.getTime();
+//    }
+//
+//    private static String month(String monthStr) {
+//        switch (monthStr) {
+//            case "jan":
+//                return "1";
+//            case "feb":
+//                return "2";
+//            case "mar":
+//                return "3";
+//            case "apr":
+//                return "4";
+//            case "may":
+//                return "5";
+//            case "jun":
+//                return "6";
+//            case "jul":
+//                return "7";
+//            case "aug":
+//                return "8";
+//            case "sep":
+//                return "9";
+//            case "oct":
+//                return "10";
+//            case "nov":
+//                return "11";
+//            case "dec":
+//                return "12";
+//        }
+//        return "0";
+//    }
 
     public static ApiArtifact toDto(Note note) {
 

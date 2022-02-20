@@ -101,20 +101,20 @@ public class NoteServiceImpl implements NoteOperations {
     @Override
     public String applyToNotes() {
 
-         // reindexAllNotes();
+        reindexAllNotes();
 
-        return noteRepository.findAll().stream()
-                .filter(n -> n.getId().startsWith(n.getTrove() + "/"))
-                .map(n -> {
-                    n.setKey(n.getId().substring(n.getTrove().length() + 1));
-                    noteRepository.save(n);
-                    return n; }
-                )
-                .map(n -> n.getKey())
-                .collect(Collectors.joining("\n"));
+//        return noteRepository.findAll().stream()
+//                .filter(n -> n.getId().startsWith(n.getTrove() + "/"))
+//                .map(n -> {
+//                    n.setKey(n.getId().substring(n.getTrove().length() + 1));
+//                    noteRepository.save(n);
+//                    return n; }
+//                )
+//                .map(n -> n.getKey())
+//                .collect(Collectors.joining("\n"));
+//
 
-
-         //return ":)";
+         return ":)";
     }
 
     @Override
