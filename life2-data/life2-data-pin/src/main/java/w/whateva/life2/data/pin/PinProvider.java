@@ -93,6 +93,7 @@ public class PinProvider implements ArtifactProvider {
         ApiArtifact result = new ApiArtifact();
         result.setWhen(null != pin.getWhen() ? pin.getWhen().toLocalDateTime() : null);
         result.setWhen2(null != pin.getWhen2() ? pin.getWhen2().toLocalDateTime() : null);
+        result.setWhenDisplay(pin.getWhenDisplay());
         result.setTrove(pin.getTrove());
         result.setKey(pin.getKey());
         result.setOwner(pin.getOwner());

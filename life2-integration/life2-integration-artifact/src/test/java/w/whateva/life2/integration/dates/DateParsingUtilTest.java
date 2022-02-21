@@ -1,11 +1,11 @@
-package w.whateva.life2.integration.note;
+package w.whateva.life2.integration.dates;
 
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static w.whateva.life2.integration.note.DateParsingUtil.*;
+import static w.whateva.life2.integration.dates.DateParsingUtil.*;
 
 public class DateParsingUtilTest {
 
@@ -18,9 +18,9 @@ public class DateParsingUtilTest {
 
     @Test
     public void parseIntWithLeadZero() {
-        System.out.println(DateParsingUtil.Month.parse(2));
-        System.out.println(DateParsingUtil.Month.parse("02"));
-        System.out.println(DateParsingUtil.Month.parse(13));
+        System.out.println(Month.parse(2));
+        System.out.println(Month.parse("02"));
+        System.out.println(Month.parse(13));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class DateParsingUtilTest {
                 "early feb 1999 to aug 2000"
         };
         Arrays.stream(dateStrs).forEach(d -> {
-            List<DateParsingUtil.Token> tokens = parseDate(d);
+            List<Token> tokens = parseDate(d);
             System.out.println("\n\"" + d + "\": " + tokens.size() + " tokens");
             System.out.println(firstMatch(tokens, isMonth, isDay, isYear)
                     + " " + firstMatch(tokens, isSeason, isYear)

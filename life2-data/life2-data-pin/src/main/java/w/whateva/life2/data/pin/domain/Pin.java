@@ -33,6 +33,8 @@ public class Pin {
     private String key;
 
     @Indexed
+    private String whenDisplay;
+    @Indexed
     private ZonedDateTime when;
     @Indexed
     private ZonedDateTime when2;

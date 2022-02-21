@@ -27,6 +27,7 @@ public class ApiArtifact {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime when2;
 
+    private String whenDisplay;
     private String title;
     private String description;
     private List<String> notes;

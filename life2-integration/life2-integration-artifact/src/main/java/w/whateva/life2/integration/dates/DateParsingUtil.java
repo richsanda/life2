@@ -1,23 +1,39 @@
-package w.whateva.life2.integration.note;
+package w.whateva.life2.integration.dates;
 
-import lombok.Builder;
-import lombok.Getter;
 import org.springframework.util.CollectionUtils;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 
 public class DateParsingUtil {
+
+    private static final String threePartDateToken = "([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})";
+    private static final String threePartDateToken2 = "([0-9]{1,2})(" + String.join("|", Month.tokens()) + ")([0-9]{2,4})";
+    private static final String numericToken = "[0-9]{1,8}";
+    private static final String commaToken = ",";
+    private static final String dashToken = "-|->|--";
+
+    private static final String dateRe =
+            "(?<=[^(a-z)]|^)(" +
+                    String.join("|", Month.tokens()) + "|" +
+                    String.join("|", Season.tokens()) + "|" +
+                    String.join("|", DayOfWeek.tokens()) + "|" +
+                    String.join("|", DateModifier.tokens()) +
+                    ")(?=[^(a-z)]|$)";
+
+    private static final Pattern datePattern = Pattern.compile("(" + dateRe + "|" +
+            threePartDateToken + "|" +
+            threePartDateToken2 + "|" +
+            numericToken  + "|" +
+            commaToken  + "|" +
+            dashToken
+            + ")");
 
     private static LocalDate firstOfWinter(int year) {
         return LocalDate.of(year - 1, 12, 21);
@@ -41,207 +57,6 @@ public class DateParsingUtil {
                 firstOfMonth.getMonth().length(firstOfMonth.isLeapYear()));
     }
 
-    public enum Month {
-        JANUARY,
-        FEBRUARY,
-        MARCH,
-        APRIL,
-        MAY,
-        JUNE,
-        JULY,
-        AUGUST,
-        SEPTEMBER,
-        OCTOBER,
-        NOVEMBER,
-        DECEMBER;
-
-        private static final Map<String, Month> MONTHS_BY_NAME = new HashMap<>();
-        private static final Map<Integer, Month> MONTHS_BY_NUMBER = new HashMap<>();
-        private static final Map<Month, Integer> NUMBERS_BY_MONTH = new HashMap<>();
-
-        static {
-            int i = 1;
-            for (Month m: values()) {
-                MONTHS_BY_NAME.put(m.name().toLowerCase(), m);
-                MONTHS_BY_NAME.put(m.name().toLowerCase().substring(0, 3), m);
-                MONTHS_BY_NUMBER.put(i, m);
-                NUMBERS_BY_MONTH.put(m, i++);
-            }
-        }
-
-//        private final MonthDay start;
-//        private final MonthDay end;
-//
-//        Month(MonthDay start, MonthDay end) {
-//            this.start = start;
-//            this.end = end;
-//        }
-
-        public boolean isMonthName(String month) {
-            return MONTHS_BY_NAME.containsKey(month);
-        }
-
-        public static Month parse(String month) {
-            Month result = MONTHS_BY_NAME.get(month);
-            if (null != result) return result;
-            try {
-                return parse(parseInt(month));
-            } catch (NumberFormatException e) {
-                return null;
-            }
-        }
-
-        public static Month parse(Integer i) {
-            return MONTHS_BY_NUMBER.get(i);
-        }
-
-        public int toInt() {
-            return NUMBERS_BY_MONTH.get(this);
-        }
-
-        public static int parse(Month m) {
-            return NUMBERS_BY_MONTH.get(m);
-        }
-
-        public static Integer monthNumber(String s) {
-            Month m = parse(s);
-            if (null == m) return null;
-            return parse(m);
-        }
-
-        public static Set<String> tokens() {
-            return MONTHS_BY_NAME.keySet();
-        }
-    }
-
-    public enum Season {
-        WINTER,
-        SPRING,
-        SUMMER,
-        FALL,
-        LENT,
-        HALLOWEEN,
-        THANKSGIVING,
-        TG,
-        CHRISTMAS,
-        CMAS,
-        XMAS,
-        HOLIDAYS;
-
-        private static final Map<String, Season> SEASONS_BY_NAME = new HashMap<>();
-
-        static {
-            int i = 1;
-            for (Season s: values()) {
-                SEASONS_BY_NAME.put(s.name().toLowerCase(), s);
-                if (s.name().length() > 3) {
-                    SEASONS_BY_NAME.put(s.name().toLowerCase().substring(0, 3), s);
-                }
-            }
-        }
-
-        public static Season parse(String season) {
-            return SEASONS_BY_NAME.get(season);
-        }
-
-        public static Set<String> tokens() {
-            return SEASONS_BY_NAME.keySet();
-        }
-    }
-
-    public enum DayOfWeek {
-        SUNDAY,
-        MONDAY,
-        TUESDAY,
-        WEDNESDAY,
-        THURSDAY,
-        FRIDAY,
-        SATURDAY;
-
-        private static final Map<String, DayOfWeek> DAYS_BY_NAME = new HashMap<>();
-
-        static {
-            int i = 1;
-            for (DayOfWeek d: values()) {
-                DAYS_BY_NAME.put(d.name().toLowerCase(), d);
-                DAYS_BY_NAME.put(d.name().toLowerCase().substring(0, 3), d);
-            }
-        }
-
-        public static DayOfWeek parse(String day) {
-            return DAYS_BY_NAME.get(day);
-        }
-
-        public static Set<String> tokens() {
-            return DAYS_BY_NAME.keySet();
-        }
-    }
-
-    public enum DateModifier {
-        FROM, BETWEEN, AFTER, BEGINNING, BEGIN, START, STARTING, BEFORE, ENDING, END, AND,
-        TO, THROUGH, THRU, DASH, UNTIL,
-        EARLY, MID, LATE, SEMESTER, VACATION, VACA;
-
-        private static final Map<String, DateModifier> DATE_MODIFIERS_BY_NAME = new HashMap<>();
-        private static final Set<DateModifier> RANGE_MODIFIERS = Set.of(TO, THROUGH, THRU, DASH, UNTIL);
-
-        static {
-            int i = 1;
-            for (DateModifier m: values()) {
-                DATE_MODIFIERS_BY_NAME.put(m.name().toLowerCase(), m);
-                if (m.name().length() > 3) {
-                    DATE_MODIFIERS_BY_NAME.put(m.name().toLowerCase().substring(0, 3), m);
-                }
-            }
-        }
-
-        public static DateModifier parse(String mod) {
-            return DATE_MODIFIERS_BY_NAME.get(mod);
-        }
-
-        public static Set<String> tokens() {
-            return DATE_MODIFIERS_BY_NAME.keySet();
-        }
-
-        public boolean isRange() {
-            return RANGE_MODIFIERS.contains(this);
-        }
-    }
-
-    private static final String monthsRe = "(" + String.join("|", Month.tokens()) + ")";
-    private static final Pattern monthsPattern = Pattern.compile(monthsRe);
-
-    private static final String threePartDateToken = "([0-9]{1,2})[./]([0-9]{1,2})[./]([0-9]{2,4})";
-    private static final String threePartDateToken2 = "([0-9]{1,2})(" + String.join("|", Month.tokens()) + ")([0-9]{2,4})";
-    private static final String numericToken = "[0-9]{1,8}";
-    private static final String commaToken = ",";
-    private static final String dashToken = "-|->|--";
-
-    private static final String dateRe =
-            "(?<=[^(a-z)]|^)(" +
-                    String.join("|", Month.tokens()) + "|" +
-                    String.join("|", Season.tokens()) + "|" +
-                    String.join("|", DayOfWeek.tokens()) + "|" +
-                    String.join("|", DateModifier.tokens()) +
-                    ")(?=[^(a-z)]|$)";
-    private static final Pattern datePattern = Pattern.compile("(" + dateRe + "|" +
-            threePartDateToken + "|" +
-            threePartDateToken2 + "|" +
-            numericToken  + "|" +
-            commaToken  + "|" +
-            dashToken
-            + ")");
-
-    private static final Pattern distillAlphaNumeric = Pattern.compile("(?=\\d)(?<=[a-zA-Z])|(?=[a-zA-Z])(?<=\\d)");
-
-    private static boolean isDate(String s) {
-        return threePartDateToken.matches(s) || threePartDateToken2.matches(s);
-    }
-
-    private static boolean isMonthName(String s) {
-        return Month.tokens().contains(s);
-    }
-
     private static Integer month(String s) {
         Month month = Month.parse(s);
         if (null != month) return month.toInt();
@@ -254,10 +69,6 @@ public class DateParsingUtil {
             return null;
         }
         return null;
-    }
-
-    private static boolean isMonth(String s) {
-        return null != month(s);
     }
 
     private static Integer dayOfMonth(String s) {
@@ -331,46 +142,6 @@ public class DateParsingUtil {
                 .build();
     }
 
-    @Builder
-    @Getter
-    public static class Token {
-        private final Month month;
-        private final Season season;
-        private final DayOfWeek dayofWeek;
-        private final DateModifier modifier;
-        private final Integer day;
-        private final Integer numericMonth;
-        private final Integer year;
-        private final boolean comma;
-        private final String dash;
-        private final LocalDate date;
-        private final LocalDate endDate;
-        private final boolean range;
-        private final List<Token> subTokens;
-
-        public LocalDate date() {
-            return date;
-        }
-
-        public LocalDate endDate() {
-            return null != endDate ? endDate : date;
-        }
-
-        public Integer durationInDays() {
-            if (null == date) return null;
-            if (null == endDate) return 0;
-            return (int)Duration.between(date.atStartOfDay(), endDate.atStartOfDay()).toDays();
-        }
-    }
-
-    @Builder
-    @Getter
-    public static class DateExpression {
-
-        private final List<Token> tokens;
-        private final LocalDate date;
-    }
-
     @SafeVarargs
     public static int firstMatch(List<Token> tokens, Predicate<Token>... predicates) {
         int i = 0;
@@ -409,24 +180,6 @@ public class DateParsingUtil {
     public static Predicate<Token> isDateExpr = (t) -> null != t.getDate() || !CollectionUtils.isEmpty(t.getSubTokens());
     public static Predicate<Token> isRange = (t) -> null != t.getDash() || (null != t.getModifier() && t.getModifier().isRange());
 
-    @Getter
-    @Builder
-    public static class TokenReplacer {
-
-        private final Predicate<Token>[] predicates;
-        private final Function<List<Token>, Token> replacer;
-
-        List<Token> replace(List<Token> tokens) {
-            int firstMatch = firstMatch(tokens, predicates);
-            if (firstMatch < 0) return null;
-            List<Token> result = new ArrayList<>();
-            result.addAll(tokens.subList(0, firstMatch));
-            result.add(replacer.apply(tokens.subList(firstMatch, firstMatch + predicates.length)));
-            result.addAll(tokens.subList(firstMatch + predicates.length, tokens.size()));
-            return Collections.unmodifiableList(result);
-        }
-    }
-
     @SafeVarargs
     private static Predicate<Token>[] predicates(Predicate<Token>... predicates) {
         return predicates;
@@ -458,11 +211,6 @@ public class DateParsingUtil {
             .predicates(predicates(isMonth, isDay, isRange, isDate))
             .replacer((tokens) ->
                     Token.builder()
-//                            .subTokens(List.of(
-//                                    Token.builder()
-//                                            .date(buildDate(tokens.get(3), tokens.get(0), tokens.get(1)))
-//                                            .build(),
-//                                    tokens.get(3)))
                             .date(buildDate(tokens.get(3), tokens.get(0), tokens.get(1)))
                             .endDate(tokens.get(3).getDate())
                             .build())
@@ -472,13 +220,6 @@ public class DateParsingUtil {
             .predicates(predicates(isMonth, isDay, isRange, isDay, isYear))
             .replacer((tokens) ->
                     Token.builder()
-//                            .subTokens(List.of(
-//                                    Token.builder()
-//                                            .date(buildDate(tokens.get(4), tokens.get(0), tokens.get(1)))
-//                                            .build(),
-//                                    Token.builder()
-//                                            .date(buildDate(tokens.get(4), tokens.get(0), tokens.get(3)))
-//                                            .build()))
                             .date(buildDate(tokens.get(4), tokens.get(0), tokens.get(1)))
                             .endDate(buildDate(tokens.get(4), tokens.get(0), tokens.get(3)))
                             .build())
