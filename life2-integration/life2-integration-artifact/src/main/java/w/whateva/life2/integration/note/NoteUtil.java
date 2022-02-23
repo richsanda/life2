@@ -84,6 +84,9 @@ public class NoteUtil {
                         result.put("when2", dateToken.endDate().toString());
                     }
                 }
+            } else if ("from".equals(fieldName) || "to".equals(fieldName) || "author".equals(fieldName)) {
+                List<String> people = people(fieldValue);
+                result.put(fieldName, people);
             } else {
                 result.put(fieldName, fieldValue);
             }
@@ -94,7 +97,7 @@ public class NoteUtil {
         }
         List<String> people = people(input);
         if (!CollectionUtils.isEmpty(people)) {
-            result.put("people", people);
+            result.put("who", people);
         }
         List<String> tags = tags(input);
         if (!CollectionUtils.isEmpty(tags)) {
@@ -270,8 +273,10 @@ public class NoteUtil {
         ZonedDateTime when = when(data);
         ZonedDateTime when2 = when2(data);
         String whenDisplay = data.containsKey("whenDisplay") ? data.get("whenDisplay").toString() : null;
+        Set<String> from = data.containsKey("from") ? new HashSet<String>((Collection)data.get("from")) : null;
+        Set<String>  to = data.containsKey("to") ? new HashSet<String>((Collection)data.get("to")) : null;
         //String title = title(data);
-        String title = prettyNoteText(note.getText().split("\n")[0]);
+        String title = !StringUtils.isEmpty(note.getText()) ? prettyNoteText(note.getText().split("\n")[0]) : null;
 
         Pin result = Pin.builder()
                 .type(NOTE_PIN_TYPE)
@@ -279,6 +284,8 @@ public class NoteUtil {
                 .key(noteKey(note))
                 .title(title)
                 .data(data)
+                .from(from)
+                .to(to)
                 .text(text)
                 .when(when)
                 .when2(when2)

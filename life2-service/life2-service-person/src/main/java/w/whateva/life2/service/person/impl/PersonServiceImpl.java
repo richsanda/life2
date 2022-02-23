@@ -133,7 +133,8 @@ public class PersonServiceImpl implements PersonService, PersonOperations {
             }
         });
         if (!CollectionUtils.isEmpty(lookup)) {
-            Set<Person> persons = personRepository.findByEmailsIn(emails);
+            Set<Person> persons = personRepository.findByEmailsIn(lookup);
+            persons.addAll(personRepository.findByNameIn(lookup));
             if (!CollectionUtils.isEmpty(persons)) {
                 persons.forEach(p -> {
                     p.getEmails().forEach(e -> {
