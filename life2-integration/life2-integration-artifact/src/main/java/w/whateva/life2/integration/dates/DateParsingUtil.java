@@ -4,7 +4,10 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -200,6 +203,13 @@ public class DateParsingUtil {
                     .build())
             .build();
 
+    public final static TokenReplacer standardDateReplacer2 = TokenReplacer.builder()
+            .predicates(predicates(isDay, isMonth, isYear))
+            .replacer((tokens) -> Token.builder()
+                    .date(buildDate(tokens.get(2), tokens.get(1), tokens.get(0)))
+                    .build())
+            .build();
+
     public final static TokenReplacer standardDateReplacerWithComma = TokenReplacer.builder()
             .predicates(predicates(isMonth, isDay, isComma, isYear))
             .replacer((tokens) -> Token.builder()
@@ -353,6 +363,7 @@ public class DateParsingUtil {
                 monthAndDayRangeReplacer,
                 standardDateReplacerWithComma,
                 standardDateReplacer,
+                standardDateReplacer2,
                 seasonReplacer,
                 monthReplacer,
                 yearReplacer,

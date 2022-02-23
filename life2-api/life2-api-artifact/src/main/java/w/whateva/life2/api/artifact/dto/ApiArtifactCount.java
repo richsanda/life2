@@ -9,5 +9,5 @@ public class ApiArtifactCount {
 
     Integer year;
     Integer month;
-    Integer count;
+    Double count;
 }

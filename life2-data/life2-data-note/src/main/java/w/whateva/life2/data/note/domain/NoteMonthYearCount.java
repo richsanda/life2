@@ -9,5 +9,5 @@ public class NoteMonthYearCount {
 
     private Integer month;
     private Integer year;
-    private Integer count;
+    private Double count;
 }

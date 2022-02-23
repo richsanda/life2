@@ -74,7 +74,7 @@ public class PinDaoImpl implements PinDao {
         return mongoTemplate.find(query, Pin.class);
     }
 
-    public List<PinMonthYearCount> getPinMonthYearCounts(
+    public List<PinMonthYearCount> getPinMonthYearCounts2(
             LocalDateTime after,
             LocalDateTime before,
             Set<String> who,
@@ -117,10 +117,20 @@ public class PinDaoImpl implements PinDao {
         if (null != after || null != before) {
             ArrayList<Criteria> whenCriteriaList = new ArrayList<>();
             if (null != after) {
-                whenCriteriaList.add(Criteria.where("when").gte(after));
+                ArrayList<Criteria> afterCriteriaList = new ArrayList<>();
+                afterCriteriaList.add(Criteria.where("when").gte(after));
+                afterCriteriaList.add(Criteria.where("when2").gte(after));
+                Criteria[] afterCriteriaArray = new Criteria[afterCriteriaList.size()];
+                afterCriteriaArray = afterCriteriaList.toArray(afterCriteriaArray);
+                whenCriteriaList.add(new Criteria().orOperator(afterCriteriaArray));
             }
             if (null != before) {
-                whenCriteriaList.add(Criteria.where("when").lt(before));
+                ArrayList<Criteria> beforeCriteriaList = new ArrayList<>();
+                beforeCriteriaList.add(Criteria.where("when").lt(before));
+                beforeCriteriaList.add(Criteria.where("when2").lt(before));
+                Criteria[] beforeCriteriaArrray = new Criteria[beforeCriteriaList.size()];
+                beforeCriteriaArrray = beforeCriteriaList.toArray(beforeCriteriaArrray);
+                whenCriteriaList.add(new Criteria().orOperator(beforeCriteriaArrray));
             }
             Criteria[] whenCriteriaArray = new Criteria[whenCriteriaList.size()];
             whenCriteriaArray = whenCriteriaList.toArray(whenCriteriaArray);
@@ -165,4 +175,79 @@ public class PinDaoImpl implements PinDao {
 
         return c;
     }
+
+    public List<PinMonthYearCount> getPinMonthYearCounts(
+            LocalDateTime after,
+            LocalDateTime before,
+            Set<String> who,
+            Set<String> troves,
+            String text) {
+
+        Criteria criteria = queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves, text);
+
+        return repository.aggregateMonthYearCounts(criteria.getCriteriaObject());
+    }
+
+
+//    public List<PinMonthYearCount> getPinMonthYearCounts(
+//            LocalDateTime after,
+//            LocalDateTime before,
+//            Set<String> who,
+//            Set<String> troves,
+//            String text) {
+//
+//        Criteria criteria = queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves, text);
+//
+//        Aggregation agg = newAggregation(
+//                match(criteria),
+//            //    addFields().addFieldWithValue("num_months",
+//              //          ConvertOperators.ToString.toString("{$divide: [{$subtract : [\"$when2\", \"$when\"]}, 2592000000]} }")).build(),
+//                project()
+//                        .andExpression("($when2 - $when) / 2592000000.0)").as("num_months")
+//                        .and(new AggregationExpression() {
+//                            @Override
+//                            public Document toDocument(AggregationOperationContext aggregationOperationContext) {
+//                                return null;
+//                            }
+//                        }
+//        new BasicDBObject
+//                                        ("version", "$version").append
+//                                        ("author", "$author").append
+//                                        ("dateAdded", "$dateAdded"));
+//                                "  $map: {\n" +
+//                                        "            input: { $range: [{$month: \"$when\"}, {$add: [{$toInt: \"$num_months\"}, {$month: \"$when\"}, 1]}, 1] },\n" +
+//                                        "            as: \"dd\",\n" +
+//                                        "            in: {year : {$add: [{$year: \"$when\"}, {$floor: {$divide: [\"$$dd\", 12]}}]}, month: {$mod: [\"$$dd\", 12]}}\n" +
+//                                        "          }"
+//                        ).as("month_years"),
+//                unwind("month_years"),
+//                group("month_years").sum("{$divide: [1, \"$num_months\"]}").as("count"),
+//                project().and("month_years.year").as("year").and("month_years.month").as("month"),
+//                sort(Sort.Direction.ASC, "year", "month")
+//        );
+//
+//        //Convert the aggregation result into a List
+//        AggregationResults<PinMonthYearCount> groupResults = mongoTemplate.aggregate(agg, Pin.class, PinMonthYearCount.class);
+//
+//        return groupResults.getMappedResults();
+//    }
+    /*
+   {$match : {trove: "life2"}},
+   {$addFields: { "num_months": {$divide: [{$subtract : ["$when2", "$when"]}, 2592000000]} } },
+   {$project: {
+       title : true,
+       num_months : true,
+       month_years: {
+          $map: {
+            input: { $range: [{$month: "$when"}, {$add: [{$toInt: "$num_months"}, {$month: "$when"}, 1]}, 1] },
+            as: "dd",
+            in: {year : {$add: [{$year: "$when"}, {$floor: {$divide: ["$$dd", 12]}}]}, month: {$mod: ["$$dd", 12]}}
+          }
+        }
+      }},
+    {$unwind: "$month_years"},
+    {$group: {_id : "$month_years", "count": {$sum: {$divide: [1, "$num_months"]}}, items: {$addToSet: "$title"}}},
+    {$sort: { _id: 1 }}
+
+     */
 }
