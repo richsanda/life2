@@ -35,14 +35,15 @@ public class PinProvider implements ArtifactProvider {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text, String source) {
 
         return pinDao.search(
                         null != after ? after.atStartOfDay(ZoneId.of("UTC")) : null,
                         null != before ? before.plusDays(1).atStartOfDay(ZoneId.of("UTC")) : null,
                         who,
                         troves,
-                        text)
+                        text,
+                        source)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toUnmodifiableList());
@@ -58,17 +59,19 @@ public class PinProvider implements ArtifactProvider {
                 searchSpec.getTroves(),
                 Collections.emptySet(),
                 Collections.emptySet(),
+                null,
                 null);
     }
 
     @Override
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text, String source) {
         return pinDao.getPinMonthYearCounts(
                         after.atStartOfDay(),
                         before.atStartOfDay(),
                         who,
                         troves,
-                        text).stream()
+                        text,
+                        source).stream()
                 .map(PinProvider::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -80,7 +83,8 @@ public class PinProvider implements ArtifactProvider {
                 searchSpec.getBefore(),
                 searchSpec.getWho(),
                 searchSpec.getTroves(),
-                searchSpec.getText());
+                searchSpec.getText(),
+                searchSpec.getSource());
     }
 
     @Override

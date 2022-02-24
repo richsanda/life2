@@ -16,7 +16,7 @@ public interface PinDao {
 
     void index(String type, String trove, String key, List<Pin> pins);
 
-    List<PinMonthYearCount> getPinMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves, String searchText);
+    List<PinMonthYearCount> getPinMonthYearCounts(LocalDateTime after, LocalDateTime before, Set<String> who, Set<String> troves, String searchText, String source);
 
-    List<Pin> search(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves, String searchText);
+    List<Pin> search(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves, String searchText, String source);
 }

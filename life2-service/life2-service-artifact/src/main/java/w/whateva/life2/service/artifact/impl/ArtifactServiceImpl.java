@@ -82,9 +82,9 @@ public class ArtifactServiceImpl implements ArtifactOperations, DataOperations {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text, String source) {
 
-        return pinProvider.search(after, before, who, troves, Collections.emptySet(), Collections.emptySet(), text);
+        return pinProvider.search(after, before, who, troves, Collections.emptySet(), Collections.emptySet(), text, source);
     }
 
     @Override
@@ -103,6 +103,7 @@ public class ArtifactServiceImpl implements ArtifactOperations, DataOperations {
         restrictedSearchSpec.setWho(NoteUtil.parseWho(searchSpec.getText()));
         restrictedSearchSpec.setTroves(troves);
         restrictedSearchSpec.setText(NoteUtil.parseSearchText(searchSpec.getText()));
+        restrictedSearchSpec.setSource(searchSpec.getSource());
 
         return pinProvider.search(
                 restrictedSearchSpec.getAfter(),
@@ -111,13 +112,14 @@ public class ArtifactServiceImpl implements ArtifactOperations, DataOperations {
                 restrictedSearchSpec.getTroves(),
                 Collections.emptySet(),
                 Collections.emptySet(),
-                restrictedSearchSpec.getText());
+                restrictedSearchSpec.getText(),
+                restrictedSearchSpec.getSource());
     }
 
     @Override
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text, String source) {
 
-        return pinProvider.count(after, before, null, null, text);
+        return pinProvider.count(after, before, null, null, text, source);
     }
 
     @Override
@@ -130,6 +132,7 @@ public class ArtifactServiceImpl implements ArtifactOperations, DataOperations {
         restrictedSearchSpec.setWho(NoteUtil.parseWho(searchSpec.getText()));
         restrictedSearchSpec.setTroves(NoteUtil.parseTroves(searchSpec.getText()));
         restrictedSearchSpec.setText(NoteUtil.parseSearchText(searchSpec.getText()));
+        restrictedSearchSpec.setSource(searchSpec.getSource());
 
         return pinProvider.count(restrictedSearchSpec);
     }

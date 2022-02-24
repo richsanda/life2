@@ -75,7 +75,8 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
                 searchSpec.getTroves(),
                 processPersonKeys(searchSpec.getFrom()),
                 processPersonKeys(searchSpec.getTo()),
-                searchSpec.getText());
+                searchSpec.getText(),
+                searchSpec.getSource());
     }
 
     @Override
@@ -86,7 +87,8 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
                 searchSpec.getBefore(),
                 processPersonKeys(searchSpec.getWho()),
                 processPersonKeys(searchSpec.getTroves()),
-                searchSpec.getText());
+                searchSpec.getText(),
+                searchSpec.getSource());
     }
 
     @Override

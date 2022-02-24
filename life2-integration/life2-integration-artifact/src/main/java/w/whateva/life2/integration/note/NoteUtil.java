@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static w.whateva.life2.integration.dates.DateParsingUtil.parseDate;
 import static w.whateva.life2.integration.dates.DateParsingUtil.reduceTokens;
@@ -24,13 +25,13 @@ public class NoteUtil {
     public static final String NOTE_PIN_TYPE = "note";
 
     private static final Pattern artifactPattern = Pattern.compile("\\$\\[[a-zA-Z0-9]*]\\(artifact:([a-z]*)\\)");
-    private static final Pattern fieldPattern = Pattern.compile("\\$\\[[a-zA-Z0-9: ]*]\\(field:([a-z]*)\\)([^\n]*)");
+    private static final Pattern fieldPattern = Pattern.compile("\\$\\[[a-zA-Z0-9]*]\\(field:([a-z]*)\\)([^\n]*)");
 
-    private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.: ]*]\\(user:([a-z.]*)\\)");
+    private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.]*]\\(user:([a-z.]*)\\)");
     private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-_]*]\\(trove:([a-zA-Z0-9-_]*)\\)");
-    private static final Pattern nonTextPattern = Pattern.compile("[$@!]\\[[a-zA-Z0-9-_:. ]*]\\([a-z]*:([a-zA-Z0-9-_:. ]*)\\)");
+    private static final Pattern nonTextPattern = Pattern.compile("[#$@!]\\[[a-zA-Z0-9-_:. ]*]\\([a-z]*:([a-zA-Z0-9-_:. ]*)\\)");
 
-    private static final Pattern tagPattern = Pattern.compile("#([a-zA-Z0-9-_]*)");
+    private static final Pattern looseTagPattern = Pattern.compile("#([a-zA-Z0-9-_]+)");
 
     public static List<String> artifacts(String input) {
         List<String> result = new ArrayList<>();
@@ -54,7 +55,7 @@ public class NoteUtil {
 
     public static List<String> tags(String input) {
         List<String> result = new ArrayList<>();
-        Matcher tagMatcher = tagPattern.matcher(input);
+        Matcher tagMatcher = looseTagPattern.matcher(input);
         int i = 0;
         while (tagMatcher.find()) {
             result.add(tagMatcher.group(1));
@@ -263,11 +264,33 @@ public class NoteUtil {
 
     public static List<Pin> toIndexPins(Note note) {
 
+        String trove = note.getTrove();
+        String key = noteKey(note);
+
+        // primary
+        List<Pin> result = new ArrayList<>();
+        result.add(toPin(trove, key, note.getText()));
+
+        // secondary
+        if (!CollectionUtils.isEmpty(note.getNotes())) {
+            result.addAll(note.getNotes().stream()
+                    .map(n -> toPin(trove, key, n, "secondary"))
+                    .collect(Collectors.toUnmodifiableList()));
+        }
+        return result;
+    }
+
+    private static Pin toPin(String trove, String key, String text) {
+        return toPin(trove, key, text, null);
+    }
+
+    private static Pin toPin(String trove, String key, String text, String source) {
+
         Map<String, Object> data = Collections.emptyMap();
-        String text = null;
-        if (!StringUtils.isEmpty(note.getText())) {
-            data = fields(note.getText());
-            text = indexNoteText(note.getText());
+        String indexText = null;
+        if (!StringUtils.isEmpty(text)) {
+            data = fields(text);
+            indexText = indexNoteText(text);
         }
 
         ZonedDateTime when = when(data);
@@ -276,23 +299,22 @@ public class NoteUtil {
         Set<String> from = data.containsKey("from") ? new HashSet<String>((Collection)data.get("from")) : null;
         Set<String>  to = data.containsKey("to") ? new HashSet<String>((Collection)data.get("to")) : null;
         //String title = title(data);
-        String title = !StringUtils.isEmpty(note.getText()) ? prettyNoteText(note.getText().split("\n")[0]) : null;
+        String title = !StringUtils.isEmpty(text) ? prettyNoteText(text.split("\n")[0]) : null;
 
-        Pin result = Pin.builder()
+        return Pin.builder()
                 .type(NOTE_PIN_TYPE)
-                .trove(note.getTrove())
-                .key(noteKey(note))
+                .trove(trove)
+                .key(key)
                 .title(title)
                 .data(data)
                 .from(from)
                 .to(to)
-                .text(text)
+                .text(indexText)
+                .source(source)
                 .when(when)
                 .when2(when2)
                 .whenDisplay(whenDisplay)
                 .build();
-
-        return Collections.singletonList(result);
     }
 
     public static String noteKey(Note note) {

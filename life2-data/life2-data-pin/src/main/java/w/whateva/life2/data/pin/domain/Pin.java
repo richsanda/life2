@@ -31,6 +31,8 @@ public class Pin {
     private String trove;
     @Indexed
     private String key;
+    @Indexed
+    private String source;
 
     @Indexed
     private String whenDisplay;

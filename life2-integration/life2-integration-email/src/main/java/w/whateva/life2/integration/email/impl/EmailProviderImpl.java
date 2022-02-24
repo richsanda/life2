@@ -86,7 +86,7 @@ public class EmailProviderImpl extends ArtifactProviderBase<Email> {
     }
 
     @Override
-    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text) {
+    public List<ApiArtifact> search(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, Set<String> from, Set<String> to, String text, String source) {
 
         who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
 
@@ -106,7 +106,7 @@ public class EmailProviderImpl extends ArtifactProviderBase<Email> {
     }
 
     @Override
-    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text) {
+    public List<ApiArtifactCount> count(LocalDate after, LocalDate before, Set<String> who, Set<String> troves, String text, String source) {
 
         who = Stream.of(who, getGroups(who)).flatMap(Set::stream).collect(Collectors.toSet());
 

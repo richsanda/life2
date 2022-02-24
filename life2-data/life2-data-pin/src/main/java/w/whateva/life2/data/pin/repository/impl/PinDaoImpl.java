@@ -3,8 +3,6 @@ package w.whateva.life2.data.pin.repository.impl;
 import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
@@ -25,8 +23,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Service
 public class PinDaoImpl implements PinDao {
@@ -65,38 +61,16 @@ public class PinDaoImpl implements PinDao {
 
     @Override
     public List<Pin> search(
-            ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves, String text) {
+            ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves, String text, String source) {
 
-        Criteria criteria = queryCriteria(after, before, who, troves, text);
+        Criteria criteria = queryCriteria(after, before, who, troves, text, source);
 
         Query query = new Query(criteria).with(Sort.by(Sort.Direction.ASC, "when"));
 
         return mongoTemplate.find(query, Pin.class);
     }
 
-    public List<PinMonthYearCount> getPinMonthYearCounts2(
-            LocalDateTime after,
-            LocalDateTime before,
-            Set<String> who,
-            Set<String> troves,
-            String text) {
-
-        Criteria criteria = queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves, text);
-
-        Aggregation agg = newAggregation(
-                match(criteria),
-                project().andExpression("month(when)").as("month").andExpression("year(when)").as("year"),
-                group("month", "year").count().as("count"),
-                sort(Sort.Direction.ASC, "year", "month")
-        );
-
-        //Convert the aggregation result into a List
-        AggregationResults<PinMonthYearCount> groupResults = mongoTemplate.aggregate(agg, Pin.class, PinMonthYearCount.class);
-
-        return groupResults.getMappedResults();
-    }
-
-    private Criteria queryCriteria(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves, String searchText) {
+    private Criteria queryCriteria(ZonedDateTime after, ZonedDateTime before, Set<String> who, Set<String> troves, String searchText, String source) {
 
         ArrayList<Criteria> criteria = new ArrayList<>();
 
@@ -141,6 +115,12 @@ public class PinDaoImpl implements PinDao {
             criteria.add(from(new TextCriteria().matching(searchText).getCriteriaObject()));
         }
 
+        if (StringUtils.isEmpty(source)) {
+            criteria.add(Criteria.where("source").exists(false));
+        } else {
+            criteria.add(Criteria.where("source").is(source));
+        }
+
         Criteria[] criteriaArray = new Criteria[criteria.size()];
         criteriaArray = criteria.toArray(criteriaArray);
 
@@ -181,73 +161,11 @@ public class PinDaoImpl implements PinDao {
             LocalDateTime before,
             Set<String> who,
             Set<String> troves,
-            String text) {
+            String text,
+            String source) {
 
-        Criteria criteria = queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves, text);
+        Criteria criteria = queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves, text, source);
 
         return repository.aggregateMonthYearCounts(criteria.getCriteriaObject());
     }
-
-
-//    public List<PinMonthYearCount> getPinMonthYearCounts(
-//            LocalDateTime after,
-//            LocalDateTime before,
-//            Set<String> who,
-//            Set<String> troves,
-//            String text) {
-//
-//        Criteria criteria = queryCriteria(after.atZone(ZoneId.of("UTC")), before.atZone(ZoneId.of("UTC")), who, troves, text);
-//
-//        Aggregation agg = newAggregation(
-//                match(criteria),
-//            //    addFields().addFieldWithValue("num_months",
-//              //          ConvertOperators.ToString.toString("{$divide: [{$subtract : [\"$when2\", \"$when\"]}, 2592000000]} }")).build(),
-//                project()
-//                        .andExpression("($when2 - $when) / 2592000000.0)").as("num_months")
-//                        .and(new AggregationExpression() {
-//                            @Override
-//                            public Document toDocument(AggregationOperationContext aggregationOperationContext) {
-//                                return null;
-//                            }
-//                        }
-//        new BasicDBObject
-//                                        ("version", "$version").append
-//                                        ("author", "$author").append
-//                                        ("dateAdded", "$dateAdded"));
-//                                "  $map: {\n" +
-//                                        "            input: { $range: [{$month: \"$when\"}, {$add: [{$toInt: \"$num_months\"}, {$month: \"$when\"}, 1]}, 1] },\n" +
-//                                        "            as: \"dd\",\n" +
-//                                        "            in: {year : {$add: [{$year: \"$when\"}, {$floor: {$divide: [\"$$dd\", 12]}}]}, month: {$mod: [\"$$dd\", 12]}}\n" +
-//                                        "          }"
-//                        ).as("month_years"),
-//                unwind("month_years"),
-//                group("month_years").sum("{$divide: [1, \"$num_months\"]}").as("count"),
-//                project().and("month_years.year").as("year").and("month_years.month").as("month"),
-//                sort(Sort.Direction.ASC, "year", "month")
-//        );
-//
-//        //Convert the aggregation result into a List
-//        AggregationResults<PinMonthYearCount> groupResults = mongoTemplate.aggregate(agg, Pin.class, PinMonthYearCount.class);
-//
-//        return groupResults.getMappedResults();
-//    }
-    /*
-   {$match : {trove: "life2"}},
-   {$addFields: { "num_months": {$divide: [{$subtract : ["$when2", "$when"]}, 2592000000]} } },
-   {$project: {
-       title : true,
-       num_months : true,
-       month_years: {
-          $map: {
-            input: { $range: [{$month: "$when"}, {$add: [{$toInt: "$num_months"}, {$month: "$when"}, 1]}, 1] },
-            as: "dd",
-            in: {year : {$add: [{$year: "$when"}, {$floor: {$divide: ["$$dd", 12]}}]}, month: {$mod: ["$$dd", 12]}}
-          }
-        }
-      }},
-    {$unwind: "$month_years"},
-    {$group: {_id : "$month_years", "count": {$sum: {$divide: [1, "$num_months"]}}, items: {$addToSet: "$title"}}},
-    {$sort: { _id: 1 }}
-
-     */
 }
