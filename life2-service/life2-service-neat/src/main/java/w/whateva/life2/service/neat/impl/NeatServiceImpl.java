@@ -10,6 +10,9 @@ import w.whateva.life2.api.neat.dto.ApiNeatFile;
 import w.whateva.life2.data.neat.NeatDao;
 import w.whateva.life2.data.neat.domain.NeatFile;
 import w.whateva.life2.data.neat.repository.NeatFileRepository;
+import w.whateva.life2.data.note.repository.NoteRepository;
+import w.whateva.life2.data.pin.repository.PinDao;
+import w.whateva.life2.integration.neat.NeatProvider;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,11 +24,13 @@ public class NeatServiceImpl implements NeatService, NeatOperations {
 
     private final NeatFileRepository neatFileRepository;
     private final NeatDao neatDao;
+    private final NeatProvider neatProvider;
 
     @Autowired
-    public NeatServiceImpl(NeatFileRepository neatFileRepository, NeatDao neatDao) {
+    public NeatServiceImpl(NeatFileRepository neatFileRepository, NeatDao neatDao, NoteRepository noteRepository, PinDao pinDao) {
         this.neatFileRepository = neatFileRepository;
         this.neatDao = neatDao;
+        this.neatProvider = new NeatProvider(neatFileRepository, neatDao, noteRepository, pinDao);
     }
 
     @Override
@@ -37,6 +42,7 @@ public class NeatServiceImpl implements NeatService, NeatOperations {
         neatFile.setId(apiNeatFile.getKey());
         BeanUtils.copyProperties(apiNeatFile, neatFile);
         neatFileRepository.save(neatFile);
+        neatProvider.index(neatFile);
     }
 
     @Override

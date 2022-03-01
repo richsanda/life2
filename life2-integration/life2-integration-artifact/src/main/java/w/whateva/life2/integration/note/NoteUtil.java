@@ -29,9 +29,14 @@ public class NoteUtil {
 
     private static final Pattern personPattern = Pattern.compile("@\\[[a-zA-Z0-9.]*]\\(user:([a-z.]*)\\)");
     private static final Pattern trovePattern = Pattern.compile("!\\[[a-zA-Z0-9-_]*]\\(trove:([a-zA-Z0-9-_]*)\\)");
-    private static final Pattern nonTextPattern = Pattern.compile("[#$@!]\\[[a-zA-Z0-9-_:. ]*]\\([a-z]*:([a-zA-Z0-9-_:. ]*)\\)");
 
-    private static final Pattern looseTagPattern = Pattern.compile("#([a-zA-Z0-9-_]+)");
+    private static final String nonTextPatternText = "([#$@!])\\[[a-zA-Z0-9-_:. ]*]\\([a-z]*:([a-zA-Z0-9-_:. ]*)\\)";
+    private static final Pattern nonTextPattern = Pattern.compile(nonTextPatternText);
+    private static final Pattern nonTextPatternAtStart = Pattern.compile("^" + nonTextPatternText);
+
+    private static final String looseTagPatternText = "#([a-zA-Z0-9-_]+)";
+    private static final Pattern looseTagPattern = Pattern.compile(looseTagPatternText);
+    private static final Pattern looseTagPatternAtStart = Pattern.compile("^" + looseTagPatternText);
 
     public static List<String> artifacts(String input) {
         List<String> result = new ArrayList<>();
@@ -56,7 +61,6 @@ public class NoteUtil {
     public static List<String> tags(String input) {
         List<String> result = new ArrayList<>();
         Matcher tagMatcher = looseTagPattern.matcher(input);
-        int i = 0;
         while (tagMatcher.find()) {
             result.add(tagMatcher.group(1));
         }
@@ -64,6 +68,7 @@ public class NoteUtil {
     }
 
     public static Map<String, Object> fields(String input) {
+        if (StringUtils.isEmpty(input)) return new LinkedHashMap<>();
         Map<String, Object> result = new LinkedHashMap<>();
         Matcher fieldMatcher = fieldPattern.matcher(input);
         while (fieldMatcher.find()) {
@@ -110,12 +115,14 @@ public class NoteUtil {
     public static ApiArtifact toDto(Note note) {
 
         ZonedDateTime when = when(note);
+        ZonedDateTime when2 = when2(note);
         String title = prettyNoteText(note.getText().split("\n")[0]);
 
         String[] troveAndKey = note.getId().split("/");
 
         ApiArtifact result = new ApiArtifact();
         result.setWhen(null != when ? when.toLocalDateTime() : null);
+        result.setWhen2(null != when2 ? when2.toLocalDateTime() : null);
         result.setTitle(title);
         result.setTrove(note.getTrove());
         result.setImage(imageLocation(note));
@@ -134,6 +141,10 @@ public class NoteUtil {
         return !CollectionUtils.isEmpty(data) && data.containsKey("when")
                 ? ZonedDateTime.parse(data.get("when").toString() + "T00:00:00Z")
                 : null;
+    }
+
+    public static ZonedDateTime when2(Note note) {
+        return note != null && note.getData() != null ? when2(note.getData()) : null;
     }
 
     public static ZonedDateTime when2(Map<String, Object> data) {
@@ -211,7 +222,10 @@ public class NoteUtil {
         Matcher matcher = nonTextPattern.matcher(searchText);
         while (matcher.find()) {
             output.append(searchText, lastIndex, matcher.start()).append(' ');
-            // output.append(matcher.group(1));
+            if (matcher.group(1).equals("#")) {
+                // put hash tags in quotes, to match exactly
+                output.append('"').append(matcher.group(1)).append(matcher.group(2)).append('"');
+            }
             lastIndex = matcher.end();
         }
         if (lastIndex < searchText.length()) {
@@ -228,6 +242,7 @@ public class NoteUtil {
         while (matcher.find()) {
             output.append(text, lastIndex, matcher.start()).append(' ');
             output.append(matcher.group(1));
+            output.append(matcher.group(2));
             lastIndex = matcher.end();
         }
         if (lastIndex < text.length()) {
@@ -243,7 +258,10 @@ public class NoteUtil {
         Matcher matcher = nonTextPattern.matcher(text);
         while (matcher.find()) {
             output.append(text, lastIndex, matcher.start()).append('[');
-            output.append(matcher.group(1)).append(']');
+            if (matcher.group(1).equals("#")) {
+                output.append(matcher.group(1));
+            }
+            output.append(matcher.group(2)).append(']');
             lastIndex = matcher.end();
         }
         if (lastIndex < text.length()) {
@@ -253,13 +271,27 @@ public class NoteUtil {
         return StringUtils.isEmpty(result) ? null : result.trim();
     }
 
-    public static String parseNoteTitle(String text) {
+    public static String parseNoteTitleForNewKey(String text) {
         if (StringUtils.isEmpty(text)) return null;
         text = text.split("\n")[0];
         if (StringUtils.isEmpty(text)) return null;
         text = text.trim();
-        text = text.split("\\s")[0];
-        return StringUtils.isEmpty(text) ? null : text;
+
+        // first let's see if the title begins with a hash tag
+        Matcher looseTagMatcher = looseTagPatternAtStart.matcher(text);
+        if (looseTagMatcher.find()) {
+            return looseTagMatcher.group();
+        }
+        // now let's see if the title starts with a markup term
+        Matcher nonTextMatcher = nonTextPatternAtStart.matcher(text);
+        if (nonTextMatcher.find()) {
+            return nonTextMatcher.group(1) + nonTextMatcher.group(2);
+        }
+        // finally, let's just join all non-markup words with dashes
+        text = indexNoteText(text);
+        if (null == text) return null;
+        text = String.join("-", text.split("\\s+"));
+        return text;
     }
 
     public static List<Pin> toIndexPins(Note note) {
@@ -269,14 +301,19 @@ public class NoteUtil {
 
         // primary
         List<Pin> result = new ArrayList<>();
-        result.add(toPin(trove, key, note.getText()));
+        Pin primary = toPin(trove, key, note.getText());
+        if (null != primary) {
+            result.add(primary);
+        }
 
         // secondary
         if (!CollectionUtils.isEmpty(note.getNotes())) {
             result.addAll(note.getNotes().stream()
                     .map(n -> toPin(trove, key, n, "secondary"))
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toUnmodifiableList()));
         }
+
         return result;
     }
 
@@ -286,11 +323,20 @@ public class NoteUtil {
 
     private static Pin toPin(String trove, String key, String text, String source) {
 
-        Map<String, Object> data = Collections.emptyMap();
-        String indexText = null;
-        if (!StringUtils.isEmpty(text)) {
-            data = fields(text);
-            indexText = indexNoteText(text);
+        if (StringUtils.isEmpty(text)) {
+            return null;
+        }
+
+        Map<String, Object> data = fields(text);
+        String indexText = indexNoteText(text);
+
+        // don't like the special treatment of life2, but eh, whatever
+        if ("life2".equals(trove)) {
+            if (data.containsKey("tags")) {
+                ((List<String>)data.get("tags")).add(key);
+            } else {
+                data.put("tags", List.of(key));
+            }
         }
 
         ZonedDateTime when = when(data);

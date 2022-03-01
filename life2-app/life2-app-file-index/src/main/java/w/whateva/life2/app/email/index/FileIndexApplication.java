@@ -17,11 +17,17 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 })
 @ComponentScan(basePackages = {
         "w.whateva.life2.service.neat",
+        "w.whateva.life2.service.person",
         "w.whateva.life2.data.neat",
+        "w.whateva.life2.data.note",
+        "w.whateva.life2.data.pin",
         "w.whateva.life2.job.file",
 })
 @EnableMongoRepositories(basePackages = {
         "w.whateva.life2.data.neat.repository",
+        "w.whateva.life2.data.note.repository",
+        "w.whateva.life2.data.pin.repository",
+        "w.whateva.life2.data.person.repository"
 })
 @EntityScan(basePackages = {
         "w.whateva.life2.data.neat.domain"

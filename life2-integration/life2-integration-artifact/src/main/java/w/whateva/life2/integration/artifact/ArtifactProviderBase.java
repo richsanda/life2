@@ -99,7 +99,7 @@ public abstract class ArtifactProviderBase<ItemType> implements ArtifactProvider
                 .count();
     }
 
-    protected final ItemType index(ItemType item) {
+    public final ItemType index(ItemType item) {
         pinDao.index(getPinType(), getTrove(item), getKey(item), toIndexPins(item));
         return item;
     }

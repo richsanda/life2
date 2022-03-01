@@ -4,6 +4,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import w.whateva.life2.api.note.NoteOperations;
 import w.whateva.life2.api.note.dto.ApiNote;
@@ -41,7 +42,16 @@ public class NoteServiceImpl implements NoteOperations {
 
     @Override
     public ApiNote add(String trove, ApiNote apiNote) {
-        return update(trove, NoteUtil.parseNoteTitle(apiNote.getText()), apiNote);
+        String key = NoteUtil.parseNoteTitleForNewKey(apiNote.getText());
+        if (StringUtils.isEmpty(key)) {
+            return null; // eh, should prob tell the client, but whatevs
+        }
+        int i = 2;
+        String unique = key;
+        while (null != read(trove, unique)) {
+            unique = key + "-" + i++;
+        }
+        return update(trove, unique, apiNote);
     }
 
     @Override

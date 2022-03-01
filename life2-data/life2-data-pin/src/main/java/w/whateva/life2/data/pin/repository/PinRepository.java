@@ -12,6 +12,8 @@ import java.util.List;
 @Repository(value = "pin")
 public interface PinRepository extends MongoRepository<Pin, String> {
 
+    List<Pin> findAllByTroveAndKey(String trove, String key);
+
     List<Pin> findAllByTypeAndTroveAndKey(String type, String trove, String key);
 
     @Aggregation(

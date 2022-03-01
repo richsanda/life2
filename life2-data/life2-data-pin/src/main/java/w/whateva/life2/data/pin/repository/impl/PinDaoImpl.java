@@ -54,6 +54,7 @@ public class PinDaoImpl implements PinDao {
     @Override
     @Async
     public void index(String type, String trove, String key, List<Pin> pins) {
+        // List<Pin> pinsToRemove = repository.findAllByTroveAndKey(trove, key);
         List<Pin> pinsToRemove = repository.findAllByTypeAndTroveAndKey(type, trove, key);
         repository.deleteAll(pinsToRemove);
         repository.saveAll(pins);
@@ -115,10 +116,13 @@ public class PinDaoImpl implements PinDao {
             criteria.add(from(new TextCriteria().matching(searchText).getCriteriaObject()));
         }
 
+        // TODO: undo this life2 hack, maybe by making "life2" a source for floating notes
         if (StringUtils.isEmpty(source)) {
             criteria.add(Criteria.where("source").exists(false));
+            criteria.add(Criteria.where("trove").ne("life2"));
         } else {
-            criteria.add(Criteria.where("source").is(source));
+            criteria.add(new Criteria()
+                    .orOperator(Criteria.where("source").is(source), Criteria.where("trove").is("life2")));
         }
 
         Criteria[] criteriaArray = new Criteria[criteria.size()];

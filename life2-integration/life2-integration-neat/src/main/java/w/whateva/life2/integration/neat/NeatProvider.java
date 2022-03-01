@@ -58,7 +58,22 @@ public class NeatProvider extends ArtifactProviderBase<NeatFile> {
 
     @Override
     protected List<Pin> toIndexPins(NeatFile neatFile) {
-        return Collections.emptyList(); // no indexing for now... corresponding notes cover it
+
+        String key = neatFile.getId().split("/")[1];
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("neat_type", neatFile.getType());
+        data.put("filename", neatFile.getFilename());
+        data.put("extension", neatFile.getExtension());
+        data.put("index", neatFile.getIndex());
+        data.put("page", neatFile.getPage());
+
+        return Collections.singletonList(Pin.builder()
+                .type(NEAT_PIN_TYPE)
+                .trove(neatFile.getFolder())
+                .key(key)
+                .title(key)
+                .data(data)
+                .build());
     }
 
     @Override
@@ -96,6 +111,12 @@ public class NeatProvider extends ArtifactProviderBase<NeatFile> {
 
     @Override
     public ApiArtifact toDto(NeatFile neatFile, Note note, RelativesAndIndex relativesAndIndex) {
+
+        if (null == note) {
+            note = new Note();
+            note.setTrove(neatFile.getFolder());
+            note.setKey(getKey(neatFile));
+        }
 
         Map<String, Object> data = fields(note.getText());
 
