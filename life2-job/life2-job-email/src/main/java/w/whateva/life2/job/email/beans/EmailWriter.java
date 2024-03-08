@@ -2,11 +2,10 @@ package w.whateva.life2.job.email.beans;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.service.email.EmailService;
-
-import java.util.List;
+import w.whateva.life2.service.email.dto.ApiEmail;
 
 public class EmailWriter implements ItemWriter<ApiEmail> {
 
@@ -23,7 +22,8 @@ public class EmailWriter implements ItemWriter<ApiEmail> {
         this.troveOwner = troveOwner;
     }
 
-    public void write(List<? extends ApiEmail> apiEmails) {
+    @Override
+    public void write(Chunk<? extends ApiEmail> apiEmails) {
 
         apiEmails.forEach(e -> {
             e.setTrove(troveName);

@@ -2,7 +2,9 @@ package w.whateva.life2.job.email;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -16,19 +18,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.FacebookMessageFileReader;
 import w.whateva.life2.job.email.beans.FacebookMessageProcessor;
 import w.whateva.life2.service.email.EmailService;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.xml.email.facebook.FacebookMessageThread;
 
 import java.io.IOException;
 
 @Configuration
 @ConditionalOnProperty(name = "facebook.message.file.pattern")
-@EnableBatchProcessing
-public class FacebookMessageJobConfiguration extends DefaultBatchConfigurer {
+public class FacebookMessageJobConfiguration {
 
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;

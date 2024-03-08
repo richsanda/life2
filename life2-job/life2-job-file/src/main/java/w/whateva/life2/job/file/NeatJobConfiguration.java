@@ -2,7 +2,9 @@ package w.whateva.life2.job.file;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.MultiResourceItemReader;
@@ -24,8 +26,7 @@ import java.io.IOException;
 
 @Configuration
 @ConditionalOnProperty(name = "neat.item.file.pattern")
-@EnableBatchProcessing
-public class NeatJobConfiguration extends DefaultBatchConfigurer {
+public class NeatJobConfiguration {
 
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;

@@ -1,6 +1,7 @@
 package w.whateva.life2.data.note.repository.impl;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class NoteDaoImpl implements NoteDao {
 
     @Autowired
     private MongoTemplate mongoTemplate;
-    MongoClient client = new MongoClient();
+    MongoClient client = MongoClients.create();
     MongoDatabase db = client.getDatabase("life2");
 
     @Override

@@ -2,7 +2,9 @@ package w.whateva.life2.job.email;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -17,11 +19,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.XmlEmailProcessor;
 import w.whateva.life2.job.email.beans.YahoogroupMessageFileReader;
 import w.whateva.life2.service.email.EmailService;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.xml.email.def.XmlEmail;
 import w.whateva.life2.xml.email.def.XmlGroupMessage;
 
@@ -29,8 +31,7 @@ import java.io.IOException;
 
 @Configuration
 @ConditionalOnProperty(name = "yahoogroup.message.file.pattern")
-@EnableBatchProcessing
-public class YahoogroupJobConfiguration extends DefaultBatchConfigurer {
+public class YahoogroupJobConfiguration {
 
     private final JobBuilderFactory jobs;
     private final StepBuilderFactory steps;

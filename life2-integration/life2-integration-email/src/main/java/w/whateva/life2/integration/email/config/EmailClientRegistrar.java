@@ -1,5 +1,6 @@
 package w.whateva.life2.integration.email.config;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -18,7 +19,6 @@ import w.whateva.life2.integration.api.ArtifactProvider;
 import w.whateva.life2.integration.email.impl.EmailProviderImpl;
 import w.whateva.life2.integration.email.netflix.EmailFeignConfiguration;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 

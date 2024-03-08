@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
@@ -31,8 +33,7 @@ import w.whateva.life2.xml.email.def.XmlUser;
 
 @Configuration
 @ConfigurationProperties(prefix = "person")
-@EnableBatchProcessing
-public class XmlPersonJobConfiguration extends DefaultBatchConfigurer {
+public class XmlPersonJobConfiguration {
 
     private transient Logger log = LoggerFactory.getLogger(XmlPersonJobConfiguration.class);
 

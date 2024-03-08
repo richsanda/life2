@@ -2,7 +2,9 @@ package w.whateva.life2.job.email;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -16,11 +18,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
-import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.job.email.beans.EmailWriter;
 import w.whateva.life2.job.email.beans.RowecomInboxEmailProcessor;
 import w.whateva.life2.job.email.beans.RowecomSentEmailProcessor;
 import w.whateva.life2.service.email.EmailService;
+import w.whateva.life2.service.email.dto.ApiEmail;
 import w.whateva.life2.xml.email.csv.RowecomInboxEmail;
 import w.whateva.life2.xml.email.csv.RowecomSentEmail;
 
@@ -28,8 +30,7 @@ import java.io.IOException;
 
 @Configuration
 @ConditionalOnProperty(name = "rowecom.email.folder")
-@EnableBatchProcessing
-public class RowecomEmailJobConfiguration extends DefaultBatchConfigurer {
+public class RowecomEmailJobConfiguration {
 
     private static final String SENT_FOLDER_NAME = "SENT";
     

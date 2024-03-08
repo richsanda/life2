@@ -1,11 +1,10 @@
 package w.whateva.life2.job.person.beans;
 
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import w.whateva.life2.api.person.PersonService;
 import w.whateva.life2.api.person.dto.ApiPerson;
-
-import java.util.List;
 
 public class PersonWriter implements ItemWriter<ApiPerson> {
 
@@ -16,7 +15,7 @@ public class PersonWriter implements ItemWriter<ApiPerson> {
         this.personService = personService;
     }
 
-    public void write(List<? extends ApiPerson> ApiPersons) throws Exception {
+    public void write(Chunk<? extends ApiPerson> ApiPersons) throws Exception {
         for (ApiPerson ApiPerson : ApiPersons) {
             personService.updatePerson(ApiPerson);
         }

@@ -2,12 +2,11 @@ package w.whateva.life2.job.file.beans;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import w.whateva.life2.api.neat.NeatService;
 import w.whateva.life2.api.neat.dto.ApiNeatFile;
-
-import java.util.List;
 
 public class NeatFileWriter implements ItemWriter<ApiNeatFile> {
 
@@ -21,7 +20,7 @@ public class NeatFileWriter implements ItemWriter<ApiNeatFile> {
     }
 
     @Override
-    public void write(List<? extends ApiNeatFile> files) throws Exception {
+    public void write(Chunk<? extends ApiNeatFile> files) throws Exception {
         files.forEach(neatService::addNeatFile);
     }
 }

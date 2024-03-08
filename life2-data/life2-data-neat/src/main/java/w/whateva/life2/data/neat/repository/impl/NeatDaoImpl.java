@@ -1,12 +1,9 @@
 package w.whateva.life2.data.neat.repository.impl;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Sorts;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,7 +21,7 @@ public class NeatDaoImpl implements NeatDao {
 
     @Autowired
     private MongoTemplate mongoTemplate;
-    MongoClient client = new MongoClient();
+    MongoClient client = MongoClients.create();
     MongoDatabase db = client.getDatabase("life2");
 
     @Override
